@@ -1,12 +1,13 @@
 #include "plotviewtreewidget.h"
 
-#include "qwt_plot.h"
+#include <qwt/qwt_plot.h>
 
 #include "curvesettingsdialog.h"
 #include "spectrogramsettingsdialog.h"
 
 #include <QDropEvent>
 #include <QDragMoveEvent>
+#include <QMimeData>
 
 PlotViewTreeWidget::PlotViewTreeWidget(QList<PlotViewWidget*> *pv, QWidget *parent = 0) : QTreeWidget(parent)
 {

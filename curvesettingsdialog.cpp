@@ -1,8 +1,8 @@
 #include "curvesettingsdialog.h"
 
-#include <qwt_symbol.h>
-#include <qwt_plot_curve.h>
-#include <qwt_plot.h>
+#include <qwt/qwt_symbol.h>
+#include <qwt/qwt_plot_curve.h>
+#include <qwt/qwt_plot.h>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -31,11 +31,11 @@ CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlo
 
     vlayout->addWidget(new QLabel(tr("Symbol Settings")));
 
-    symbolColor = new QPushButton(iconFromColor(curve->symbol().pen().color()),"Symbol Color");
+    symbolColor = new QPushButton(iconFromColor(curve->symbol()->pen().color()),"Symbol Color");
     connect(symbolColor,SIGNAL(clicked()),this,SLOT(SymbolBorderColor()));
     vlayout->addWidget(symbolColor,0,Qt::AlignHCenter);
 
-    symbolFillColor = new QPushButton(iconFromColor(curve->symbol().brush().color()),"Symbol Fill Color");
+    symbolFillColor = new QPushButton(iconFromColor(curve->symbol()->brush().color()),"Symbol Fill Color");
     connect(symbolFillColor,SIGNAL(clicked()),this,SLOT(SymbolFillColor()));
     vlayout->addWidget(symbolFillColor,0,Qt::AlignHCenter);
 
@@ -49,7 +49,7 @@ CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlo
     QSpinBox *symbolSize = new QSpinBox();
     symbolSize->setMinimum(0);
     symbolSize->setMaximum(100);
-    symbolSize->setValue(curve->symbol().pen().width());
+    symbolSize->setValue(curve->symbol()->pen().width());
     connect(symbolSize,SIGNAL(valueChanged(int)),this,SLOT(SymbolSizeChange(int)));
     vlayout->addWidget(symbolSize);
 
@@ -85,12 +85,10 @@ CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlo
 void CurveSettingsDialog::SymbolBorderColor()
 {
     QColorDialog cd;
-    QColor col = cd.getColor(curve->symbol().pen().color());
+    QColor col = cd.getColor(curve->symbol()->pen().color());
     if(!col.isValid()) { return; }
 
-    QwtSymbol sym = curve->symbol();
-    sym.setPen(QPen(col));
-    curve->setSymbol(sym);
+    curve->setSymbol( new QwtSymbol( curve->symbol()->style() , curve->symbol()->brush(), curve->symbol()->pen() , curve->symbol()->size() ) );
     symbolColor->setIcon(iconFromColor(col));
 
     parent->replot();
@@ -99,12 +97,10 @@ void CurveSettingsDialog::SymbolBorderColor()
 void CurveSettingsDialog::SymbolFillColor()
 {
     QColorDialog cd;
-    QColor col = cd.getColor(curve->symbol().brush().color());
+    QColor col = cd.getColor(curve->symbol()->brush().color());
     if(!col.isValid()) { return; }
 
-    QwtSymbol sym = curve->symbol();
-    sym.setBrush(QBrush(col));
-    curve->setSymbol(sym);
+    curve->setSymbol( new QwtSymbol( curve->symbol()->style() , QBrush(col), curve->symbol()->pen() , curve->symbol()->size() ) );
     symbolFillColor->setIcon(iconFromColor(col));
 
     parent->replot();
@@ -120,20 +116,13 @@ QIcon CurveSettingsDialog::iconFromColor(QColor col)
 void CurveSettingsDialog::SymbolStyleChanged(int index)
 {
     index--;
-
-    QwtSymbol sym = curve->symbol();
-    sym.setStyle((QwtSymbol::Style)index);
-    curve->setSymbol(sym);
-
+    curve->setSymbol( new QwtSymbol( (QwtSymbol::Style)index , curve->symbol()->brush(), curve->symbol()->pen() , curve->symbol()->size() ) );
     parent->replot();
 }
 
 void CurveSettingsDialog::SymbolSizeChange(int size)
 {
-    QwtSymbol sym = curve->symbol();
-    sym.setSize(size,size);
-    curve->setSymbol(sym);
-
+    curve->setSymbol( new QwtSymbol( curve->symbol()->style() , curve->symbol()->brush(), curve->symbol()->pen() , QSize(size,size) ) );
     parent->replot();
 }
 

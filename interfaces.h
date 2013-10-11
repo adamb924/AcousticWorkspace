@@ -6,7 +6,7 @@
 #include <QStringList>
 #include <QVariant>
 
-#include "qwt_data.h"
+#include <qwt/qwt_series_data.h>
 #include "waveformdata.h"
 #include "spectrogramdata.h"
 

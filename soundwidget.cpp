@@ -1,22 +1,22 @@
 #include "soundwidget.h"
 
 
-#include <qwt_plot.h>
-#include <qwt_plot_marker.h>
-#include <qwt_plot_curve.h>
-#include <qwt_legend.h>
-#include <qwt_data.h>
-#include <qwt_text.h>
-#include <qwt_math.h>
-#include <qwt_color_map.h>
-#include <qwt_scale_engine.h>
-#include <qwt_text_label.h>
-#include <qwt_slider.h>
-#include <qwt_symbol.h>
-#include <qwt_plot_curve.h>
-#include <qwt_scale_engine.h>
+#include <qwt/qwt_plot.h>
+#include <qwt/qwt_plot_marker.h>
+#include <qwt/qwt_plot_curve.h>
+#include <qwt/qwt_legend.h>
+#include <qwt/qwt_series_data.h>
+#include <qwt/qwt_text.h>
+#include <qwt/qwt_math.h>
+#include <qwt/qwt_color_map.h>
+#include <qwt/qwt_scale_engine.h>
+#include <qwt/qwt_text_label.h>
+#include <qwt/qwt_slider.h>
+#include <qwt/qwt_symbol.h>
+#include <qwt/qwt_plot_curve.h>
+#include <qwt/qwt_scale_engine.h>
 
-#include <QtGui>
+#include <QtWidgets>
 #include <QString>
 #include <QStringList>
 #include <QtScript>
@@ -208,7 +208,7 @@ void SoundWidget::importSound()
 void SoundWidget::loadSound(QString fileName)
 {
     SF_INFO sndInfo;
-    SNDFILE *sndFile = sf_open(fileName.toAscii(), SFM_READ, &sndInfo);
+    SNDFILE *sndFile = sf_open(fileName.toUtf8(), SFM_READ, &sndInfo);
     if(sndFile==NULL)
     {
 	QMessageBox::critical(0,"Error","The file "+fileName+" could not be opened.");
@@ -571,11 +571,11 @@ void SoundWidget::readFromFile(QString filename)
 		plotDisplay->plotViews()->last()->curves()->last()->setStyle((QwtPlotCurve::CurveStyle)lineStyle);
 		plotDisplay->plotViews()->last()->curves()->last()->setRenderHint(QwtPlotItem::RenderAntialiased,antialiased);
 
-		QwtSymbol sym = plotDisplay->plotViews()->last()->curves()->last()->symbol();
-		sym.setBrush(QBrush(symbolFillColor));
-		sym.setPen(QPen(symbolColor));
-		sym.setSize(symbolSize);
-		sym.setStyle((QwtSymbol::Style)symbolStyle);
+        QwtSymbol * sym = new QwtSymbol;
+        sym->setBrush(QBrush(symbolFillColor));
+        sym->setPen(QPen(symbolColor));
+        sym->setSize(symbolSize);
+        sym->setStyle((QwtSymbol::Style)symbolStyle);
 		plotDisplay->plotViews()->last()->curves()->last()->setSymbol(sym);
 	    }
 	    else if(name=="spectrogram-plot")
@@ -708,11 +708,11 @@ void SoundWidget::writeProjectToFile(QString filename)
 
 	for(quint32 j=0; j<aWaveformData.at(i)->getNSamples(); j++)
 	{
-	    binaryout << aWaveformData.at(i)->getTimeAtSample(j);
+        binaryout << aWaveformData.at(i)->xData().at(j);
 	}
 	for(quint32 j=0; j<aWaveformData.at(i)->getNSamples(); j++)
 	{
-	    binaryout << aWaveformData.at(i)->getYAtSample(j);
+        binaryout << aWaveformData.at(i)->yData().at(j);
 	}
     }
 
@@ -766,8 +766,8 @@ void SoundWidget::writeProjectToFile(QString filename)
 	    xs.writeAttribute("index", QString::number( aSpectrogramData.indexOf(plotDisplay->plotViews()->at(i)->spectrogramData(j) ) ) );
 	    xs.writeAttribute("name", plotDisplay->plotViews()->at(i)->spectrogramData(j)->name());
 
-	    xs.writeTextElement("frequency-lower-bound",QString::number( plotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft)->lowerBound() ));
-	    xs.writeTextElement("frequency-upper-bound",QString::number( plotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft)->upperBound() ));
+	    xs.writeTextElement("frequency-lower-bound",QString::number( plotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft).lowerBound() ));
+	    xs.writeTextElement("frequency-upper-bound",QString::number( plotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft).upperBound() ));
 	    xs.writeEndElement();
 	}
 
@@ -782,21 +782,21 @@ void SoundWidget::writeProjectToFile(QString filename)
 		xs.writeAttribute("secondary-axis", "1" );
 
 	    xs.writeEmptyElement("symbol-color");
-	    xs.writeAttribute("r",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol().pen().color().red()));
-	    xs.writeAttribute("g",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol().pen().color().green()));
-	    xs.writeAttribute("b",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol().pen().color().blue()));
+        xs.writeAttribute("r",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().red()));
+        xs.writeAttribute("g",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().green()));
+        xs.writeAttribute("b",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().blue()));
 
 	    xs.writeEmptyElement("symbol-fill-color");
-	    xs.writeAttribute("r",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol().brush().color().red()));
-	    xs.writeAttribute("g",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol().brush().color().green()));
-	    xs.writeAttribute("b",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol().brush().color().blue()));
+        xs.writeAttribute("r",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().red()));
+        xs.writeAttribute("g",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().green()));
+        xs.writeAttribute("b",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().blue()));
 
-	    xs.writeTextElement("symbol-style",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol().style()));
+        xs.writeTextElement("symbol-style",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->style()));
 
-	    xs.writeTextElement("symbol-size",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol().size().height()));
+        xs.writeTextElement("symbol-size",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->size().height()));
 
 	    xs.writeEmptyElement("line-color");
-	    xs.writeAttribute("r",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().red()));
+        xs.writeAttribute("r",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().red()));
 	    xs.writeAttribute("g",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().green()));
 	    xs.writeAttribute("b",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().blue()));
 

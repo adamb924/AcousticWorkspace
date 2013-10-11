@@ -2,6 +2,7 @@
 
 #include <QDropEvent>
 #include <QDragMoveEvent>
+#include <QMimeData>
 
 PluginViewTreeWidget::PluginViewTreeWidget(QString mime, QWidget *parent) : QTreeWidget(parent)
 {

@@ -1,13 +1,13 @@
 #include "intervaldisplaywidget.h"
 
-#include <QtGui>
+#include <QtWidgets>
 //#include <QPainter>
 //#include <QPaintEvent>
 #include <QtDebug>
 
-#include <qwt_plot.h>
-#include <qwt_plot_canvas.h>
-#include <qwt_scale_widget.h>
+#include <qwt/qwt_plot.h>
+#include <qwt/qwt_plot_canvas.h>
+#include <qwt/qwt_scale_widget.h>
 
 #include "plotviewwidget.h"
 #include "intervalannotation.h"
@@ -33,8 +33,8 @@ void IntervalDisplayWidget::paintEvent(QPaintEvent *event)
     double left, right;
     int pLeft, pRight;
     int pHeight = this->height();
-    left = prosody->plot()->axisScaleDiv(QwtPlot::xBottom)->lowerBound();
-    right = prosody->plot()->axisScaleDiv(QwtPlot::xBottom)->upperBound();
+    left = prosody->plot()->axisScaleDiv(QwtPlot::xBottom).lowerBound();
+    right = prosody->plot()->axisScaleDiv(QwtPlot::xBottom).upperBound();
     pLeft = prosody->plot()->pos().x() + prosody->plot()->canvas()->pos().x() + prosody->plot()->canvasMap(QwtPlot::xBottom).transform(left);
     pRight = prosody->plot()->pos().x() + prosody->plot()->canvas()->pos().x() + prosody->plot()->canvasMap(QwtPlot::xBottom).transform(right);
 

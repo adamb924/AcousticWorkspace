@@ -8,7 +8,7 @@
 #include "datasourcetreewidget.h"
 
 #include <QtDebug>
-#include <QtGui>
+#include <QtWidgets>
 #include <QTreeWidgetItem>
 #include <QStringList>
 #include <QGridLayout>

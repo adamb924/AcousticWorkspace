@@ -11,8 +11,7 @@
 #ifndef SPECTROGRAMDATA_H
 #define SPECTROGRAMDATA_H
 
-#include <qwt_raster_data.h>
-#include <qwt_double_rect.h>
+#include <qwt/qwt_raster_data.h>
 
 #include "fftw3.h"
 #include <math.h>
@@ -47,13 +46,10 @@ public:
 
 public slots:
     //! \brief Return the bounding rectangle of the data. Reimplemented from QwtRasterData
-    QwtDoubleRect boundingRect() const;
+    QRectF boundingRect() const;
 
     //! \brief Create a copy of the object. Performs a deep copy of the data structures
     virtual SpectrogramData* copy() const;
-
-    //! \brief Return the range of the data. Reimplemented from QwtRasterData
-    virtual QwtDoubleInterval range() const;
 
     //! \brief Return the value at at time \a t, frequency \a f
     double dataAt(quint32 t, quint32 f) const;

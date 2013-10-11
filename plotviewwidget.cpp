@@ -1,11 +1,11 @@
 #include "plotviewwidget.h"
 #include "waveformdata.h"
-#include <qwt_plot_curve.h>
-#include <qwt_text_label.h>
-#include <qwt_color_map.h>
-#include <qwt_scale_div.h>
-#include <qwt_scale_draw.h>
-#include <qwt_scale_widget.h>
+#include <qwt/qwt_plot_curve.h>
+#include <qwt/qwt_text_label.h>
+#include <qwt/qwt_color_map.h>
+#include <qwt/qwt_scale_div.h>
+#include <qwt/qwt_scale_draw.h>
+#include <qwt/qwt_scale_widget.h>
 
 #include <QtDebug>
 #include <QHBoxLayout>
@@ -20,7 +20,7 @@
 
 #include "curvesettingsdialog.h"
 #include "spectrogramsettingsdialog.h"
-#include <qwt_plot.h>
+#include <qwt/qwt_plot.h>
 
 void PlotViewWidget::setHorizontalAxis(double left, double right)
 {
@@ -72,14 +72,14 @@ void PlotViewWidget::addCurveData(WaveformData *curveData, bool secondary, QColo
     QwtPlotCurve *waveCurve = new QwtPlotCurve("dummy");
     waveCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
     waveCurve->setPen(QPen(col));
-    waveCurve->setData( *curveData );
+    waveCurve->setSamples( curveData );
     aCurves << waveCurve;
     waveCurve->attach(qwtPlot);
 
     if( !secondaryAxis || aCurves.length() == 0 ) // no secondary axis or just one plot
     {
 	qwtPlot->replot();
-	qwtPlot->setAxisScaleDiv(QwtPlot::yRight, *qwtPlot->axisScaleDiv(QwtPlot::yLeft));
+    qwtPlot->setAxisScaleDiv(QwtPlot::yRight, qwtPlot->axisScaleDiv(QwtPlot::yLeft));
 	qwtPlot->replot();
     }
     else
@@ -104,12 +104,12 @@ void PlotViewWidget::addSpectrogramData(SpectrogramData *spectrogramData)
 
     QwtPlotSpectrogram *spectrogram = new QwtPlotSpectrogram();
 
-    QwtLinearColorMap colorMap(Qt::white, Qt::black);
+    QwtLinearColorMap * colorMap = new QwtLinearColorMap(Qt::white, Qt::black);
     //    QwtLinearColorMap colorMap(Qt::black, Qt::white);
     spectrogram->setColorMap(colorMap);
-    spectrogram->setData(*spectrogramData);
+    spectrogram->setData(spectrogramData);
 
-    QwtDoubleRect r = spectrogramData->boundingRect();
+    QRectF r = spectrogramData->boundingRect();
     qwtPlot->setAxisScale( QwtPlot::yLeft , 0, 5000, 1000);
     qwtPlot->setAxisScale( QwtPlot::yRight , 0, 5000, 1000);
     qwtPlot->setAxisScale( QwtPlot::xBottom , r.left(), r.right(), 0.1);
@@ -129,7 +129,7 @@ void PlotViewWidget::removeItemAt(int i)
     if( !secondaryAxis || aCurves.length() == 1 ) // no secondary axis or just one plot
     {
 	qwtPlot->replot();
-	qwtPlot->setAxisScaleDiv(QwtPlot::yRight, *qwtPlot->axisScaleDiv(QwtPlot::yLeft));
+    qwtPlot->setAxisScaleDiv(QwtPlot::yRight, qwtPlot->axisScaleDiv(QwtPlot::yLeft));
 	qwtPlot->replot();
     }
 }
@@ -255,7 +255,7 @@ void PlotViewWidget::showCurveTimes(int index)
     QString str;
     for(quint32 i=0; i<aWaveformData.at(index)->getNSamples(); i++)
     {
-	str.append(QString::number(aWaveformData.at(index)->getTimeAtSample(i))+"\n");
+    str.append(QString::number(aWaveformData.at(index)->xData().at(i) )+"\n");
     }
     TextDisplayDialog tdd(str, this);
     tdd.exec();
@@ -266,7 +266,7 @@ void PlotViewWidget::showCurveTimesData(int index)
     QString str;
     for(quint32 i=0; i<aWaveformData.at(index)->getNSamples(); i++)
     {
-	str.append(QString::number(aWaveformData.at(index)->getTimeAtSample(i))+"\t"+QString::number(aWaveformData.at(index)->getYAtSample(i))+"\n");
+    str.append(QString::number(aWaveformData.at(index)->xData().at(i))+"\t"+QString::number(aWaveformData.at(index)->yData().at(i))+"\n");
     }
     TextDisplayDialog tdd(str, this);
     tdd.exec();

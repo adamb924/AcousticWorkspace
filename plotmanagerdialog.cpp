@@ -4,11 +4,11 @@
 #include "waveformdata.h"
 #include "spectrogramdata.h"
 
-#include <qwt_scale_engine.h>
-#include <qwt_plot.h>
+#include <qwt/qwt_scale_engine.h>
+#include <qwt/qwt_plot.h>
 
 #include <QtDebug>
-#include <QtGui>
+#include <QtWidgets>
 #include <QTreeWidgetItem>
 #include <QStringList>
 #include <QPushButton>
@@ -86,7 +86,7 @@ void PlotManagerDialog::addWaveform(int plot, int waveform)
 	return;
     }
 
-    QwtDoubleRect limits = tmp->boundingRect();
+    QRectF limits = tmp->boundingRect();
     if( !limits.isValid() )
     {
 	qDebug() << "Somehow the boundingRect of the data is not valid, which is entirely unexpected.";
@@ -94,13 +94,13 @@ void PlotManagerDialog::addWaveform(int plot, int waveform)
     }
 
     QString info = "The range of the waveform is [" + QString::number(limits.bottom()) + ", " + QString::number(limits.top()) + "].\nOn which axis should the waveform be plotted?";
-    QString primary = "Primary Axis - [" + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft)->lowerBound()) + ", " + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft)->upperBound()) + "].";
+    QString primary = "Primary Axis - [" + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft).lowerBound()) + ", " + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft).upperBound()) + "].";
 
     QString secondary;
-    if( aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight)->lowerBound() == 0 && aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight)->upperBound() == 1000 )
+    if( aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).lowerBound() == 0 && aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).upperBound() == 1000 )
 	secondary = "Secondary Axis";
     else
-	secondary = "Secondary Axis - [" + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight)->lowerBound()) + ", " + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight)->upperBound()) + "].";
+    secondary = "Secondary Axis - [" + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).lowerBound()) + ", " + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).upperBound()) + "].";
 
     QStringList items;
     items << primary << secondary;

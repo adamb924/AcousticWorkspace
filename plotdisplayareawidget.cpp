@@ -1,8 +1,8 @@
 #include "plotdisplayareawidget.h"
 
-#include <QtGui>
+#include <QtWidgets>
 
-#include <qwt_slider.h>
+#include <qwt/qwt_slider.h>
 
 #include "plotviewwidget.h"
 #include "intervaldisplaywidget.h"

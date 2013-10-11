@@ -1,6 +1,6 @@
 #include "regressiondialog.h"
 
-#include <QtGui>
+#include <QtWidgets>
 #include <QtDebug>
 #include <QList>
 

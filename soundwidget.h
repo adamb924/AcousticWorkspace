@@ -11,7 +11,7 @@
 
 #include <QMetaType>
 #include <QWidget>
-#include <qwt_slider.h>
+#include <qwt/qwt_slider.h>
 
 class QVBoxLayout;
 class ProsodyViewWidget;

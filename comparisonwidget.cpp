@@ -13,7 +13,7 @@
 #include <QContextMenuEvent>
 #include <QDialog>
 #include <QGridLayout>
-#include <QtGui>
+#include <QtWidgets>
 
 #include <QtDebug>
 
@@ -27,10 +27,9 @@ ComparisonWidget::ComparisonWidget(const SoundWidget *primary, const QList<Sound
     this->primary = primary;
     this->sounds = sounds;
 
-
     // skip the first because that's just the waveform
     for(int i = 1; i < primary->aWaveformData.count(); i++)
-	primaryCurves << primary->aWaveformData.at(i)->copy();
+        primaryCurves << new WaveformData( * (primary->aWaveformData.at(i)) );
 
     displayWidget = new PlotDisplayAreaWidget;
     QVBoxLayout *layout = new QVBoxLayout;
@@ -249,12 +248,12 @@ void ComparisonWidget::warpPrimaryCurvesLinear()
 	    int intervalRightFrames = curve->getSampleFromTime( primaryInterval->aIntervals.at(j)->right );
 	    double intervalLeftSeconds = primaryInterval->aIntervals.at(j)->left;
 
-	    double primaryLeftSeconds = curve->x(intervalLeftFrames);
+        double primaryLeftSeconds = curve->xData().at(intervalLeftFrames);
 	    double primaryLength = primaryInterval->aIntervals.at(j)->right - primaryInterval->aIntervals.at(j)->left;
-	    double frameLengthSeconds = curve->x(intervalRightFrames) - curve->x(intervalLeftFrames);
+        double frameLengthSeconds = curve->xData().at(intervalRightFrames) - curve->xData().at(intervalLeftFrames);
 
 	    for(int k=intervalLeftFrames; k <= intervalRightFrames; k++)
-		*(newTimes+k) = intervalLeftSeconds + (curve->x(k)-primaryLeftSeconds)*(primaryLength/frameLengthSeconds);
+        *(newTimes+k) = intervalLeftSeconds + (curve->xData().at(k)-primaryLeftSeconds)*(primaryLength/frameLengthSeconds);
 	}
 	curve->setXData(newTimes);
     }
@@ -280,12 +279,12 @@ void ComparisonWidget::warpSecondaryCurvesLinear(int index)
 	    size_t secondaryIntervalLeftFrames = curve->getSampleFromTime( secondaryInterval->aIntervals.at(j)->left );
 	    size_t secondaryIntervalRightFrames = curve->getSampleFromTime( secondaryInterval->aIntervals.at(j)->right );
 
-	    double secondaryLeftSeconds = curve->x(secondaryIntervalLeftFrames);
+        double secondaryLeftSeconds = curve->xData().at(secondaryIntervalLeftFrames);
 	    double primaryIntervalLength = primaryInterval->aIntervals.at(j)->right - primaryInterval->aIntervals.at(j)->left;
-	    double frameLengthSeconds = curve->x(secondaryIntervalRightFrames) - curve->x(secondaryIntervalLeftFrames);
+        double frameLengthSeconds = curve->xData().at(secondaryIntervalRightFrames) - curve->xData().at(secondaryIntervalLeftFrames);
 
 	    for(size_t k=secondaryIntervalLeftFrames; k <= secondaryIntervalRightFrames; k++)
-		*(newTimes + k) = primaryIntervalLeftSeconds + (curve->x(k)-secondaryLeftSeconds)*(primaryIntervalLength/frameLengthSeconds);
+        *(newTimes + k) = primaryIntervalLeftSeconds + (curve->xData().at(k)-secondaryLeftSeconds)*(primaryIntervalLength/frameLengthSeconds);
 	}
 
 	curve->setXData(newTimes);
@@ -311,9 +310,9 @@ void ComparisonWidget::warpPrimaryCurvesAccumulated()
 	    double intervalLeftSeconds = primaryInterval->aIntervals.at(j)->left;
 
 	    double *peChange = (double*)malloc(sizeof(double)*(intervalRightFrames-intervalLeftFrames+1));
-	    *(peChange+0) = primary->aWaveformData.at(primaryChangeMetric)->getYAtSample(intervalLeftFrames);
+        *(peChange+0) = primary->aWaveformData.at(primaryChangeMetric)->yData().at(intervalLeftFrames);
 	    for(int k=intervalLeftFrames+1; k <= intervalRightFrames; k++)
-		*(peChange+k-intervalLeftFrames) = *(peChange+k-intervalLeftFrames-1) + primary->aWaveformData.at(primaryChangeMetric)->getYAtSample(k);
+        *(peChange+k-intervalLeftFrames) = *(peChange+k-intervalLeftFrames-1) + primary->aWaveformData.at(primaryChangeMetric)->yData().at(k);
 
 	    for(int k=0; k < intervalRightFrames-intervalLeftFrames+1; k++)
 		*(peChange+k) = *(peChange+k) / *(peChange+intervalRightFrames-intervalLeftFrames);
@@ -332,7 +331,7 @@ void ComparisonWidget::warpPrimaryCurvesAccumulated()
 	curve->setXData(newTimes);
 
 	for(size_t j=0; j<curve->size(); j++)
-	    qDebug() << j << curve->x(j);
+        qDebug() << j << curve->xData().at(j);
     }
 }
 
@@ -357,9 +356,9 @@ void ComparisonWidget::warpSecondaryCurvesAccumulated(int index)
 	    double intervalLeftSeconds = primaryInterval->aIntervals.at(j)->left;
 
 	    double *peChange = (double*)malloc(sizeof(double)*(intervalRightFrames-intervalLeftFrames+1));
-	    *(peChange+0) = curve->getYAtSample(intervalLeftFrames);
+        *(peChange+0) = curve->yData().at(intervalLeftFrames);
 	    for(int k=intervalLeftFrames+1; k <= intervalRightFrames; k++)
-		*(peChange+k-intervalLeftFrames) = *(peChange+k-intervalLeftFrames-1) + curve->getYAtSample(k);
+        *(peChange+k-intervalLeftFrames) = *(peChange+k-intervalLeftFrames-1) + curve->yData().at(k);
 
 	    for(int k=0; k < intervalRightFrames-intervalLeftFrames+1; k++)
 		*(peChange+k) = *(peChange+k) / *(peChange+intervalRightFrames-intervalLeftFrames);
@@ -375,7 +374,7 @@ void ComparisonWidget::warpSecondaryCurvesAccumulated(int index)
 	curve->setXData(newTimes);
 
 	for(size_t j=0; j<curve->size(); j++)
-	    qDebug() << j << curve->x(j);
+        qDebug() << j << curve->xData().at(j);
     }
 }
 

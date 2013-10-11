@@ -11,7 +11,7 @@ From the UI perspective, the important member of the MainWindow class is the Mdi
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 
 class QVBoxLayout;
 class ProsodyViewWidget;

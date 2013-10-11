@@ -16,7 +16,7 @@
 class SoundWidget;
 class WaveformData;
 class QContextMenuEvent;
-class QwtData;
+class QwtPointArrayData;
 class PlotDisplayAreaWidget;
 class IntervalAnnotation;
 class QColor;

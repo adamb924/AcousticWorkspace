@@ -1,8 +1,8 @@
 #include "spectrogramsettingsdialog.h"
 
-#include <qwt_plot.h>
-#include <qwt_plot_spectrogram.h>
-#include <qwt_scale_engine.h>
+#include <qwt/qwt_plot.h>
+#include <qwt/qwt_plot_spectrogram.h>
+#include <qwt/qwt_scale_engine.h>
 
 #include <QLineEdit>
 #include <QVBoxLayout>
@@ -24,8 +24,8 @@ SpectrogramSettingsDialog::SpectrogramSettingsDialog(QwtPlotSpectrogram *spectro
     fromFrequency->setValidator(new QDoubleValidator(spectrogram->boundingRect().bottom(),spectrogram->boundingRect().top(),2,this));
     toFrequency->setValidator(new QDoubleValidator(spectrogram->boundingRect().bottom(),spectrogram->boundingRect().top(),2,this));
 
-    fromFrequency->setText(QString::number(parentPlot->axisScaleDiv(QwtPlot::yLeft)->lowerBound()));
-    toFrequency->setText(QString::number(parentPlot->axisScaleDiv(QwtPlot::yLeft)->upperBound()));
+    fromFrequency->setText(QString::number(parentPlot->axisScaleDiv(QwtPlot::yLeft).lowerBound()));
+    toFrequency->setText(QString::number(parentPlot->axisScaleDiv(QwtPlot::yLeft).upperBound()));
 
     connect(fromFrequency,SIGNAL(textEdited(QString)),this,SLOT(setFrequencyLowerbound(QString)));
     connect(toFrequency,SIGNAL(textEdited(QString)),this,SLOT(setFrequencyUpperbound(QString)));
@@ -44,14 +44,14 @@ SpectrogramSettingsDialog::SpectrogramSettingsDialog(QwtPlotSpectrogram *spectro
 void SpectrogramSettingsDialog::setFrequencyUpperbound(QString text)
 {
     QwtLinearScaleEngine engine;
-    plot->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale(plot->axisScaleDiv(QwtPlot::yLeft)->lowerBound(), text.toDouble() ,10, 10) ));
+    plot->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale(plot->axisScaleDiv(QwtPlot::yLeft).lowerBound(), text.toDouble() ,10, 10) ));
     plot->replot();
 }
 
 void SpectrogramSettingsDialog::setFrequencyLowerbound(QString text)
 {
     QwtLinearScaleEngine engine;
-    plot->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale(text.toDouble(), plot->axisScaleDiv(QwtPlot::yLeft)->upperBound(),10, 10) ));
+    plot->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale(text.toDouble(), plot->axisScaleDiv(QwtPlot::yLeft).upperBound(),10, 10) ));
     plot->replot();
 }
 

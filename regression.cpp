@@ -7,10 +7,10 @@
 #include <gsl/gsl_multifit.h>
 #include <gsl/gsl_statistics_double.h>
 
-#include <qwt_plot.h>
-#include <qwt_plot_curve.h>
+#include <qwt/qwt_plot.h>
+#include <qwt/qwt_plot_curve.h>
 
-#include <QtGui>
+#include <QtWidgets>
 #include <QtDebug>
 #include <QTime>
 #include <QDir>
@@ -127,7 +127,7 @@ void RegressionModel::fit()
     {
 	factorNames << simple.at(i)->name();
 
-	gsl_vector_view tmpView = gsl_vector_view_array( simple.at(i)->yData() , nrow);
+    gsl_vector_const_view tmpView = gsl_vector_const_view_array( simple.at(i)->yData().data() , nrow);
 	gsl_matrix_set_col(independent, ct, &tmpView.vector );
 	ct++;
     }
@@ -141,13 +141,13 @@ void RegressionModel::fit()
 
 	gsl_vector *tmp = gsl_vector_alloc(nrow);
 
-	gsl_vector_view firstView = gsl_vector_view_array( interaction.at(i)->members.at(0)->yData() , nrow);
+    gsl_vector_const_view firstView = gsl_vector_const_view_array( interaction.at(i)->members.at(0)->yData().data() , nrow);
 
 	gsl_vector_memcpy(tmp, &firstView.vector);
 
 	for(int j=1; j<interaction.at(i)->members.count(); j++)
 	{
-	    gsl_vector_view tmpView = gsl_vector_view_array( interaction.at(i)->members.at(j)->yData() , nrow);
+        gsl_vector_const_view tmpView = gsl_vector_const_view_array( interaction.at(i)->members.at(j)->yData().data() , nrow);
 	    gsl_vector_mul ( tmp , &(tmpView.vector) );
 	}
 
@@ -192,7 +192,7 @@ void RegressionModel::fit()
 	QwtPlotCurve *waveCurve = new QwtPlotCurve("dummy");
 	waveCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
 	waveCurve->setPen(QPen(Qt::blue));
-	waveCurve->setData(dependentSpectrogram->pfrequencies(),rsq,dependentSpectrogram->getNFrequencyBins());
+    waveCurve->setSamples(dependentSpectrogram->pfrequencies(),rsq,dependentSpectrogram->getNFrequencyBins());
 	waveCurve->attach(qwtPlot);
 
 	qwtPlot->setWindowTitle("R-squared values");
@@ -208,11 +208,11 @@ void RegressionModel::fit()
 	{
 	    output += "Report for: "+ dependent.at(i)->name() +"\n";
 
-	    gsl_vector_view dependent_view = gsl_vector_view_array(dependent.at(i)->yData(), nrow);
+        gsl_vector_const_view dependent_view = gsl_vector_const_view_array(dependent.at(i)->yData().data(), nrow);
 
 	    gsl_multifit_linear(independent, &dependent_view.vector, estimate, cov, &chisq, workspace);
 	    gsl_multifit_linear_residuals(independent, &dependent_view.vector, estimate, residuals);
-	    double TSS = gsl_stats_tss(dependent.at(i)->yData(),1,nrow);
+        double TSS = gsl_stats_tss(dependent.at(i)->yData().data(),1,nrow);
 	    double rsq = 1- gsl_stats_tss(residuals->data,1,nrow)/TSS;
 
 	    output += "Estimates\n";
@@ -284,7 +284,7 @@ void RegressionModel::R()
 	    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 	    for(quint32 j=0; j< dependent.at(i)->getNSamples(); j++)
 	    {
-		out << dependent.at(i)->y(j);
+        out << dependent.at(i)->yData().at(j);
 	    }
 
 	    file.close();
@@ -305,7 +305,7 @@ void RegressionModel::R()
 	out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 	for(quint32 j=0; j< simple.at(i)->getNSamples(); j++)
 	{
-	    out << simple.at(i)->y(j);
+        out << simple.at(i)->yData().at(j);
 	}
 
 	file.close();

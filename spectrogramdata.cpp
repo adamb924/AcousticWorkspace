@@ -1,5 +1,4 @@
-#include <qwt_raster_data.h>
-#include <qwt_double_rect.h>
+#include <qwt/qwt_raster_data.h>
 
 #include "fftw3.h"
 #include <math.h>
@@ -43,9 +42,9 @@ SpectrogramData::~SpectrogramData()
     if(frequencies) { free(frequencies); }
 }
 
-QwtDoubleRect SpectrogramData::boundingRect() const
+QRectF SpectrogramData::boundingRect() const
 {
-    return QwtDoubleRect( getTimeFromIndex(0) , getFrequencyFromIndex(0), getTimeFromIndex(nFrames-1)-getTimeFromIndex(0), getFrequencyFromIndex(nFreqBins-1)-getFrequencyFromIndex(0) );
+    return QRectF( getTimeFromIndex(0) , getFrequencyFromIndex(0), getTimeFromIndex(nFrames-1)-getTimeFromIndex(0), getFrequencyFromIndex(nFreqBins-1)-getFrequencyFromIndex(0) );
 }
 
 SpectrogramData* SpectrogramData::copy() const
@@ -81,11 +80,6 @@ SpectrogramData* SpectrogramData::copy() const
     }
 
     return copy;
-}
-
-QwtDoubleInterval SpectrogramData::range() const
-{
-    return QwtDoubleInterval(spec_min, spec_max);
 }
 
 double SpectrogramData::dataAt(quint32 t, quint32 f) const
