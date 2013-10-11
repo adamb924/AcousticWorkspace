@@ -26,7 +26,7 @@ PlotDisplayAreaWidget::PlotDisplayAreaWidget(QWidget *parent) :
 
     QHBoxLayout *controlLayout = new QHBoxLayout;
 
-    slider = new QwtSlider(0);
+    slider = new QwtSlider(Qt::Horizontal, 0);
     connect(slider,SIGNAL(sliderMoved(double)),this,SLOT(updateTimeScaleFromSlider(double)));
     controlLayout->addWidget(slider,100);
 
