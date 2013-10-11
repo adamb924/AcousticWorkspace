@@ -92,7 +92,6 @@ private:
     QString safeLabel;
     size_t fs;
     double period;
-    double len;
     double *times;
     double minimum;
     double maximum;

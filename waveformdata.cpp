@@ -12,7 +12,6 @@ WaveformData::WaveformData(QString name, double *x, double *y, size_t nsam, size
     safeLabel.replace(QRegExp("[\\W]*"),"");
 
     period = 1.0 / fs;
-    len = xData().last() - xData().first();
 
     calculateMinMax();
 }
@@ -22,7 +21,6 @@ WaveformData::WaveformData(const WaveformData& other) : QObject(), QwtPointArray
     label = other.label;
     fs = other.fs;
     period = other.period;
-    len = other.len;
     maximum = other.maximum;
     minimum = other.minimum;
     safeLabel = other.safeLabel;
@@ -32,10 +30,10 @@ void WaveformData::calculateMinMax()
 {
     minimum = 99999999999.0f;
     maximum = -99999999999.0f;
-    for(quint32 i=0; i<xData().size(); i++)
+    for(quint32 i=0; i<yData().size(); i++)
     {
-        if( xData().at(i) < minimum ) { minimum = xData().at(i); }
-        if( xData().at(i) > maximum ) { maximum = xData().at(i); }
+        if( yData().at(i) < minimum ) { minimum = yData().at(i); }
+        if( yData().at(i) > maximum ) { maximum = yData().at(i); }
     }
 }
 

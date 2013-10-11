@@ -138,7 +138,7 @@ void CurveSettingsDialog::LineColor()
 
 void CurveSettingsDialog::LineStyleChanged(int index)
 {
-    curve->setStyle((QwtPlotCurve::CurveStyle)index);
+    curve->setStyle((QwtPlotCurve::CurveStyle)(index-1));
     parent->replot();
 }
 
