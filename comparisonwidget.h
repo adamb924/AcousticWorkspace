@@ -26,7 +26,7 @@ class ComparisonWidget : public QWidget
     Q_OBJECT
 public:
     //! \brief Prompts the user for input, and creates the window
-    explicit ComparisonWidget(const SoundWidget *primary, const QList<SoundWidget*> *sounds, QWidget *parent = 0);
+    explicit ComparisonWidget(const SoundWidget *mPrimary, const QList<SoundWidget*> *mSounds, QWidget *parent = 0);
     ~ComparisonWidget();
 
 private:
@@ -63,21 +63,21 @@ private:
     //! \brief Return a name for the comparison window
     QString createWindowTitle() const;
 
-    const SoundWidget *primary;
-    const QList<SoundWidget*> *sounds;
+    const SoundWidget *mPrimary;
+    const QList<SoundWidget*> *mSounds;
 
     QList<QColor> colors;
 
-    int warpAlgorithm, primaryChangeMetric;
-    QList<int> secondaryChangeMetrics;
+    int mWarpAlgorithm, mPrimaryChangeMetric;
+    QList<int> mSecondaryChangeMetrics;
 
-    PlotDisplayAreaWidget *displayWidget;
+    PlotDisplayAreaWidget *mDisplayWidget;
 
-    QList<WaveformData*> primaryCurves;
-    QList< QList<WaveformData*> > secondaryCurves;
+    QList<WaveformData*> mPrimaryCurves;
+    QList< QList<WaveformData*> > mSecondaryCurves;
 
-    IntervalAnnotation *primaryInterval;
-    QList< IntervalAnnotation* > secondaryIntervals;
+    IntervalAnnotation *mPrimaryInterval;
+    QList< IntervalAnnotation* > mSecondaryIntervals;
 
 
 private slots:

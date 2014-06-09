@@ -22,8 +22,8 @@
 
 CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlot, QWidget *parent) : QDialog(parent)
 {
-    this->curve = curve;
-    this->parent = parentPlot;
+    this->mCurve = curve;
+    this->mParent = parentPlot;
 
 //    qDebug() << this->curve->pen().color();
 
@@ -31,13 +31,13 @@ CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlo
 
     vlayout->addWidget(new QLabel(tr("Symbol Settings")));
 
-    symbolColor = new QPushButton(iconFromColor(curve->symbol()->pen().color()),"Symbol Color");
-    connect(symbolColor,SIGNAL(clicked()),this,SLOT(SymbolBorderColor()));
-    vlayout->addWidget(symbolColor,0,Qt::AlignHCenter);
+    mSymbolColor = new QPushButton(iconFromColor(curve->symbol()->pen().color()),"Symbol Color");
+    connect(mSymbolColor,SIGNAL(clicked()),this,SLOT(SymbolBorderColor()));
+    vlayout->addWidget(mSymbolColor,0,Qt::AlignHCenter);
 
-    symbolFillColor = new QPushButton(iconFromColor(curve->symbol()->brush().color()),"Symbol Fill Color");
-    connect(symbolFillColor,SIGNAL(clicked()),this,SLOT(SymbolFillColor()));
-    vlayout->addWidget(symbolFillColor,0,Qt::AlignHCenter);
+    mSymbolFillColor = new QPushButton(iconFromColor(curve->symbol()->brush().color()),"Symbol Fill Color");
+    connect(mSymbolFillColor,SIGNAL(clicked()),this,SLOT(SymbolFillColor()));
+    vlayout->addWidget(mSymbolFillColor,0,Qt::AlignHCenter);
 
     QComboBox *symbolStyle = new QComboBox();
     QStringList styles;
@@ -55,9 +55,9 @@ CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlo
 
     vlayout->addWidget(new QLabel(tr("Line Settings")));
 
-    lineColor = new QPushButton(iconFromColor(curve->pen().color() ),"Line Color");
-    connect(lineColor,SIGNAL(clicked()),this,SLOT(LineColor()));
-    vlayout->addWidget(lineColor,0,Qt::AlignHCenter);
+    mLineColor = new QPushButton(iconFromColor(curve->pen().color() ),"Line Color");
+    connect(mLineColor,SIGNAL(clicked()),this,SLOT(LineColor()));
+    vlayout->addWidget(mLineColor,0,Qt::AlignHCenter);
 
     QComboBox *lineStyle = new QComboBox();
     styles.clear();
@@ -85,25 +85,25 @@ CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlo
 void CurveSettingsDialog::SymbolBorderColor()
 {
     QColorDialog cd;
-    QColor col = cd.getColor(curve->symbol()->pen().color());
+    QColor col = cd.getColor(mCurve->symbol()->pen().color());
     if(!col.isValid()) { return; }
 
-    curve->setSymbol( new QwtSymbol( curve->symbol()->style() , curve->symbol()->brush(), curve->symbol()->pen() , curve->symbol()->size() ) );
-    symbolColor->setIcon(iconFromColor(col));
+    mCurve->setSymbol( new QwtSymbol( mCurve->symbol()->style() , mCurve->symbol()->brush(), mCurve->symbol()->pen() , mCurve->symbol()->size() ) );
+    mSymbolColor->setIcon(iconFromColor(col));
 
-    parent->replot();
+    mParent->replot();
 }
 
 void CurveSettingsDialog::SymbolFillColor()
 {
     QColorDialog cd;
-    QColor col = cd.getColor(curve->symbol()->brush().color());
+    QColor col = cd.getColor(mCurve->symbol()->brush().color());
     if(!col.isValid()) { return; }
 
-    curve->setSymbol( new QwtSymbol( curve->symbol()->style() , QBrush(col), curve->symbol()->pen() , curve->symbol()->size() ) );
-    symbolFillColor->setIcon(iconFromColor(col));
+    mCurve->setSymbol( new QwtSymbol( mCurve->symbol()->style() , QBrush(col), mCurve->symbol()->pen() , mCurve->symbol()->size() ) );
+    mSymbolFillColor->setIcon(iconFromColor(col));
 
-    parent->replot();
+    mParent->replot();
 }
 
 QIcon CurveSettingsDialog::iconFromColor(QColor col)
@@ -116,40 +116,40 @@ QIcon CurveSettingsDialog::iconFromColor(QColor col)
 void CurveSettingsDialog::SymbolStyleChanged(int index)
 {
     index--;
-    curve->setSymbol( new QwtSymbol( (QwtSymbol::Style)index , curve->symbol()->brush(), curve->symbol()->pen() , curve->symbol()->size() ) );
-    parent->replot();
+    mCurve->setSymbol( new QwtSymbol( (QwtSymbol::Style)index , mCurve->symbol()->brush(), mCurve->symbol()->pen() , mCurve->symbol()->size() ) );
+    mParent->replot();
 }
 
 void CurveSettingsDialog::SymbolSizeChange(int size)
 {
-    curve->setSymbol( new QwtSymbol( curve->symbol()->style() , curve->symbol()->brush(), curve->symbol()->pen() , QSize(size,size) ) );
-    parent->replot();
+    mCurve->setSymbol( new QwtSymbol( mCurve->symbol()->style() , mCurve->symbol()->brush(), mCurve->symbol()->pen() , QSize(size,size) ) );
+    mParent->replot();
 }
 
 void CurveSettingsDialog::LineColor()
 {
     QColorDialog cd;
-    QColor col = cd.getColor(curve->pen().color());
+    QColor col = cd.getColor(mCurve->pen().color());
     if(!col.isValid()) { return; }
-    lineColor->setIcon(iconFromColor(col));
-    curve->setPen(QPen(col));
-    parent->replot();
+    mLineColor->setIcon(iconFromColor(col));
+    mCurve->setPen(QPen(col));
+    mParent->replot();
 }
 
 void CurveSettingsDialog::LineStyleChanged(int index)
 {
-    curve->setStyle((QwtPlotCurve::CurveStyle)(index-1));
-    parent->replot();
+    mCurve->setStyle((QwtPlotCurve::CurveStyle)(index-1));
+    mParent->replot();
 }
 
 void CurveSettingsDialog::LineSizeChange(int size)
 {
-    curve->setPen(QPen( curve->pen().color(), size ));
-    parent->replot();
+    mCurve->setPen(QPen( mCurve->pen().color(), size ));
+    mParent->replot();
 }
 
 void CurveSettingsDialog::LineAntialiased(bool value)
 {
-    curve->setRenderHint(QwtPlotItem::RenderAntialiased,value);
-    parent->replot();
+    mCurve->setRenderHint(QwtPlotItem::RenderAntialiased,value);
+    mParent->replot();
 }

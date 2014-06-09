@@ -27,7 +27,7 @@ public:
     explicit SpectrogramSettingsDialog(QwtPlotSpectrogram *spectrogram, QwtPlot *parentPlot, QWidget *parent = 0);
 
 private:
-    QwtPlot *plot;
+    QwtPlot *mPlot;
 
 signals:
 

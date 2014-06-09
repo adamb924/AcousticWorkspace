@@ -33,7 +33,7 @@ public:
     QString text() const;
 
 private:
-    WaveformData *waveformData;
+    WaveformData *mWaveformData;
 };
 
 /*!
@@ -55,7 +55,7 @@ public:
     QString text() const;
 
 private:
-    SpectrogramData *spectrogramData;
+    SpectrogramData *mSpectrogramData;
 };
 
 /*!
@@ -77,7 +77,7 @@ public:
     QString text() const;
 
 private:
-    InteractionEffect *interactionData;
+    InteractionEffect *mInteractionData;
 };
 
 class RegressionModel;
@@ -125,13 +125,13 @@ private:
       */
     void addNWayInteractions(QList<RegressionListItem*> *list, int n);
 
-    QListWidget *dependentList;
-    QListWidget *dependentSpectrogramList;
-    QListWidget *independentSimpleList;
-    QListWidget *independentInteractionList;
+    QListWidget *mDependentList;
+    QListWidget *mDependentSpectrogramList;
+    QListWidget *mIndependentSimpleList;
+    QListWidget *mIndependentInteractionList;
 
-    QLineEdit *nameEdit;
-    QCheckBox *interceptTerm;
+    QLineEdit *mNameEdit;
+    QCheckBox *mInterceptTerm;
 
 signals:
     //! \brief Emit a regression model (associated with a slot in SoundWidget)

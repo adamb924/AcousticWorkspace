@@ -5,35 +5,35 @@
 
 WaveformData::WaveformData(QString name, double *x, double *y, size_t nsam, size_t fs) : QObject(), QwtPointArrayData(x, y, nsam)
 {
-    this->label = name;
-    this->fs = fs;
+    this->mLabel = name;
+    this->mFs = fs;
 
-    safeLabel = label;
-    safeLabel.replace(QRegExp("[\\W]*"),"");
+    mSafeLabel = mLabel;
+    mSafeLabel.replace(QRegExp("[\\W]*"),"");
 
-    period = 1.0 / fs;
+    mPeriod = 1.0 / fs;
 
     calculateMinMax();
 }
 
 WaveformData::WaveformData(const WaveformData& other) : QObject(), QwtPointArrayData(other)
 {
-    label = other.label;
-    fs = other.fs;
-    period = other.period;
-    maximum = other.maximum;
-    minimum = other.minimum;
-    safeLabel = other.safeLabel;
+    mLabel = other.mLabel;
+    mFs = other.mFs;
+    mPeriod = other.mPeriod;
+    mMaximum = other.mMaximum;
+    mMinimum = other.mMinimum;
+    mSafeLabel = other.mSafeLabel;
 }
 
 void WaveformData::calculateMinMax()
 {
-    minimum = 99999999999.0f;
-    maximum = -99999999999.0f;
+    mMinimum = 99999999999.0f;
+    mMaximum = -99999999999.0f;
     for(quint32 i=0; i<yData().size(); i++)
     {
-        if( yData().at(i) < minimum ) { minimum = yData().at(i); }
-        if( yData().at(i) > maximum ) { maximum = yData().at(i); }
+        if( yData().at(i) < mMinimum ) { mMinimum = yData().at(i); }
+        if( yData().at(i) > mMaximum ) { mMaximum = yData().at(i); }
     }
 }
 
@@ -50,8 +50,8 @@ size_t WaveformData::size() const
 void WaveformData::setXData(double *x)
 {
     // TODO this is out of date. It's only used in comparisonwidget.cpp, so I don't know if that can be gotten around.
-    if(times != 0) { free(times); }
-    times = x;
+    if(mTimes != 0) { free(mTimes); }
+    mTimes = x;
 }
 
 quint32 WaveformData::getNSamples() const
@@ -76,12 +76,12 @@ double WaveformData::length() const
 
 double WaveformData::getSamplingFrequency() const
 {
-    return (double)fs;
+    return (double)mFs;
 }
 
 double WaveformData::getNyquistFrequency() const
 {
-    return floor((double)fs/2);
+    return floor((double)mFs/2);
 }
 
 size_t WaveformData::getSampleFromTime(double time)
@@ -96,7 +96,7 @@ size_t WaveformData::getSampleFromTime(double time)
 
 QRectF WaveformData::boundingRect() const
 {
-    return QRectF( tMin() , minimum, tMax()-tMin(), maximum-minimum );
+    return QRectF( tMin() , mMinimum, tMax()-tMin(), mMaximum-mMinimum );
 }
 
 bool WaveformData::checkCongruentWith(const WaveformData *other) const
@@ -109,8 +109,8 @@ bool WaveformData::checkCongruentWith(const WaveformData *other) const
 
 void WaveformData::setName(QString n)
 {
-    label = n;
-    safeLabel = n;
-    safeLabel.replace(QRegExp("[\\W]*"),"");
+    mLabel = n;
+    mSafeLabel = n;
+    mSafeLabel.replace(QRegExp("[\\W]*"),"");
 //    qDebug() << label << safeLabel;
 }

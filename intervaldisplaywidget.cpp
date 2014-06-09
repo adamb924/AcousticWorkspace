@@ -14,8 +14,8 @@
 
 IntervalDisplayWidget::IntervalDisplayWidget(IntervalAnnotation *annotation, PlotViewWidget *prosody, QWidget *parent) : QWidget(parent)
 {
-    this->annotation = annotation;
-    this->prosody = prosody;
+    this->mAnnotation = annotation;
+    this->mProsody = prosody;
 
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     this->setSizePolicy(sizePolicy);
@@ -33,10 +33,10 @@ void IntervalDisplayWidget::paintEvent(QPaintEvent *event)
     double left, right;
     int pLeft, pRight;
     int pHeight = this->height();
-    left = prosody->plot()->axisScaleDiv(QwtPlot::xBottom).lowerBound();
-    right = prosody->plot()->axisScaleDiv(QwtPlot::xBottom).upperBound();
-    pLeft = prosody->plot()->pos().x() + prosody->plot()->canvas()->pos().x() + prosody->plot()->canvasMap(QwtPlot::xBottom).transform(left);
-    pRight = prosody->plot()->pos().x() + prosody->plot()->canvas()->pos().x() + prosody->plot()->canvasMap(QwtPlot::xBottom).transform(right);
+    left = mProsody->plot()->axisScaleDiv(QwtPlot::xBottom).lowerBound();
+    right = mProsody->plot()->axisScaleDiv(QwtPlot::xBottom).upperBound();
+    pLeft = mProsody->plot()->pos().x() + mProsody->plot()->canvas()->pos().x() + mProsody->plot()->canvasMap(QwtPlot::xBottom).transform(left);
+    pRight = mProsody->plot()->pos().x() + mProsody->plot()->canvas()->pos().x() + mProsody->plot()->canvasMap(QwtPlot::xBottom).transform(right);
 
 
     // multiply times by scale to get numbers
@@ -47,18 +47,18 @@ void IntervalDisplayWidget::paintEvent(QPaintEvent *event)
     painter.setBrush(noBrush);
     painter.setPen(simpleBlack);
 
-    for(int i=0; i<annotation->aIntervals.count(); i++)
+    for(int i=0; i<mAnnotation->maIntervals.count(); i++)
     {
-	if(annotation->aIntervals.at(i)->inRange(left, right))
+	if(mAnnotation->maIntervals.at(i)->inRange(left, right))
 	{
-	    Interval *clipped = annotation->aIntervals.at(i)->clip(left, right);
+	    Interval *clipped = mAnnotation->maIntervals.at(i)->clip(left, right);
 	    int L, R;
-	    L = pLeft + (clipped->left-left) * scale;
-	    R = pLeft + (clipped->right-left) * scale;
+	    L = pLeft + (clipped->mLeft-left) * scale;
+	    R = pLeft + (clipped->mRight-left) * scale;
 
 	    QRect drawingRect(L, 0, R-L, pHeight-1);
 	    painter.drawRect(drawingRect);
-	    painter.drawText(drawingRect,Qt::AlignHCenter|Qt::AlignVCenter,clipped->label);
+	    painter.drawText(drawingRect,Qt::AlignHCenter|Qt::AlignVCenter,clipped->mLabel);
 
 	    delete clipped;
 	}

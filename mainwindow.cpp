@@ -14,12 +14,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     loadPlugins();
 
-    mdiWindow = new MdiArea(this);
+    mMdiWindow = new MdiArea(this);
 
     setupMenus();
 
     this->setWindowTitle(tr("Acoustic Workspace"));
-    this->setCentralWidget(mdiWindow);
+    this->setCentralWidget(mMdiWindow);
 }
 
 
@@ -32,19 +32,19 @@ void MainWindow::setupMenus()
 {
     QAction *newAction = new QAction(tr("New sound window"),this);
     newAction->setShortcut(QKeySequence("Ctrl+Z"));
-    connect(newAction,SIGNAL(triggered()),mdiWindow,SLOT(newSoundWindow()));
+    connect(newAction,SIGNAL(triggered()),mMdiWindow,SLOT(newSoundWindow()));
 
     QAction *newComparison = new QAction(tr("New comparison window"),this);
     newComparison->setShortcut(QKeySequence("Ctrl+C"));
-    connect(newComparison,SIGNAL(triggered()),mdiWindow,SLOT(newComparisonWindow()));
+    connect(newComparison,SIGNAL(triggered()),mMdiWindow,SLOT(newComparisonWindow()));
 
     menuBar()->addAction(newAction);
     menuBar()->addAction(newComparison);
 
     QMenu *windows = new QMenu(tr("Windows"));
     menuBar()->addMenu(windows);
-    windows->addAction(tr("Tile Windows"),mdiWindow,SLOT(tileSubWindows()));
-    windows->addAction(tr("Cascade Windows"),mdiWindow,SLOT(cascadeSubWindows()));
+    windows->addAction(tr("Tile Windows"),mMdiWindow,SLOT(tileSubWindows()));
+    windows->addAction(tr("Cascade Windows"),mMdiWindow,SLOT(cascadeSubWindows()));
 }
 
 void MainWindow::loadPlugins()
@@ -93,17 +93,17 @@ void MainWindow::loadPlugin(QObject *plugin)
 {
     AbstractWaveform2WaveformMeasure *wm = qobject_cast<AbstractWaveform2WaveformMeasure*>(plugin);
     if (wm)
-	w2wPlugins << wm;
+	mW2wPlugins << wm;
 
     AbstractWaveform2SpectrogramMeasure *sm = qobject_cast<AbstractWaveform2SpectrogramMeasure*>(plugin);
     if (sm)
-	w2sPlugins << sm;
+	mW2sPlugins << sm;
 
     AbstractSpectrogram2WaveformMeasure *sw = qobject_cast<AbstractSpectrogram2WaveformMeasure*>(plugin);
     if (sw)
-	s2wPlugins << sw;
+	mS2wPlugins << sw;
 
     AbstractSpectrogram2SpectrogramMeasure *ss = qobject_cast<AbstractSpectrogram2SpectrogramMeasure*>(plugin);
     if (ss)
-	s2sPlugins << ss;
+	mS2sPlugins << ss;
 }

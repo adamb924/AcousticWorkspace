@@ -24,48 +24,48 @@ ComparisonWidget::ComparisonWidget(const SoundWidget *primary, const QList<Sound
 
     this->setMinimumSize(500,200);
 
-    this->primary = primary;
-    this->sounds = sounds;
+    this->mPrimary = primary;
+    this->mSounds = sounds;
 
     // skip the first because that's just the waveform
-    for(int i = 1; i < primary->aWaveformData.count(); i++)
-        primaryCurves << new WaveformData( * (primary->aWaveformData.at(i)) );
+    for(int i = 1; i < primary->maWaveformData.count(); i++)
+        mPrimaryCurves << new WaveformData( * (primary->maWaveformData.at(i)) );
 
-    displayWidget = new PlotDisplayAreaWidget;
+    mDisplayWidget = new PlotDisplayAreaWidget;
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(displayWidget);
+    layout->addWidget(mDisplayWidget);
     this->setLayout(layout);
 
-    primaryInterval = 0;
-    if( primary->aIntervalAnnotations.count() > 0 && QMessageBox::Yes == QMessageBox::question(this, tr("Acoustic Workspace"), tr("Will you be aligning the sounds with an interval annotation?"), QMessageBox::Yes | QMessageBox::No) )
+    mPrimaryInterval = 0;
+    if( primary->maIntervalAnnotations.count() > 0 && QMessageBox::Yes == QMessageBox::question(this, tr("Acoustic Workspace"), tr("Will you be aligning the sounds with an interval annotation?"), QMessageBox::Yes | QMessageBox::No) )
     {
 	// choose the intervals
 	bool ok;
 	QStringList items;
-	for(int i=0; i< primary->aIntervalAnnotations.count(); i++)
-	    items << primary->aIntervalAnnotations.at(i)->name;
+	for(int i=0; i< primary->maIntervalAnnotations.count(); i++)
+	    items << primary->maIntervalAnnotations.at(i)->mName;
 	QString item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the interval you want to use"), items, 0, false, &ok);
 	if(!ok) { return; }
-	primaryInterval = primary->aIntervalAnnotations.at( items.indexOf(item) );
+	mPrimaryInterval = primary->maIntervalAnnotations.at( items.indexOf(item) );
 
 	// choose the algorithm
 	items.clear();
 	items << "Linear" << "Accumulated Change";
 	item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the algorithm you want to use"), items, 0, false, &ok);
 	if(!ok) { return; }
-	warpAlgorithm = items.indexOf(item);
+	mWarpAlgorithm = items.indexOf(item);
 
-	if(warpAlgorithm==1)
+	if(mWarpAlgorithm==1)
 	{
 	    items.clear();
-	    for(int i=0; i<primary->aWaveformData.count(); i++)
-		items << primary->aWaveformData.at(i)->name();
+	    for(int i=0; i<primary->maWaveformData.count(); i++)
+		items << primary->maWaveformData.at(i)->name();
 	    item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the waveform that contains the spectral change information"), items, 0, false, &ok);
 	    if(!ok) { return; }
-	    primaryChangeMetric = items.indexOf(item);
+	    mPrimaryChangeMetric = items.indexOf(item);
 	}
 
-	switch(warpAlgorithm)
+	switch(mWarpAlgorithm)
 	{
 	case 1:
 	    warpPrimaryCurvesAccumulated();
@@ -92,11 +92,11 @@ QString ComparisonWidget::createWindowTitle() const
 {
     QString t;
     t = "Comparing (";
-    t += primary->windowTitle() + ", ";
-    for(int i=0; i<sounds->count(); i++)
-	t += sounds->at(i)->windowTitle() + ", ";
+    t += mPrimary->windowTitle() + ", ";
+    for(int i=0; i<mSounds->count(); i++)
+	t += mSounds->at(i)->windowTitle() + ", ";
     t = t.trimmed() + ") with ";
-    switch(warpAlgorithm)
+    switch(mWarpAlgorithm)
     {
     case 1:
 	t += "Accumulated change algorithm";
@@ -122,8 +122,8 @@ void ComparisonWidget::contextMenuEvent(QContextMenuEvent *e)
 void  ComparisonWidget::addSecondary()
 {
     QStringList items;
-    for(int i=0; i< sounds->count(); i++)
-	items << sounds->at(i)->windowTitle();
+    for(int i=0; i< mSounds->count(); i++)
+	items << mSounds->at(i)->windowTitle();
 
     bool ok;
     QString item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Add a secondary sound for the comparison"), items, 0, false, &ok);
@@ -132,49 +132,49 @@ void  ComparisonWidget::addSecondary()
 
     if(index == -1) { return; }
 
-    SoundWidget *sec = sounds->at(index);
+    SoundWidget *sec = mSounds->at(index);
 
-    if(primaryInterval != 0)
+    if(mPrimaryInterval != 0)
     {
-	if(sec->aIntervalAnnotations.count() == 0)
+	if(sec->maIntervalAnnotations.count() == 0)
 	{
 	    QMessageBox::critical(this,tr("Error"),tr("You've chosen to align the sounds with an interval annotation, but there are no annotations for this sound."));
 	    return;
 	}
 
 	QStringList items;
-	for(int i=0; i< sec->aIntervalAnnotations.count(); i++)
-	    items << sec->aIntervalAnnotations.at(i)->name;
+	for(int i=0; i< sec->maIntervalAnnotations.count(); i++)
+	    items << sec->maIntervalAnnotations.at(i)->mName;
 
 	bool ok;
 	QString item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the interval you want to use"), items, 0, false, &ok);
 
 	if(!ok) { return; }
-	IntervalAnnotation *interval = sec->aIntervalAnnotations.at( items.indexOf(item) );
+	IntervalAnnotation *interval = sec->maIntervalAnnotations.at( items.indexOf(item) );
 
-	if( *(primaryInterval) != *(interval) )
+	if( *(mPrimaryInterval) != *(interval) )
 	{
 	    QMessageBox::critical(this,tr("Error"),tr("The labels of the interval you've chosen aren't exactly the same as those of the primary sound."));
 	    return;
 	}
 
-	secondaryIntervals << interval;
+	mSecondaryIntervals << interval;
     }
 
     QList<QComboBox*> combos;
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(new QLabel(tr("Select corresponding waveforms")),0,0,1,2);
     int i;
-    for(i=0; i<primary->aWaveformData.count(); i++)
+    for(i=0; i<mPrimary->maWaveformData.count(); i++)
     {
-	layout->addWidget(new QLabel(primary->aWaveformData.at(i)->name()),i+1,0);
+	layout->addWidget(new QLabel(mPrimary->maWaveformData.at(i)->name()),i+1,0);
 	QStringList waveformNames;
-	for(int j=0; j < sec->aWaveformData.count(); j++)
-	    waveformNames << sec->aWaveformData.at(j)->name();
+	for(int j=0; j < sec->maWaveformData.count(); j++)
+	    waveformNames << sec->maWaveformData.at(j)->name();
 	waveformNames << "<None>";
 	QComboBox *combo = new QComboBox;
 	combo->addItems(waveformNames);
-	int comboIndex = waveformNames.indexOf(primary->aWaveformData.at(i)->name());
+	int comboIndex = waveformNames.indexOf(mPrimary->maWaveformData.at(i)->name());
 	if(comboIndex==-1)
 	    combo->setCurrentIndex(waveformNames.count()-1);
 	else
@@ -199,35 +199,35 @@ void  ComparisonWidget::addSecondary()
     for(i=1; i< combos.count(); i++)
     {
 	int ind = combos.at(i)->currentIndex();
-	if(ind == sec->aWaveformData.count() )
+	if(ind == sec->maWaveformData.count() )
 	    list << 0;
 	else
-	    list << sec->aWaveformData.at(ind);
+	    list << sec->maWaveformData.at(ind);
     }
 
 //    qDebug() << list;
 
-    if(primaryInterval != 0 && warpAlgorithm == 1)
+    if(mPrimaryInterval != 0 && mWarpAlgorithm == 1)
     {
 	QStringList items;
-	for(i=0; i<sec->aWaveformData.count(); i++)
-	    items << sec->aWaveformData.at(i)->name();
+	for(i=0; i<sec->maWaveformData.count(); i++)
+	    items << sec->maWaveformData.at(i)->name();
 	item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the waveform that contains the spectral change information"), items, 0, false, &ok);
 	if(!ok) { return; }
-	secondaryChangeMetrics << items.indexOf(item);
+	mSecondaryChangeMetrics << items.indexOf(item);
     }
 
-    secondaryCurves << list;
+    mSecondaryCurves << list;
 
 
-    if(primaryInterval != 0)
-	switch(warpAlgorithm)
+    if(mPrimaryInterval != 0)
+	switch(mWarpAlgorithm)
 	{
 	case 1:
-	    warpSecondaryCurvesAccumulated(secondaryCurves.count()-1);
+	    warpSecondaryCurvesAccumulated(mSecondaryCurves.count()-1);
 	    break;
 	default:
-	    warpSecondaryCurvesLinear(secondaryCurves.count()-1);
+	    warpSecondaryCurvesLinear(mSecondaryCurves.count()-1);
 	    break;
 	}
 
@@ -236,20 +236,20 @@ void  ComparisonWidget::addSecondary()
 
 void ComparisonWidget::warpPrimaryCurvesLinear()
 {
-    for(int i=0; i<primaryCurves.count(); i++) // for all curves
+    for(int i=0; i<mPrimaryCurves.count(); i++) // for all curves
     {
-	WaveformData *curve = primaryCurves.at(i);
+	WaveformData *curve = mPrimaryCurves.at(i);
 
 	double *newTimes = (double*)malloc(sizeof(double)*curve->size());
 
-	for(int j=0; j<primaryInterval->aIntervals.count(); j++) // for all intervals
+	for(int j=0; j<mPrimaryInterval->maIntervals.count(); j++) // for all intervals
 	{
-	    int intervalLeftFrames = curve->getSampleFromTime( primaryInterval->aIntervals.at(j)->left );
-	    int intervalRightFrames = curve->getSampleFromTime( primaryInterval->aIntervals.at(j)->right );
-	    double intervalLeftSeconds = primaryInterval->aIntervals.at(j)->left;
+	    int intervalLeftFrames = curve->getSampleFromTime( mPrimaryInterval->maIntervals.at(j)->mLeft );
+	    int intervalRightFrames = curve->getSampleFromTime( mPrimaryInterval->maIntervals.at(j)->mRight );
+	    double intervalLeftSeconds = mPrimaryInterval->maIntervals.at(j)->mLeft;
 
         double primaryLeftSeconds = curve->xData().at(intervalLeftFrames);
-	    double primaryLength = primaryInterval->aIntervals.at(j)->right - primaryInterval->aIntervals.at(j)->left;
+	    double primaryLength = mPrimaryInterval->maIntervals.at(j)->mRight - mPrimaryInterval->maIntervals.at(j)->mLeft;
         double frameLengthSeconds = curve->xData().at(intervalRightFrames) - curve->xData().at(intervalLeftFrames);
 
 	    for(int k=intervalLeftFrames; k <= intervalRightFrames; k++)
@@ -264,23 +264,23 @@ void ComparisonWidget::warpSecondaryCurvesLinear(int index)
 //    qDebug() << "ComparisonWidget::warpSecondaryCurvesLinear";
 
     // for all curves
-    for(int i=0; i<secondaryCurves.at(index).count(); i++)
+    for(int i=0; i<mSecondaryCurves.at(index).count(); i++)
     {
-	WaveformData *curve = secondaryCurves.at(index).at(i);
-	IntervalAnnotation *secondaryInterval = secondaryIntervals.at(index);
+	WaveformData *curve = mSecondaryCurves.at(index).at(i);
+	IntervalAnnotation *secondaryInterval = mSecondaryIntervals.at(index);
 	if(curve==0) { continue;}
 
 	double *newTimes = (double*)malloc(sizeof(double)*curve->size());
 	// for all intervals
-	for(int j=0; j<primaryInterval->aIntervals.count(); j++)
+	for(int j=0; j<mPrimaryInterval->maIntervals.count(); j++)
 	{
-	    double primaryIntervalLeftSeconds = primaryInterval->aIntervals.at(j)->left;
+	    double primaryIntervalLeftSeconds = mPrimaryInterval->maIntervals.at(j)->mLeft;
 
-	    size_t secondaryIntervalLeftFrames = curve->getSampleFromTime( secondaryInterval->aIntervals.at(j)->left );
-	    size_t secondaryIntervalRightFrames = curve->getSampleFromTime( secondaryInterval->aIntervals.at(j)->right );
+	    size_t secondaryIntervalLeftFrames = curve->getSampleFromTime( secondaryInterval->maIntervals.at(j)->mLeft );
+	    size_t secondaryIntervalRightFrames = curve->getSampleFromTime( secondaryInterval->maIntervals.at(j)->mRight );
 
         double secondaryLeftSeconds = curve->xData().at(secondaryIntervalLeftFrames);
-	    double primaryIntervalLength = primaryInterval->aIntervals.at(j)->right - primaryInterval->aIntervals.at(j)->left;
+	    double primaryIntervalLength = mPrimaryInterval->maIntervals.at(j)->mRight - mPrimaryInterval->maIntervals.at(j)->mLeft;
         double frameLengthSeconds = curve->xData().at(secondaryIntervalRightFrames) - curve->xData().at(secondaryIntervalLeftFrames);
 
 	    for(size_t k=secondaryIntervalLeftFrames; k <= secondaryIntervalRightFrames; k++)
@@ -296,29 +296,29 @@ void ComparisonWidget::warpPrimaryCurvesAccumulated()
     qDebug() << "ComparisonWidget::warpPrimaryCurvesAccumulated";
 
     // for all curves
-    for(int i=0; i<primaryCurves.count(); i++)
+    for(int i=0; i<mPrimaryCurves.count(); i++)
     {
-	WaveformData *curve = primaryCurves.at(i);
+	WaveformData *curve = mPrimaryCurves.at(i);
 
 	double *newTimes = (double*)malloc(sizeof(double)*curve->size());
 
 	// for all intervals
-	for(int j=0; j<primaryInterval->aIntervals.count(); j++)
+	for(int j=0; j<mPrimaryInterval->maIntervals.count(); j++)
 	{
-	    int intervalLeftFrames = curve->getSampleFromTime( primaryInterval->aIntervals.at(j)->left );
-	    int intervalRightFrames = curve->getSampleFromTime( primaryInterval->aIntervals.at(j)->right );
-	    double intervalLeftSeconds = primaryInterval->aIntervals.at(j)->left;
+	    int intervalLeftFrames = curve->getSampleFromTime( mPrimaryInterval->maIntervals.at(j)->mLeft );
+	    int intervalRightFrames = curve->getSampleFromTime( mPrimaryInterval->maIntervals.at(j)->mRight );
+	    double intervalLeftSeconds = mPrimaryInterval->maIntervals.at(j)->mLeft;
 
 	    double *peChange = (double*)malloc(sizeof(double)*(intervalRightFrames-intervalLeftFrames+1));
-        *(peChange+0) = primary->aWaveformData.at(primaryChangeMetric)->yData().at(intervalLeftFrames);
+        *(peChange+0) = mPrimary->maWaveformData.at(mPrimaryChangeMetric)->yData().at(intervalLeftFrames);
 	    for(int k=intervalLeftFrames+1; k <= intervalRightFrames; k++)
-        *(peChange+k-intervalLeftFrames) = *(peChange+k-intervalLeftFrames-1) + primary->aWaveformData.at(primaryChangeMetric)->yData().at(k);
+        *(peChange+k-intervalLeftFrames) = *(peChange+k-intervalLeftFrames-1) + mPrimary->maWaveformData.at(mPrimaryChangeMetric)->yData().at(k);
 
 	    for(int k=0; k < intervalRightFrames-intervalLeftFrames+1; k++)
 		*(peChange+k) = *(peChange+k) / *(peChange+intervalRightFrames-intervalLeftFrames);
 
 
-	    double frameLengthSeconds = primaryInterval->aIntervals.at(j)->right - primaryInterval->aIntervals.at(j)->left;
+	    double frameLengthSeconds = mPrimaryInterval->maIntervals.at(j)->mRight - mPrimaryInterval->maIntervals.at(j)->mLeft;
 
 	    for(int k=intervalLeftFrames; k <= intervalRightFrames; k++)
 	    {
@@ -340,20 +340,20 @@ void ComparisonWidget::warpSecondaryCurvesAccumulated(int index)
     qDebug() << "ComparisonWidget::warpSecondaryCurvesAccumulated";
 
     // for all curves
-    for(int i=0; i<secondaryCurves.at(index).count(); i++)
+    for(int i=0; i<mSecondaryCurves.at(index).count(); i++)
     {
-	WaveformData *curve = secondaryCurves.at(index).at(i);
-	IntervalAnnotation *secondaryInterval = secondaryIntervals.at(index);
+	WaveformData *curve = mSecondaryCurves.at(index).at(i);
+	IntervalAnnotation *secondaryInterval = mSecondaryIntervals.at(index);
 	if(curve==0) { continue;}
 
 	double *newTimes = (double*)malloc(sizeof(double)*curve->size());
 
 	// for all intervals
-	for(int j=0; j<secondaryInterval->aIntervals.count(); j++)
+	for(int j=0; j<secondaryInterval->maIntervals.count(); j++)
 	{
-	    int intervalLeftFrames = curve->getSampleFromTime( secondaryInterval->aIntervals.at(j)->left );
-	    int intervalRightFrames = curve->getSampleFromTime( secondaryInterval->aIntervals.at(j)->right );
-	    double intervalLeftSeconds = primaryInterval->aIntervals.at(j)->left;
+	    int intervalLeftFrames = curve->getSampleFromTime( secondaryInterval->maIntervals.at(j)->mLeft );
+	    int intervalRightFrames = curve->getSampleFromTime( secondaryInterval->maIntervals.at(j)->mRight );
+	    double intervalLeftSeconds = mPrimaryInterval->maIntervals.at(j)->mLeft;
 
 	    double *peChange = (double*)malloc(sizeof(double)*(intervalRightFrames-intervalLeftFrames+1));
         *(peChange+0) = curve->yData().at(intervalLeftFrames);
@@ -363,7 +363,7 @@ void ComparisonWidget::warpSecondaryCurvesAccumulated(int index)
 	    for(int k=0; k < intervalRightFrames-intervalLeftFrames+1; k++)
 		*(peChange+k) = *(peChange+k) / *(peChange+intervalRightFrames-intervalLeftFrames);
 
-	    double frameLengthSeconds = primaryInterval->aIntervals.at(j)->right - primaryInterval->aIntervals.at(j)->left;
+	    double frameLengthSeconds = mPrimaryInterval->maIntervals.at(j)->mRight - mPrimaryInterval->maIntervals.at(j)->mLeft;
 
 	    for(int k=intervalLeftFrames; k <= intervalRightFrames; k++)
 	    {
@@ -380,28 +380,28 @@ void ComparisonWidget::warpSecondaryCurvesAccumulated(int index)
 
 void ComparisonWidget::drawCurves()
 {
-    if(displayWidget != 0) { delete displayWidget; }
-    displayWidget = new PlotDisplayAreaWidget;
+    if(mDisplayWidget != 0) { delete mDisplayWidget; }
+    mDisplayWidget = new PlotDisplayAreaWidget;
 
-    for(int i=0; i< primaryCurves.count(); i++) // for each of the curves in the primary
+    for(int i=0; i< mPrimaryCurves.count(); i++) // for each of the curves in the primary
     {
-        PlotViewWidget *tmp = new PlotViewWidget(primaryCurves.at(i)->name());
-	tmp->addCurveData(primaryCurves.at(i),false,Qt::blue);
+        PlotViewWidget *tmp = new PlotViewWidget(mPrimaryCurves.at(i)->name());
+	tmp->addCurveData(mPrimaryCurves.at(i),false,Qt::blue);
 
-	for(int j=0; j < secondaryCurves.count(); j++) // for each secondary sound
-	    if( secondaryCurves.at(j).at(i) != 0 )
-		tmp->addCurveData(secondaryCurves.at(j).at(i) ,false, colors.at(j % colors.length()));
+	for(int j=0; j < mSecondaryCurves.count(); j++) // for each secondary sound
+	    if( mSecondaryCurves.at(j).at(i) != 0 )
+		tmp->addCurveData(mSecondaryCurves.at(j).at(i) ,false, colors.at(j % colors.length()));
 
 	if(tmp->curves()->count() > 1)
-            displayWidget->addPlotView(tmp , "You were mistaken" );
+            mDisplayWidget->addPlotView(tmp , "You were mistaken" );
 	else
 	    delete tmp;
     }
 
-    displayWidget->setTimeMinMax( primary->aWaveformData.at(0)->tMin(), primary->aWaveformData.at(0)->tMax() );
+    mDisplayWidget->setTimeMinMax( mPrimary->maWaveformData.at(0)->tMin(), mPrimary->maWaveformData.at(0)->tMax() );
 
-    if(primaryInterval != 0)
-	displayWidget->addAnnotation(new IntervalDisplayWidget(primaryInterval,displayWidget->plotViews()->first()));
+    if(mPrimaryInterval != 0)
+	mDisplayWidget->addAnnotation(new IntervalDisplayWidget(mPrimaryInterval,mDisplayWidget->plotViews()->first()));
 
-    this->layout()->addWidget(displayWidget);
+    this->layout()->addWidget(mDisplayWidget);
 }

@@ -22,50 +22,50 @@ PlotManagerDialog::PlotManagerDialog(QList<PlotViewWidget*> *pv, const QList<Wav
 {
     setSizeGripEnabled(true);
 
-    aProsodyViews = pv;
-    aWaveformData = wfd;
-    aSpectrogramData = spd;
+    maProsodyViews = pv;
+    maWaveformData = wfd;
+    maSpectrogramData = spd;
 
     QHBoxLayout *hlayout = new QHBoxLayout;
 
-    pvt = new PlotViewTreeWidget(pv,this);
-    pvt->setHeaderLabel(tr("Prosody Views"));
-    pvt->populate();
+    mPvt = new PlotViewTreeWidget(pv,this);
+    mPvt->setHeaderLabel(tr("Prosody Views"));
+    mPvt->populate();
 
     QPushButton *addPlot = new QPushButton(tr("Add a plot"),this);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
     QVBoxLayout *vlayout2 = new QVBoxLayout;
-    waveformTree = new DataSourceTreeWidget("waveform");
-    spectrogramTree = new DataSourceTreeWidget("spectrogram");
+    mWaveformTree = new DataSourceTreeWidget("waveform");
+    mSpectrogramTree = new DataSourceTreeWidget("spectrogram");
 
-    waveformTree->setContextMenuPolicy(Qt::NoContextMenu);
-    spectrogramTree->setContextMenuPolicy(Qt::NoContextMenu);
+    mWaveformTree->setContextMenuPolicy(Qt::NoContextMenu);
+    mSpectrogramTree->setContextMenuPolicy(Qt::NoContextMenu);
 
-    waveformTree->setHeaderLabel(tr("Waveforms"));
-    waveformTree->setDragEnabled(true);
-    for(int i=0; i<aWaveformData->count(); i++)
+    mWaveformTree->setHeaderLabel(tr("Waveforms"));
+    mWaveformTree->setDragEnabled(true);
+    for(int i=0; i<maWaveformData->count(); i++)
     {
-	waveformTree->addTopLevelItem(new QTreeWidgetItem(QStringList(aWaveformData->at(i)->name()),i));
+	mWaveformTree->addTopLevelItem(new QTreeWidgetItem(QStringList(maWaveformData->at(i)->name()),i));
     }
 
-    spectrogramTree->setHeaderLabel(tr("Spectrograms"));
-    spectrogramTree->setDragEnabled(true);
-    for(int i=0; i<aSpectrogramData->count(); i++)
+    mSpectrogramTree->setHeaderLabel(tr("Spectrograms"));
+    mSpectrogramTree->setDragEnabled(true);
+    for(int i=0; i<maSpectrogramData->count(); i++)
     {
-	spectrogramTree->addTopLevelItem(new QTreeWidgetItem(QStringList(aSpectrogramData->at(i)->name()),i));
+	mSpectrogramTree->addTopLevelItem(new QTreeWidgetItem(QStringList(maSpectrogramData->at(i)->name()),i));
     }
 
-    vlayout->addWidget(waveformTree);
-    vlayout->addWidget(spectrogramTree);
-    vlayout2->addWidget(pvt);
+    vlayout->addWidget(mWaveformTree);
+    vlayout->addWidget(mSpectrogramTree);
+    vlayout2->addWidget(mPvt);
     vlayout2->addWidget(addPlot);
     hlayout->addLayout(vlayout2);
     hlayout->addLayout(vlayout);
     this->setLayout(hlayout);
 
-    connect(pvt,SIGNAL(addSpectrogram(int,int)),this,SLOT(addSpectrogram(int,int)));
-    connect(pvt,SIGNAL(addWaveform(int,int)),this,SLOT(addWaveform(int,int)));
+    connect(mPvt,SIGNAL(addSpectrogram(int,int)),this,SLOT(addSpectrogram(int,int)));
+    connect(mPvt,SIGNAL(addWaveform(int,int)),this,SLOT(addWaveform(int,int)));
 
     connect(addPlot,SIGNAL(clicked()),this,SLOT(addPlot()));
 
@@ -74,15 +74,15 @@ PlotManagerDialog::PlotManagerDialog(QList<PlotViewWidget*> *pv, const QList<Wav
 
 void PlotManagerDialog::addWaveform(int plot, int waveform)
 {
-    WaveformData *tmp = aWaveformData->at(waveform);
+    WaveformData *tmp = maWaveformData->at(waveform);
 
     // if it doesn't have a secondary axis, just replot it
-    if( !aProsodyViews->at(plot)->hasSecondaryAxis() )
+    if( !maProsodyViews->at(plot)->hasSecondaryAxis() )
     {
-	aProsodyViews->at(plot)->addCurveData(tmp , false );
-	aProsodyViews->at(plot)->plot()->replot();
+	maProsodyViews->at(plot)->addCurveData(tmp , false );
+	maProsodyViews->at(plot)->plot()->replot();
 
-	pvt->populate();
+	mPvt->populate();
 	return;
     }
 
@@ -94,13 +94,13 @@ void PlotManagerDialog::addWaveform(int plot, int waveform)
     }
 
     QString info = "The range of the waveform is [" + QString::number(limits.bottom()) + ", " + QString::number(limits.top()) + "].\nOn which axis should the waveform be plotted?";
-    QString primary = "Primary Axis - [" + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft).lowerBound()) + ", " + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft).upperBound()) + "].";
+    QString primary = "Primary Axis - [" + QString::number(maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft).lowerBound()) + ", " + QString::number(maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft).upperBound()) + "].";
 
     QString secondary;
-    if( aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).lowerBound() == 0 && aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).upperBound() == 1000 )
+    if( maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).lowerBound() == 0 && maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).upperBound() == 1000 )
 	secondary = "Secondary Axis";
     else
-    secondary = "Secondary Axis - [" + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).lowerBound()) + ", " + QString::number(aProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).upperBound()) + "].";
+    secondary = "Secondary Axis - [" + QString::number(maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).lowerBound()) + ", " + QString::number(maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).upperBound()) + "].";
 
     QStringList items;
     items << primary << secondary;
@@ -111,20 +111,20 @@ void PlotManagerDialog::addWaveform(int plot, int waveform)
     if (ok && !item.isEmpty())
     {
 	if(item == primary)
-	    aProsodyViews->at(plot)->addCurveData(tmp , false );
+	    maProsodyViews->at(plot)->addCurveData(tmp , false );
 	else
-	    aProsodyViews->at(plot)->addCurveData(tmp , true );
+	    maProsodyViews->at(plot)->addCurveData(tmp , true );
 
-	aProsodyViews->at(plot)->plot()->replot();
-	pvt->populate();
+	maProsodyViews->at(plot)->plot()->replot();
+	mPvt->populate();
     }
 }
 
 void PlotManagerDialog::addSpectrogram(int plot, int spectrogram)
 {
-    aProsodyViews->at(plot)->addSpectrogramData( aSpectrogramData->at(spectrogram) );
-    aProsodyViews->at(plot)->plot()->replot();
-    pvt->populate();
+    maProsodyViews->at(plot)->addSpectrogramData( maSpectrogramData->at(spectrogram) );
+    maProsodyViews->at(plot)->plot()->replot();
+    mPvt->populate();
 }
 
 void PlotManagerDialog::addPlot()
@@ -136,7 +136,7 @@ void PlotManagerDialog::addPlot()
     if (ok && !text.isEmpty())
     {
 	emit addProsody(new PlotViewWidget(text),text);
-	pvt->populate();
+	mPvt->populate();
 //	drawProsodyViewTree();
     }
 }

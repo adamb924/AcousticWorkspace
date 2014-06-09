@@ -8,14 +8,14 @@
 
 DataSourceTreeWidget::DataSourceTreeWidget(QString mime, QWidget *parent) : QTreeWidget(parent)
 {
-    mimeIdString = mime;
+    mMimeIdString = mime;
     this->setDragEnabled(true);
     this->setDragDropMode(QAbstractItemView::DragOnly);
 
-    removeAction = new QAction(tr("Remove"),this);
-    connect(removeAction,SIGNAL(triggered()),this,SLOT(remove()));
-    renameAction = new QAction(tr("Rename"),this);
-    connect(renameAction,SIGNAL(triggered()),this,SLOT(rename()));
+    mRemoveAction = new QAction(tr("Remove"),this);
+    connect(mRemoveAction,SIGNAL(triggered()),this,SLOT(remove()));
+    mRenameAction = new QAction(tr("Rename"),this);
+    connect(mRenameAction,SIGNAL(triggered()),this,SLOT(rename()));
 }
 
 QStringList DataSourceTreeWidget::mimeTypes() const
@@ -34,7 +34,7 @@ QMimeData * DataSourceTreeWidget::mimeData ( const QList<QTreeWidgetItem *> item
 
     for(int i=0; i<items.count(); i++)
     {
-	stream << mimeIdString + "+" + QString::number(indexOfTopLevelItem(items.at(i)));
+	stream << mMimeIdString + "+" + QString::number(indexOfTopLevelItem(items.at(i)));
     }
 
     mimeData->setData("text/plain", encodedData);
@@ -44,8 +44,8 @@ QMimeData * DataSourceTreeWidget::mimeData ( const QList<QTreeWidgetItem *> item
 void DataSourceTreeWidget::contextMenuEvent ( QContextMenuEvent * event )
 {
     QMenu menu(this);
-    menu.addAction(renameAction);
-    menu.addAction(removeAction);
+    menu.addAction(mRenameAction);
+    menu.addAction(mRemoveAction);
     menu.exec(event->globalPos());
 }
 

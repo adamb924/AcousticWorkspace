@@ -2,11 +2,11 @@
 
 IndexedAction::IndexedAction(QString text, int i, QObject *parent) : QAction(text,parent)
 {
-    index = i;
+    mIndex = i;
     connect(this, SIGNAL(triggered()), this, SLOT(mytrigger()) );
 }
 
 void IndexedAction::mytrigger()
 {
-    emit indexClicked(index);
+    emit indexClicked(mIndex);
 }

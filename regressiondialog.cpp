@@ -29,61 +29,61 @@ RegressionDialog::RegressionDialog(QList<WaveformData*> *wfd, QList<SpectrogramD
     independentSimpleLayout->addWidget(new QLabel(tr("Independent Variables (Simple)")));
     independentInteractionLayout->addWidget(new QLabel(tr("Independent Variables (Interactions)")));
 
-    dependentList = new QListWidget;
-    dependentSpectrogramList = new QListWidget;
-    independentSimpleList = new QListWidget;
-    independentInteractionList = new QListWidget;
+    mDependentList = new QListWidget;
+    mDependentSpectrogramList = new QListWidget;
+    mIndependentSimpleList = new QListWidget;
+    mIndependentInteractionList = new QListWidget;
 
-    dependentLayout->addWidget(dependentList);
-    dependentLayout->addWidget(dependentSpectrogramList);
-    independentSimpleLayout->addWidget(independentSimpleList);
-    independentInteractionLayout->addWidget(independentInteractionList);
+    dependentLayout->addWidget(mDependentList);
+    dependentLayout->addWidget(mDependentSpectrogramList);
+    independentSimpleLayout->addWidget(mIndependentSimpleList);
+    independentInteractionLayout->addWidget(mIndependentInteractionList);
 
     for(int i=0; i<wfd->count(); i++)
-	dependentList->addItem(new RegressionListItem(wfd->at(i)) );
+	mDependentList->addItem(new RegressionListItem(wfd->at(i)) );
 
     for(int i=0; i<spd->count(); i++)
-	dependentSpectrogramList->addItem(new RegressionSpectrogramListItem(spd->at(i)) );
+	mDependentSpectrogramList->addItem(new RegressionSpectrogramListItem(spd->at(i)) );
 
     for(int i=0; i<wfd->count(); i++)
-	independentSimpleList->addItem(new RegressionListItem(wfd->at(i)) );
+	mIndependentSimpleList->addItem(new RegressionListItem(wfd->at(i)) );
 
     QPushButton *int2xButton = new QPushButton(tr("Add 2x interactions"));
     QPushButton *int3xButton = new QPushButton(tr("Add 2x and 3x interactions"));
     QPushButton *intAllButton = new QPushButton(tr("Add all interactions"));
     QPushButton *int2xSpecificButton = new QPushButton(tr("Add 2x interaction..."));
 
-    interceptTerm = new QCheckBox(tr("Include intercept term"));
-    interceptTerm->setChecked(true);
+    mInterceptTerm = new QCheckBox(tr("Include intercept term"));
+    mInterceptTerm->setChecked(true);
 
     independentInteractionLayout->addWidget(int2xButton);
     independentInteractionLayout->addWidget(int3xButton);
     independentInteractionLayout->addWidget(intAllButton);
     independentInteractionLayout->addWidget(int2xSpecificButton);
     independentInteractionLayout->addWidget(new QLabel("<hr>"));
-    independentInteractionLayout->addWidget(interceptTerm);
+    independentInteractionLayout->addWidget(mInterceptTerm);
 
     connect(int2xButton,SIGNAL(clicked()),this,SLOT(int2x()));
     connect(int3xButton,SIGNAL(clicked()),this,SLOT(int3x()));
     connect(intAllButton,SIGNAL(clicked()),this,SLOT(intAll()));
     connect(int2xSpecificButton,SIGNAL(clicked()),this,SLOT(int2xSpecific()));
 
-    connect(independentSimpleList,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(independentSimpleChanged(QListWidgetItem*)));
-    connect(dependentList,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(dependentChanged(QListWidgetItem*)));
+    connect(mIndependentSimpleList,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(independentSimpleChanged(QListWidgetItem*)));
+    connect(mDependentList,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(dependentChanged(QListWidgetItem*)));
 
-    connect(dependentList,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(dependentChanged(QListWidgetItem*)));
-    connect(dependentSpectrogramList,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(dependentSpectrogramChanged(QListWidgetItem*)));
+    connect(mDependentList,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(dependentChanged(QListWidgetItem*)));
+    connect(mDependentSpectrogramList,SIGNAL(itemChanged(QListWidgetItem*)),this,SLOT(dependentSpectrogramChanged(QListWidgetItem*)));
 
     QPushButton *saveRegression = new QPushButton(tr("Save Model"));
     saveRegression->setDefault(true);
     QPushButton *createRegression = new QPushButton(tr("Show Regression Results"));
     QPushButton *createRDataCode = new QPushButton(tr("Create R data and code"));
 
-    nameEdit = new QLineEdit(tr("Default name"));
+    mNameEdit = new QLineEdit(tr("Default name"));
 
     controlLayout->addWidget(new QLabel(tr("Name")));
     controlLayout->addWidget(new QLabel(tr("(if you're saving the regression)")));
-    controlLayout->addWidget(nameEdit);
+    controlLayout->addWidget(mNameEdit);
     controlLayout->addWidget(saveRegression);
     controlLayout->addStretch(100);
     QLabel *l = new QLabel(tr("If you wish to save the model for later use, you must click \"%1\". If you don't have further plans for this regression, or if you've already saved it, you can use either of the buttons below to close this dialog and get whatever result you request.").arg(tr("Save Model")));
@@ -102,9 +102,9 @@ RegressionDialog::RegressionDialog(QList<WaveformData*> *wfd, QList<SpectrogramD
 QList<RegressionListItem*> RegressionDialog::checkedDependent(RegressionListItem *excluding = 0)
 {
     QList<RegressionListItem*> list;
-    for(int i=0; i<dependentList->count(); i++)
-	if(dependentList->item(i)->checkState() == Qt::Checked && excluding != dependentList->item(i))
-        list << dynamic_cast<RegressionListItem*>(dependentList->item(i));
+    for(int i=0; i<mDependentList->count(); i++)
+	if(mDependentList->item(i)->checkState() == Qt::Checked && excluding != mDependentList->item(i))
+        list << dynamic_cast<RegressionListItem*>(mDependentList->item(i));
     return list;
 }
 
@@ -112,18 +112,18 @@ QList<RegressionListItem*> RegressionDialog::checkedDependent(RegressionListItem
 QList<RegressionListItem*> RegressionDialog::checkedSimple(RegressionListItem *excluding = 0)
 {
     QList<RegressionListItem*> list;
-    for(int i=0; i<independentSimpleList->count(); i++)
-	if(independentSimpleList->item(i)->checkState() == Qt::Checked && excluding != independentSimpleList->item(i))
-        list << dynamic_cast<RegressionListItem*>(independentSimpleList->item(i));
+    for(int i=0; i<mIndependentSimpleList->count(); i++)
+	if(mIndependentSimpleList->item(i)->checkState() == Qt::Checked && excluding != mIndependentSimpleList->item(i))
+        list << dynamic_cast<RegressionListItem*>(mIndependentSimpleList->item(i));
     return list;
 }
 
 QList<RegressionInteractionListItem*> RegressionDialog::checkedInteraction(RegressionListItem *excluding = 0)
 {
     QList<RegressionInteractionListItem*> list;
-    for(int i=0; i<independentInteractionList->count(); i++)
-	if(independentInteractionList->item(i)->checkState() == Qt::Checked && excluding != independentInteractionList->item(i))
-	    list << (RegressionInteractionListItem*)independentInteractionList->item(i);
+    for(int i=0; i<mIndependentInteractionList->count(); i++)
+	if(mIndependentInteractionList->item(i)->checkState() == Qt::Checked && excluding != mIndependentInteractionList->item(i))
+	    list << (RegressionInteractionListItem*)mIndependentInteractionList->item(i);
     return list;
 }
 
@@ -153,7 +153,7 @@ void RegressionDialog::addNWayInteractions(QList<RegressionListItem*> *list, int
 
 	RegressionInteractionListItem *tmp = new RegressionInteractionListItem(interaction);
 	tmp->setCheckState(Qt::Checked);
-	independentInteractionList->addItem( tmp );
+	mIndependentInteractionList->addItem( tmp );
     }
     while (gsl_combination_next(c) == GSL_SUCCESS);
     gsl_combination_free(c);
@@ -188,7 +188,7 @@ void RegressionDialog::int2xSpecific()
 
 		RegressionInteractionListItem *tmp = new RegressionInteractionListItem(interaction);
 		tmp->setCheckState(Qt::Checked);
-		independentInteractionList->addItem( tmp );
+		mIndependentInteractionList->addItem( tmp );
 	    }
 	}
     }
@@ -197,14 +197,14 @@ void RegressionDialog::int2xSpecific()
 void RegressionDialog::dependentChanged(QListWidgetItem* item)
 {
     int count=0;
-    for(int i=0; i<dependentList->count(); i++)
-	if( dependentList->item(i)->checkState() == Qt::Checked )
+    for(int i=0; i<mDependentList->count(); i++)
+	if( mDependentList->item(i)->checkState() == Qt::Checked )
 	    count++;
 
     if(count==0)
-	dependentSpectrogramList->setEnabled(true);
+	mDependentSpectrogramList->setEnabled(true);
     else
-	dependentSpectrogramList->setEnabled(false);
+	mDependentSpectrogramList->setEnabled(false);
 
 
     if(item->checkState()==Qt::Unchecked) {return; }
@@ -225,14 +225,14 @@ void RegressionDialog::dependentSpectrogramChanged(QListWidgetItem* item)
 {
     if(item->checkState()==Qt::Unchecked)
     {
-	dependentList->setEnabled(true);
+	mDependentList->setEnabled(true);
 	return;
     }
-    dependentList->setEnabled(false);
+    mDependentList->setEnabled(false);
 
-    for(int i=0; i<dependentSpectrogramList->count(); i++)
-	if( dependentSpectrogramList->item(i) != item )
-	    dependentSpectrogramList->item(i)->setCheckState(Qt::Unchecked);
+    for(int i=0; i<mDependentSpectrogramList->count(); i++)
+	if( mDependentSpectrogramList->item(i) != item )
+	    mDependentSpectrogramList->item(i)->setCheckState(Qt::Unchecked);
 }
 
 
@@ -269,7 +269,7 @@ void RegressionDialog::calculateRegression()
 
     RegressionModel *r = new RegressionModel;
 
-    r->setInterceptTerm(interceptTerm->isChecked());
+    r->setInterceptTerm(mInterceptTerm->isChecked());
 
     QList<RegressionListItem*> dependent = checkedDependent();
     if(dependent.count() != 0)
@@ -278,11 +278,11 @@ void RegressionDialog::calculateRegression()
     }
     else
     {
-	for(int i=0; i<dependentSpectrogramList->count(); i++)
+	for(int i=0; i<mDependentSpectrogramList->count(); i++)
 	{
-	    if( dependentSpectrogramList->item(i)->checkState() == Qt::Checked )
+	    if( mDependentSpectrogramList->item(i)->checkState() == Qt::Checked )
 	    {
-		r->setDependentSpectrogram(((RegressionSpectrogramListItem*)(dependentSpectrogramList->item(i)))->data());
+		r->setDependentSpectrogram(((RegressionSpectrogramListItem*)(mDependentSpectrogramList->item(i)))->data());
 		break;
 	    }
 	}
@@ -303,7 +303,7 @@ void RegressionDialog::createRDataCode()
 
     RegressionModel *r = new RegressionModel;
 
-    r->setInterceptTerm(interceptTerm->isChecked());
+    r->setInterceptTerm(mInterceptTerm->isChecked());
 
     QList<RegressionListItem*> dependent = checkedDependent();
     if(dependent.count() != 0)
@@ -312,11 +312,11 @@ void RegressionDialog::createRDataCode()
     }
     else
     {
-	for(int i=0; i<dependentSpectrogramList->count(); i++)
+	for(int i=0; i<mDependentSpectrogramList->count(); i++)
 	{
-	    if( dependentSpectrogramList->item(i)->checkState() == Qt::Checked )
+	    if( mDependentSpectrogramList->item(i)->checkState() == Qt::Checked )
 	    {
-		r->setDependentSpectrogram(((RegressionSpectrogramListItem*)(dependentSpectrogramList->item(i)))->data());
+		r->setDependentSpectrogram(((RegressionSpectrogramListItem*)(mDependentSpectrogramList->item(i)))->data());
 		break;
 	    }
 	}
@@ -337,9 +337,9 @@ void RegressionDialog::saveRegression()
 
     RegressionModel *r = new RegressionModel;
 
-    r->setName(nameEdit->text());
+    r->setName(mNameEdit->text());
 
-    r->setInterceptTerm(interceptTerm->isChecked());
+    r->setInterceptTerm(mInterceptTerm->isChecked());
 
     QList<RegressionListItem*> dependent = checkedDependent();
     if(dependent.count() != 0)
@@ -348,11 +348,11 @@ void RegressionDialog::saveRegression()
     }
     else
     {
-	for(int i=0; i<dependentSpectrogramList->count(); i++)
+	for(int i=0; i<mDependentSpectrogramList->count(); i++)
 	{
-	    if( dependentSpectrogramList->item(i)->checkState() == Qt::Checked )
+	    if( mDependentSpectrogramList->item(i)->checkState() == Qt::Checked )
 	    {
-		r->setDependentSpectrogram(((RegressionSpectrogramListItem*)(dependentSpectrogramList->item(i)))->data());
+		r->setDependentSpectrogram(((RegressionSpectrogramListItem*)(mDependentSpectrogramList->item(i)))->data());
 		break;
 	    }
 	}
@@ -366,31 +366,31 @@ void RegressionDialog::saveRegression()
 
 void RegressionDialog::setFromRegression(RegressionModel *model)
 {
-    nameEdit->setText(model->name());
-    interceptTerm->setChecked(model->hasIntercept());
+    mNameEdit->setText(model->name());
+    mInterceptTerm->setChecked(model->hasIntercept());
 
-    for(int i=0; i < dependentList->count(); i++)
-    if( model->dependent.contains( dynamic_cast<RegressionListItem*>(dependentList->item(i))->data() ) )
-	    dependentList->item(i)->setCheckState(Qt::Checked);
+    for(int i=0; i < mDependentList->count(); i++)
+    if( model->mDependent.contains( dynamic_cast<RegressionListItem*>(mDependentList->item(i))->data() ) )
+	    mDependentList->item(i)->setCheckState(Qt::Checked);
 
     if( model->dependentIsSpectrogram() )
-	for(int i=0; i < dependentSpectrogramList->count(); i++)
-	    if( model->dependentSpectrogram == ((RegressionSpectrogramListItem*)dependentSpectrogramList->item(i))->data() )
-		dependentSpectrogramList->item(i)->setCheckState(Qt::Checked);
+	for(int i=0; i < mDependentSpectrogramList->count(); i++)
+	    if( model->mDependentSpectrogram == ((RegressionSpectrogramListItem*)mDependentSpectrogramList->item(i))->data() )
+		mDependentSpectrogramList->item(i)->setCheckState(Qt::Checked);
 
-    if( model->dependent.count() > 1 )
-	dependentSpectrogramList->setEnabled(false);
+    if( model->mDependent.count() > 1 )
+	mDependentSpectrogramList->setEnabled(false);
     if( model->dependentIsSpectrogram() )
-	dependentList->setEnabled(false);
+	mDependentList->setEnabled(false);
 
-    for(int i=0; i< independentSimpleList->count(); i++ )
-    if( model->simple.contains( dynamic_cast<RegressionListItem*>(independentSimpleList->item(i))->data() ))
-	    independentSimpleList->item(i)->setCheckState(Qt::Checked);
+    for(int i=0; i< mIndependentSimpleList->count(); i++ )
+    if( model->mSimple.contains( dynamic_cast<RegressionListItem*>(mIndependentSimpleList->item(i))->data() ))
+	    mIndependentSimpleList->item(i)->setCheckState(Qt::Checked);
 
-    for(int i=0; i< model->interaction.count(); i++)
+    for(int i=0; i< model->mInteraction.count(); i++)
     {
-	RegressionInteractionListItem *tmp = new RegressionInteractionListItem( model->interaction.at(i) );
+	RegressionInteractionListItem *tmp = new RegressionInteractionListItem( model->mInteraction.at(i) );
 	tmp->setCheckState(Qt::Checked);
-	independentInteractionList->addItem( tmp );
+	mIndependentInteractionList->addItem( tmp );
     }
 }

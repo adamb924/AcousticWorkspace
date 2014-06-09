@@ -60,7 +60,7 @@ public:
     //! \brief Returns true if the \a index-th second-level item in the \a plotIndex-th first-level item refers to spectrogram, false if it's a curve. If false, it changes \a itemIndex so that it a zero-indexed reference to the appropriate curve.
     bool isSpectrogram(int plotIndex, int &index);
 
-    QAction *removeAction, *settingsAction, *secondaryAxisAction, *moveToOtherAxisAction;
+    QAction *mRemoveAction, *mSettingsAction, *mSecondaryAxisAction, *mMoveToOtherAxisAction;
 
 private slots:
     //! \brief Launches a CurveSettingsDialog or SpectrogramSettingsDialog, or none, as appropriate.
@@ -95,7 +95,7 @@ signals:
     void addSpectrogram(int plot, int spectrogram);
 
 private:
-    QList<PlotViewWidget*> *aProsodyViews;
+    QList<PlotViewWidget*> *maProsodyViews;
 };
 
 #endif // PROSODYVIEWTREE_H

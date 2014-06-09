@@ -29,8 +29,8 @@ public:
       */
     explicit DataEntryDialog(const QStringList* f, QList<QVariant>* v, QString label, QWidget *parent);
 
-    QList<QLineEdit*> edits;
-    QList<QVariant> values;
+    QList<QLineEdit*> mEdits;
+    QList<QVariant> mValues;
 
 signals:
 

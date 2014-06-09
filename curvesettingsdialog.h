@@ -32,17 +32,17 @@ public:
       \param curve The curve that will be modified
       \param parentPlot The plot the curve belongs to
     */
-    explicit CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlot, QWidget *parent);
+    explicit CurveSettingsDialog(QwtPlotCurve *mCurve, QwtPlot *parentPlot, QWidget *mParent);
 private:
-    QPushButton *symbolColor;
-    QPushButton *lineColor;
-    QPushButton *symbolFillColor;
+    QPushButton *mSymbolColor;
+    QPushButton *mLineColor;
+    QPushButton *mSymbolFillColor;
 
     //! \brief Return a QIcon that is a square filled with the specified color (convenience function)
     QIcon iconFromColor(QColor col);
 
-    QwtPlotCurve *curve;
-    QwtPlot *parent;
+    QwtPlotCurve *mCurve;
+    QwtPlot *mParent;
 
 private slots:
     //! \brief Prompts the user to select a color for the symbol borders, and modifies the curve accordingly

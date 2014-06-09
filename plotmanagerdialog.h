@@ -46,12 +46,12 @@ public slots:
     void addPlot();
 
 private:
-    PlotViewTreeWidget *pvt;
-    DataSourceTreeWidget *waveformTree, *spectrogramTree;
+    PlotViewTreeWidget *mPvt;
+    DataSourceTreeWidget *mWaveformTree, *mSpectrogramTree;
 
-    QList<PlotViewWidget*> *aProsodyViews;
-    const QList<WaveformData*> *aWaveformData;
-    const QList<SpectrogramData*> *aSpectrogramData;
+    QList<PlotViewWidget*> *maProsodyViews;
+    const QList<WaveformData*> *maWaveformData;
+    const QList<SpectrogramData*> *maSpectrogramData;
 };
 
 #endif // PLOTMANAGER_H

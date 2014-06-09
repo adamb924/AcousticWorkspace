@@ -11,25 +11,25 @@
 
 PlotViewTreeWidget::PlotViewTreeWidget(QList<PlotViewWidget*> *pv, QWidget *parent = 0) : QTreeWidget(parent)
 {
-    this->aProsodyViews = pv;
+    this->maProsodyViews = pv;
 
     this->setDragEnabled(true);
     this->setDragDropMode(QAbstractItemView::DragDrop);
     this->setAcceptDrops(true);
     this->viewport()->setAcceptDrops(true);
 
-    removeAction = new QAction(tr("Remove"),this);
-    connect(removeAction,SIGNAL(triggered()),this,SLOT(remove()));
+    mRemoveAction = new QAction(tr("Remove"),this);
+    connect(mRemoveAction,SIGNAL(triggered()),this,SLOT(remove()));
 
-    settingsAction = new QAction(tr("Edit plot settings"),this);
-    connect(settingsAction,SIGNAL(triggered()),this,SLOT(settings()));
+    mSettingsAction = new QAction(tr("Edit plot settings"),this);
+    connect(mSettingsAction,SIGNAL(triggered()),this,SLOT(settings()));
 
-    secondaryAxisAction = new QAction(tr("Has secondary axis"),this);
-    secondaryAxisAction->setCheckable(true);
-    connect(secondaryAxisAction,SIGNAL(toggled(bool)),this,SLOT(secondary(bool)));
+    mSecondaryAxisAction = new QAction(tr("Has secondary axis"),this);
+    mSecondaryAxisAction->setCheckable(true);
+    connect(mSecondaryAxisAction,SIGNAL(toggled(bool)),this,SLOT(secondary(bool)));
 
-    moveToOtherAxisAction = new QAction(tr("Move to other axis"),this);
-    connect(moveToOtherAxisAction,SIGNAL(triggered()),this,SLOT(moveToOtherAxis()));
+    mMoveToOtherAxisAction = new QAction(tr("Move to other axis"),this);
+    connect(mMoveToOtherAxisAction,SIGNAL(triggered()),this,SLOT(moveToOtherAxis()));
 
     connect(this,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(doubleClick(QTreeWidgetItem*,int)));
 }
@@ -37,20 +37,20 @@ PlotViewTreeWidget::PlotViewTreeWidget(QList<PlotViewWidget*> *pv, QWidget *pare
 void PlotViewTreeWidget::populate()
 {
     this->clear();
-    for(int i=0; i<aProsodyViews->count(); i++)
+    for(int i=0; i<maProsodyViews->count(); i++)
     {
-    QTreeWidgetItem *top = new QTreeWidgetItem(QStringList(aProsodyViews->at(i)->name()),i);
+    QTreeWidgetItem *top = new QTreeWidgetItem(QStringList(maProsodyViews->at(i)->name()),i);
     this->addTopLevelItem(top);
 
-    for(int j=0; j<aProsodyViews->at(i)->spectrograms()->count(); j++)
+    for(int j=0; j<maProsodyViews->at(i)->spectrograms()->count(); j++)
     {
-        QTreeWidgetItem *child = new QTreeWidgetItem(QStringList(aProsodyViews->at(i)->spectrogramData(j)->name()),i);
+        QTreeWidgetItem *child = new QTreeWidgetItem(QStringList(maProsodyViews->at(i)->spectrogramData(j)->name()),i);
         top->addChild(child);
     }
 
-    for(int j=0; j<aProsodyViews->at(i)->curves()->count(); j++)
+    for(int j=0; j<maProsodyViews->at(i)->curves()->count(); j++)
     {
-        QTreeWidgetItem *child = new QTreeWidgetItem(QStringList(aProsodyViews->at(i)->curveData(j)->name()),i);
+        QTreeWidgetItem *child = new QTreeWidgetItem(QStringList(maProsodyViews->at(i)->curveData(j)->name()),i);
         top->addChild(child);
     }
     }
@@ -143,13 +143,13 @@ void PlotViewTreeWidget::dragMoveEvent ( QDragMoveEvent *event )
 
 bool PlotViewTreeWidget::isSpectrogram(int plotIndex, int &index)
 {
-    if( index < aProsodyViews->at(plotIndex)->spectrograms()->count() )
+    if( index < maProsodyViews->at(plotIndex)->spectrograms()->count() )
     {
     return true;
     }
     else // must be a curve
     {
-    index -= aProsodyViews->at(plotIndex)->spectrograms()->count();
+    index -= maProsodyViews->at(plotIndex)->spectrograms()->count();
     return false;
     }
 }
@@ -167,24 +167,24 @@ void PlotViewTreeWidget::contextMenuEvent ( QContextMenuEvent * event )
     if(index == -1 ) { return; }
 
     QMenu menu(this);
-    menu.addAction(settingsAction);
+    menu.addAction(mSettingsAction);
     if(!isSpectrogram(plotIndex,index))
     {
-        if(aProsodyViews->at(plotIndex)->curves()->at(index)->yAxis() == QwtPlot::yLeft)
-        moveToOtherAxisAction->setText(tr("Move to secondary axis"));
+        if(maProsodyViews->at(plotIndex)->curves()->at(index)->yAxis() == QwtPlot::yLeft)
+        mMoveToOtherAxisAction->setText(tr("Move to secondary axis"));
         else
-        moveToOtherAxisAction->setText(tr("Move to primary axis"));
-        menu.addAction(moveToOtherAxisAction);
+        mMoveToOtherAxisAction->setText(tr("Move to primary axis"));
+        menu.addAction(mMoveToOtherAxisAction);
     }
-    menu.addAction(removeAction);
+    menu.addAction(mRemoveAction);
     menu.exec(event->globalPos());
     }
     else // if it's a top-level item
     {
     QMenu menu(this);
-    menu.addAction(removeAction);
-    menu.addAction(secondaryAxisAction);
-    secondaryAxisAction->setChecked(aProsodyViews->at(index)->hasSecondaryAxis());
+    menu.addAction(mRemoveAction);
+    menu.addAction(mSecondaryAxisAction);
+    mSecondaryAxisAction->setChecked(maProsodyViews->at(index)->hasSecondaryAxis());
     menu.exec(event->globalPos());
     }
 }
@@ -228,12 +228,12 @@ void PlotViewTreeWidget::doubleClick(QTreeWidgetItem * item, int column)
 
     if(isSpectrogram(plotIndex,index))
     {
-        SpectrogramSettingsDialog ss(aProsodyViews->at(plotIndex)->spectrograms()->at(index), aProsodyViews->at(plotIndex)->plot(), this);
+        SpectrogramSettingsDialog ss(maProsodyViews->at(plotIndex)->spectrograms()->at(index), maProsodyViews->at(plotIndex)->plot(), this);
         ss.exec();
     }
     else
     {
-        CurveSettingsDialog cs(aProsodyViews->at(plotIndex)->curves()->at(index) ,aProsodyViews->at(plotIndex)->plot(),this);
+        CurveSettingsDialog cs(maProsodyViews->at(plotIndex)->curves()->at(index) ,maProsodyViews->at(plotIndex)->plot(),this);
         cs.exec();
     }
     }
@@ -251,8 +251,8 @@ void PlotViewTreeWidget::remove()
     index = target->parent()->indexOfChild(target);
     //	emit removeSource(plotIndex,index);
 
-    aProsodyViews->at(plotIndex)->removeItemAt(index);
-    aProsodyViews->at(plotIndex)->plot()->replot();
+    maProsodyViews->at(plotIndex)->removeItemAt(index);
+    maProsodyViews->at(plotIndex)->plot()->replot();
     populate();
     }
     else // it's a top-level item
@@ -275,12 +275,12 @@ void PlotViewTreeWidget::settings()
     // spectrograms are always added to the list first
     if( isSpectrogram(plotIndex,index) )
     {
-        SpectrogramSettingsDialog ss(aProsodyViews->at(plotIndex)->spectrograms()->at(index), aProsodyViews->at(plotIndex)->plot(), this);
+        SpectrogramSettingsDialog ss(maProsodyViews->at(plotIndex)->spectrograms()->at(index), maProsodyViews->at(plotIndex)->plot(), this);
         ss.exec();
     }
     else // must be a curve
     {
-        CurveSettingsDialog cs(aProsodyViews->at(plotIndex)->curves()->at(index) ,aProsodyViews->at(plotIndex)->plot(),this);
+        CurveSettingsDialog cs(maProsodyViews->at(plotIndex)->curves()->at(index) ,maProsodyViews->at(plotIndex)->plot(),this);
         cs.exec();
     }
     }
@@ -294,7 +294,7 @@ void PlotViewTreeWidget::secondary(bool does)
     int index;
     if( (index = indexOfTopLevelItem(target)) != -1 )
     {
-    aProsodyViews->at(index)->setHasSecondaryAxis(does);
+    maProsodyViews->at(index)->setHasSecondaryAxis(does);
     }
 }
 
@@ -312,10 +312,10 @@ void PlotViewTreeWidget::moveToOtherAxis()
 
     if( !isSpectrogram(plotIndex,index) )
     {
-        if(aProsodyViews->at(plotIndex)->curves()->at(index)->yAxis() == QwtPlot::yLeft)
-        aProsodyViews->at(plotIndex)->setHasSecondaryAxis(true);
+        if(maProsodyViews->at(plotIndex)->curves()->at(index)->yAxis() == QwtPlot::yLeft)
+        maProsodyViews->at(plotIndex)->setHasSecondaryAxis(true);
 
-        aProsodyViews->at(plotIndex)->toggleCurveAxisAssociation(index);
+        maProsodyViews->at(plotIndex)->toggleCurveAxisAssociation(index);
     }
     }
 }

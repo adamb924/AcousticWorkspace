@@ -74,7 +74,7 @@ public:
       For convenience this function takes a list of pointers to RegressionListItem objects and RegressionInteractionListItem objects, which are used in the RegressionDialog class.
       \param dep A list of pointers to dependent variables.
       */
-    void addIndependentVariables(QList<RegressionListItem*> simple, QList<RegressionInteractionListItem*> interaction);
+    void addIndependentVariables(QList<RegressionListItem*> mSimple, QList<RegressionInteractionListItem*> mInteraction);
 
     //! \brief Fit the regression with FFTW routines, and display a brief summary of the results.
     void fit();
@@ -82,15 +82,15 @@ public:
     //! \brief Generate data files and R code to run the regressons externally.
     void R();
 
-    QList<WaveformData*> dependent;
-    SpectrogramData *dependentSpectrogram;
+    QList<WaveformData*> mDependent;
+    SpectrogramData *mDependentSpectrogram;
 
-    QList<WaveformData*> simple;
-    QList<InteractionEffect*> interaction;
+    QList<WaveformData*> mSimple;
+    QList<InteractionEffect*> mInteraction;
 private:
-    bool interceptTerm;
-    bool spectrogramMode;
-    QString label;
+    bool mInterceptTerm;
+    bool mSpectrogramMode;
+    QString mLabel;
 };
 
 #endif // REGRESSION_H

@@ -10,7 +10,7 @@ PluginViewTreeWidget::PluginViewTreeWidget(QString mime, QWidget *parent) : QTre
     this->setAcceptDrops(true);
     this->viewport()->setAcceptDrops(true);
 
-    this->mime = mime;
+    this->mMime = mime;
 }
 
 QStringList PluginViewTreeWidget::mimeTypes() const
@@ -37,7 +37,7 @@ void PluginViewTreeWidget::dropEvent(QDropEvent *event)
 
 	QStringList bits = text.split("+");
 	QVariant which(bits.at(1));
-	if(bits.at(0) == mime && index!=-1 && subindex!=-1)
+	if(bits.at(0) == mMime && index!=-1 && subindex!=-1)
 	{
 //		qDebug() << which.toInt() << index << subindex;
 	    emit dropped(which.toInt(), index, subindex);
@@ -60,7 +60,7 @@ void PluginViewTreeWidget::dragMoveEvent ( QDragMoveEvent *event )
 
 	QStringList bits = text.split("+");
 	QVariant which(bits.at(1));
-	if(bits.at(0) == mime)
+	if(bits.at(0) == mMime)
 	{
 	    QTreeWidget::dragMoveEvent(event);
 	}

@@ -24,10 +24,10 @@ public:
     ~PlotDisplayAreaWidget();
 
     //! \brief Return a pointer to the list of PlotViewWidget objects
-    QList<PlotViewWidget*>* plotViews() { return &aPlotViewWidgets; }
+    QList<PlotViewWidget*>* plotViews() { return &maPlotViewWidgets; }
 
     //! \brief Return a pointer to the list of annotation display (IntervalDisplayWidget) objects
-    QList<IntervalDisplayWidget*>* annotations() { return &aAnnotations; }
+    QList<IntervalDisplayWidget*>* annotations() { return &maAnnotations; }
 
     //! \brief Set the minimum and maximum times of the sound to \a min and \a max, respectively.
     /*!
@@ -42,16 +42,16 @@ public:
     void setSliderFromWindow();
 
     //! \brief Return the maximum time of the project
-    double getTMax() { return tMax; }
+    double getTMax() { return mTMax; }
 
     //! \brief Return the minimum time of the project
-    double getTMin() { return tMin; }
+    double getTMin() { return mTMin; }
 
     //! \brief Return the time at the left edge of the display
-    double getLeftPos() { return leftPos; }
+    double getLeftPos() { return mLeftPos; }
 
     //! \brief Return the time at the right edge of the display
-    double getRightPos() { return rightPos; }
+    double getRightPos() { return mRightPos; }
 
 
 public slots:
@@ -65,15 +65,15 @@ public slots:
     void drawVerticalLayout();
 
 private:
-    QVBoxLayout *verticalLayout;
-    QWidget *scrollAreaWidget;
-    QwtSlider *slider;
-    int prosodyHeight, prosodySpacing, border;
-    double tMin, tMax, leftPos, rightPos, windowWidth;
+    QVBoxLayout *mVerticalLayout;
+    QWidget *mScrollAreaWidget;
+    QwtSlider *mSlider;
+    int mProsodyHeight, mProsodySpacing, mBorder;
+    double mTMin, mTMax, mLeftPos, mRightPos, mWindowWidth;
 
-    QStringList aProsodyNames;
-    QList<IntervalDisplayWidget*> aAnnotations;
-    QList<PlotViewWidget*> aPlotViewWidgets;
+    QStringList maProsodyNames;
+    QList<IntervalDisplayWidget*> maAnnotations;
+    QList<PlotViewWidget*> maPlotViewWidgets;
 
     //! \brief Updates the geometry of the plot area when the widget is resized. Reimplemented from QWidget.
     void resizeEvent(QResizeEvent *event);

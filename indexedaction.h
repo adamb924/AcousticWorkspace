@@ -18,7 +18,7 @@ class IndexedAction : public QAction
 public:
     //! \brief Construct the object, storing \a i
     IndexedAction(QString text, int i, QObject *parent);
-    int index;
+    int mIndex;
 public slots:
     //! \brief Connected to the triggered() signal, this emits the indexClicked signal with the value of \a index
     void mytrigger();

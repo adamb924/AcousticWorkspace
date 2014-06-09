@@ -45,22 +45,22 @@ public:
     ~MainWindow();
 
     //! \brief Returns a pointer to the MdiArea object (i.e., the MDI area)
-    inline MdiArea* mdi() const { return mdiWindow; }
+    inline MdiArea* mdi() const { return mMdiWindow; }
 
     //! \brief Sets up the menus for the window
     void setupMenus();
 
     //! \brief Returns a pointer to a list of pointers to the plugins that make waveforms from waveforms
-    inline QList<AbstractWaveform2WaveformMeasure*>* w2w() { return &w2wPlugins; }
+    inline QList<AbstractWaveform2WaveformMeasure*>* w2w() { return &mW2wPlugins; }
 
     //! \brief Returns a pointer to a list of pointers to the plugins that make spectrograms from waveforms
-    inline QList<AbstractWaveform2SpectrogramMeasure*>* w2s() { return &w2sPlugins; }
+    inline QList<AbstractWaveform2SpectrogramMeasure*>* w2s() { return &mW2sPlugins; }
 
     //! \brief Returns a pointer to a list of pointers to the plugins that make waveforms from spectrograms
-    inline QList<AbstractSpectrogram2WaveformMeasure*>* s2w() { return &s2wPlugins; }
+    inline QList<AbstractSpectrogram2WaveformMeasure*>* s2w() { return &mS2wPlugins; }
 
     //! \brief Returns a pointer to a list of pointers to the plugins that make spectrograms from spectrograms
-    inline QList<AbstractSpectrogram2SpectrogramMeasure*>* s2s() { return &s2sPlugins; }
+    inline QList<AbstractSpectrogram2SpectrogramMeasure*>* s2s() { return &mS2sPlugins; }
 
 private:
     //! \brief Reads the plugins from the application's plugins folder, invoking loadPlugin for each one
@@ -69,13 +69,13 @@ private:
     //! \brief Adds the passed plugin to the appropriate array, depending on the successful outcome of qobject_cast
     void loadPlugin(QObject *plugin);
 
-    QList<AbstractWaveform2WaveformMeasure*> w2wPlugins;
-    QList<AbstractWaveform2SpectrogramMeasure*> w2sPlugins;
-    QList<AbstractSpectrogram2WaveformMeasure*> s2wPlugins;
-    QList<AbstractSpectrogram2SpectrogramMeasure*> s2sPlugins;
+    QList<AbstractWaveform2WaveformMeasure*> mW2wPlugins;
+    QList<AbstractWaveform2SpectrogramMeasure*> mW2sPlugins;
+    QList<AbstractSpectrogram2WaveformMeasure*> mS2wPlugins;
+    QList<AbstractSpectrogram2SpectrogramMeasure*> mS2sPlugins;
 
-    QList<QAction*> pluginOptionActions;
-    MdiArea *mdiWindow;
+    QList<QAction*> mPluginOptionActions;
+    MdiArea *mMdiWindow;
 };
 
 #endif // MAINWINDOW_H

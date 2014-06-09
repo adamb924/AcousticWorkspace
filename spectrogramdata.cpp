@@ -9,69 +9,69 @@
 #include <QTime>
 #include <QRegExp>
 
-SpectrogramData::SpectrogramData() : data(0), times(0), frequencies(0), spec_min(-1.0f), spec_max(-1.0f), windowLength(-1.0f), timeStep(-1.0f)
+SpectrogramData::SpectrogramData() : mData(0), mTimes(0), mFrequencies(0), mSpecMin(-1.0f), mSpecMax(-1.0f), mWindowLength(-1.0f), mTimeStep(-1.0f)
 {
 }
 
 SpectrogramData::SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins, double spec_min, double spec_max , double windowLength, double timeStep)
 {
-    this->label = n;
-    safeLabel = n;
-    safeLabel.replace(QRegExp("[\\W]*"),"");
+    this->mLabel = n;
+    mSafeLabel = n;
+    mSafeLabel.replace(QRegExp("[\\W]*"),"");
 
-    this->data = data;
-    this->times = times;
-    this->frequencies = frequencies;
-    this->spec_min = spec_min;
-    this->spec_max = spec_max;
-    this->windowLength = windowLength;
-    this->timeStep = timeStep;
-    this->nFrames = nFrames;
-    this->nFreqBins = nFreqBins;
+    this->mData = data;
+    this->mTimes = times;
+    this->mFrequencies = frequencies;
+    this->mSpecMin = spec_min;
+    this->mSpecMax = spec_max;
+    this->mWindowLength = windowLength;
+    this->mTimeStep = timeStep;
+    this->mNFrames = nFrames;
+    this->mNFreqBins = nFreqBins;
 }
 
 SpectrogramData::~SpectrogramData()
 {
-    if(data) { free(data); }
-    if(times){ free(times); }
-    if(frequencies) { free(frequencies); }
+    if(mData) { free(mData); }
+    if(mTimes){ free(mTimes); }
+    if(mFrequencies) { free(mFrequencies); }
 }
 
 QRectF SpectrogramData::boundingRect() const
 {
-    return QRectF( getTimeFromIndex(0) , getFrequencyFromIndex(0), getTimeFromIndex(nFrames-1)-getTimeFromIndex(0), getFrequencyFromIndex(nFreqBins-1)-getFrequencyFromIndex(0) );
+    return QRectF( getTimeFromIndex(0) , getFrequencyFromIndex(0), getTimeFromIndex(mNFrames-1)-getTimeFromIndex(0), getFrequencyFromIndex(mNFreqBins-1)-getFrequencyFromIndex(0) );
 }
 
 SpectrogramData* SpectrogramData::copy() const
 {
     SpectrogramData *copy = new SpectrogramData;
 
-    copy->windowLength = this->windowLength;
-    copy->timeStep = this->timeStep;
-    copy->windowLengthInSamples = this->windowLengthInSamples;
-    copy->timeStepInSamples = this->timeStepInSamples;
-    copy->nFrames = this->nFrames;
-    copy->nFreqBins = this->nFreqBins;
-    copy->spec_max = this->spec_max;
-    copy->safeLabel = this->safeLabel;
+    copy->mWindowLength = this->mWindowLength;
+    copy->mTimeStep = this->mTimeStep;
+    copy->mWindowLengthInSamples = this->mWindowLengthInSamples;
+    copy->mTimeStepInSamples = this->mTimeStepInSamples;
+    copy->mNFrames = this->mNFrames;
+    copy->mNFreqBins = this->mNFreqBins;
+    copy->mSpecMax = this->mSpecMax;
+    copy->mSafeLabel = this->mSafeLabel;
 
     quint32 i;
-    copy->times = (double*)malloc(sizeof(double)*nFrames);
-    for(i=0; i<nFrames; i++)
+    copy->mTimes = (double*)malloc(sizeof(double)*mNFrames);
+    for(i=0; i<mNFrames; i++)
     {
-	*(copy->times+i) = *(this->times+i);
+	*(copy->mTimes+i) = *(this->mTimes+i);
     }
 
-    copy->frequencies = (double*)malloc(sizeof(double)*nFreqBins);
-    for(i=0; i<nFreqBins; i++)
+    copy->mFrequencies = (double*)malloc(sizeof(double)*mNFreqBins);
+    for(i=0; i<mNFreqBins; i++)
     {
-	*(copy->frequencies+i) = *(this->frequencies+i);
+	*(copy->mFrequencies+i) = *(this->mFrequencies+i);
     }
 
-    copy->data = (double*)malloc(sizeof(double)*nFreqBins*nFrames);
-    for(i=0; i<nFreqBins*nFrames; i++)
+    copy->mData = (double*)malloc(sizeof(double)*mNFreqBins*mNFrames);
+    for(i=0; i<mNFreqBins*mNFrames; i++)
     {
-	*(copy->data+i) = *(this->data+i);
+	*(copy->mData+i) = *(this->mData+i);
     }
 
     return copy;
@@ -79,32 +79,32 @@ SpectrogramData* SpectrogramData::copy() const
 
 double SpectrogramData::dataAt(quint32 t, quint32 f) const
 {
-    Q_CHECK_PTR(data);
-    return *(data + t*nFreqBins + f);
+    Q_CHECK_PTR(mData);
+    return *(mData + t*mNFreqBins + f);
 }
 
 double SpectrogramData::flatdata(quint32 i) const
 {
-    Q_CHECK_PTR(data);
-    return *(data+i);
+    Q_CHECK_PTR(mData);
+    return *(mData+i);
 }
 
 double* SpectrogramData::pdata() const
 {
-    Q_CHECK_PTR(data);
-    return data;
+    Q_CHECK_PTR(mData);
+    return mData;
 }
 
 double* SpectrogramData::pfrequencies() const
 {
-    Q_CHECK_PTR(frequencies);
-    return frequencies;
+    Q_CHECK_PTR(mFrequencies);
+    return mFrequencies;
 }
 
 
 bool SpectrogramData::inTimeRange(double t) const
 {
-    if( t <= *(times+nFrames-1) && t >= *(times) )
+    if( t <= *(mTimes+mNFrames-1) && t >= *(mTimes) )
 	return true;
     else
 	return false;
@@ -112,7 +112,7 @@ bool SpectrogramData::inTimeRange(double t) const
 
 bool SpectrogramData::inFrequencyRange(double f) const
 {
-    if( f >= 0 && f <= *(frequencies+nFreqBins-1) )
+    if( f >= 0 && f <= *(mFrequencies+mNFreqBins-1) )
 	return true;
     else
 	return false;
@@ -121,9 +121,9 @@ bool SpectrogramData::inFrequencyRange(double f) const
 quint32 SpectrogramData::timeStepAbove(double t) const
 {
     if(!inTimeRange(t)) { return 0; }
-    for(quint32 i=0; i<nFrames; i++)
+    for(quint32 i=0; i<mNFrames; i++)
     {
-	if( *(times+i) > t ) {return i;}
+	if( *(mTimes+i) > t ) {return i;}
     }
     return 0;
 }
@@ -131,9 +131,9 @@ quint32 SpectrogramData::timeStepAbove(double t) const
 quint32 SpectrogramData::timeStepBelow(double t) const
 {
     //	if(!inTimeRange(t)) { return 0; }
-    for(quint32 i=0; i<nFrames; i++)
+    for(quint32 i=0; i<mNFrames; i++)
     {
-	if( *(times+i) > t ) {return i-1;}
+	if( *(mTimes+i) > t ) {return i-1;}
     }
     return 0;
 }
@@ -141,21 +141,21 @@ quint32 SpectrogramData::timeStepBelow(double t) const
 quint32 SpectrogramData::frequencyBinAbove(double t) const
 {
     //	if(!inFrequencyRange(t)) { return 0; }
-    for(quint32 i=0; i<nFreqBins; i++)
+    for(quint32 i=0; i<mNFreqBins; i++)
     {
-	if( *(frequencies+i) > t ) {return i;}
+	if( *(mFrequencies+i) > t ) {return i;}
     }
-    return nFreqBins-1;
+    return mNFreqBins-1;
 }
 
 quint32 SpectrogramData::frequencyBinBelow(double t) const
 {
     //	if(!inFrequencyRange(t)) { return 0; }
-    for(quint32 i=0; i<nFreqBins; i++)
+    for(quint32 i=0; i<mNFreqBins; i++)
     {
-	if( *(frequencies+i) > t ) {return i-1;}
+	if( *(mFrequencies+i) > t ) {return i-1;}
     }
-    return nFreqBins-1;
+    return mNFreqBins-1;
 }
 
 double SpectrogramData::value(double x, double y) const
@@ -174,10 +174,10 @@ double SpectrogramData::bilinearInterpolation(double x, double y) const
 
     if( ix1==0xff || ix2==0xff || iy1==0xff || iy2==0xff ) { return 0.0f; }
 
-    double x1 = *(times + ix1);
-    double x2 = *(times + ix2);
-    double y1 = *(frequencies + iy1);
-    double y2 = *(frequencies + iy2);
+    double x1 = *(mTimes + ix1);
+    double x2 = *(mTimes + ix2);
+    double y1 = *(mFrequencies + iy1);
+    double y2 = *(mFrequencies + iy2);
     double q11 = dataAt(ix1,iy1);
     double q12 = dataAt(ix1,iy2);
     double q21 = dataAt(ix2,iy1);
@@ -191,48 +191,48 @@ double SpectrogramData::bilinearInterpolation(double x, double y) const
 
 QString SpectrogramData::name() const
 {
-    return label;
+    return mLabel;
 }
 
 QString SpectrogramData::safeName() const
 {
-    return safeLabel;
+    return mSafeLabel;
 }
 
 void SpectrogramData::setName(QString n)
 {
-    label = n;
-    safeLabel = n;
-    safeLabel.replace(QRegExp("[\\W]*"),"");
+    mLabel = n;
+    mSafeLabel = n;
+    mSafeLabel.replace(QRegExp("[\\W]*"),"");
 }
 
 double SpectrogramData::getWindowLength() const
 {
-    return windowLength;
+    return mWindowLength;
 }
 
 double SpectrogramData::getTimeStep() const
 {
-    return timeStep;
+    return mTimeStep;
 }
 
 quint32 SpectrogramData::getNTimeSteps() const
 {
-    return nFrames;
+    return mNFrames;
 }
 
 quint32 SpectrogramData::getNFrequencyBins() const
 {
-    return nFreqBins;
+    return mNFreqBins;
 }
 
 double SpectrogramData::getTimeFromIndex(int i) const
 {
-    Q_CHECK_PTR(times);
-    return *(times+i);
+    Q_CHECK_PTR(mTimes);
+    return *(mTimes+i);
 }
 
 double SpectrogramData::getFrequencyFromIndex(int i) const
 {
-    return *(frequencies+i);
+    return *(mFrequencies+i);
 }

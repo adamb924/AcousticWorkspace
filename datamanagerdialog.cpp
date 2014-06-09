@@ -18,38 +18,38 @@ DataManagerDialog::DataManagerDialog(QList<AbstractWaveform2WaveformMeasure*> *w
 {
     setSizeGripEnabled(true);
 
-    aWaveformData = wfd;
-    aSpectrogramData = spd;
+    maWaveformData = wfd;
+    maSpectrogramData = spd;
 
-    this->w2wPlugins = w2wPlugins;
-    this->w2sPlugins = w2sPlugins;
-    this->s2wPlugins = s2wPlugins;
-    this->s2sPlugins = s2sPlugins;
+    this->mW2wPlugins = w2wPlugins;
+    this->mW2sPlugins = w2sPlugins;
+    this->mS2wPlugins = s2wPlugins;
+    this->mS2sPlugins = s2sPlugins;
 
     QGridLayout *glayout = new QGridLayout(this);
 
-    waveformTree = new DataSourceTreeWidget("waveform",this); waveformTree->setHeaderHidden(true);
-    spectrogramTree = new DataSourceTreeWidget("spectrogram",this); spectrogramTree->setHeaderHidden(true);
+    mWaveformTree = new DataSourceTreeWidget("waveform",this); mWaveformTree->setHeaderHidden(true);
+    mSpectrogramTree = new DataSourceTreeWidget("spectrogram",this); mSpectrogramTree->setHeaderHidden(true);
 
-    w2wTree = new PluginViewTreeWidget("waveform"); w2wTree->setHeaderHidden(true);
-    w2sTree = new PluginViewTreeWidget("waveform"); w2sTree->setHeaderHidden(true);
-    s2wTree = new PluginViewTreeWidget("spectrogram"); s2wTree->setHeaderHidden(true);
-    s2sTree = new PluginViewTreeWidget("spectrogram"); s2sTree->setHeaderHidden(true);
+    mW2wTree = new PluginViewTreeWidget("waveform"); mW2wTree->setHeaderHidden(true);
+    mW2sTree = new PluginViewTreeWidget("waveform"); mW2sTree->setHeaderHidden(true);
+    mS2wTree = new PluginViewTreeWidget("spectrogram"); mS2wTree->setHeaderHidden(true);
+    mS2sTree = new PluginViewTreeWidget("spectrogram"); mS2sTree->setHeaderHidden(true);
 
     glayout->addWidget(new QLabel(tr("Waveforms")),0,0);
-    glayout->addWidget(waveformTree,1,0);
+    glayout->addWidget(mWaveformTree,1,0);
     glayout->addWidget(new QLabel(tr("Spectrograms")),2,0);
-    glayout->addWidget(spectrogramTree,3,0);
+    glayout->addWidget(mSpectrogramTree,3,0);
 
     glayout->addWidget(new QLabel(tr("Waveform-to-Waveform")),0,1);
-    glayout->addWidget(w2wTree,1,1);
+    glayout->addWidget(mW2wTree,1,1);
     glayout->addWidget(new QLabel(tr("Waveform-to-Spectrogram")),0,2);
-    glayout->addWidget(w2sTree,1,2);
+    glayout->addWidget(mW2sTree,1,2);
 
     glayout->addWidget(new QLabel(tr("Spectrogram-to-Waveform")),2,1);
-    glayout->addWidget(s2wTree,3,1);
+    glayout->addWidget(mS2wTree,3,1);
     glayout->addWidget(new QLabel(tr("Spectrogram-to-Spectrogram")),2,2);
-    glayout->addWidget(s2sTree,3,2);
+    glayout->addWidget(mS2sTree,3,2);
 
     populateWaveformTree();
     populateSpectrogramTree();
@@ -59,23 +59,23 @@ DataManagerDialog::DataManagerDialog(QList<AbstractWaveform2WaveformMeasure*> *w
     populateS2wTree();
     populateS2sTree();
 
-    w2wTree->expandAll();
-    w2sTree->expandAll();
-    s2wTree->expandAll();
-    s2sTree->expandAll();
+    mW2wTree->expandAll();
+    mW2sTree->expandAll();
+    mS2wTree->expandAll();
+    mS2sTree->expandAll();
 
-    connect(w2wTree,SIGNAL(dropped(int,int,int)),this,SLOT(w2wDrop(int,int,int)));
-    connect(w2sTree,SIGNAL(dropped(int,int,int)),this,SLOT(w2sDrop(int,int,int)));
-    connect(s2wTree,SIGNAL(dropped(int,int,int)),this,SLOT(s2wDrop(int,int,int)));
-    connect(s2sTree,SIGNAL(dropped(int,int,int)),this,SLOT(s2sDrop(int,int,int)));
+    connect(mW2wTree,SIGNAL(dropped(int,int,int)),this,SLOT(w2wDrop(int,int,int)));
+    connect(mW2sTree,SIGNAL(dropped(int,int,int)),this,SLOT(w2sDrop(int,int,int)));
+    connect(mS2wTree,SIGNAL(dropped(int,int,int)),this,SLOT(s2wDrop(int,int,int)));
+    connect(mS2sTree,SIGNAL(dropped(int,int,int)),this,SLOT(s2sDrop(int,int,int)));
 
-    connect(waveformTree,SIGNAL(removeItemSignal(int)),this,SIGNAL(removeWaveform(int)));
-    connect(waveformTree,SIGNAL(removeItemSignal(int)),this,SLOT(populateWaveformTree())); // and redraw
-    connect(spectrogramTree,SIGNAL(removeItemSignal(int)),this,SIGNAL(removeSpectrogram(int)));
-    connect(spectrogramTree,SIGNAL(removeItemSignal(int)),this,SLOT(populateSpectrogramTree())); // and redraw
+    connect(mWaveformTree,SIGNAL(removeItemSignal(int)),this,SIGNAL(removeWaveform(int)));
+    connect(mWaveformTree,SIGNAL(removeItemSignal(int)),this,SLOT(populateWaveformTree())); // and redraw
+    connect(mSpectrogramTree,SIGNAL(removeItemSignal(int)),this,SIGNAL(removeSpectrogram(int)));
+    connect(mSpectrogramTree,SIGNAL(removeItemSignal(int)),this,SLOT(populateSpectrogramTree())); // and redraw
 
-    connect(waveformTree,SIGNAL(renameItemSignal(int)),this,SLOT(renameWaveform(int)));
-    connect(spectrogramTree,SIGNAL(renameItemSignal(int)),this,SLOT(renameSpectrogram(int)));
+    connect(mWaveformTree,SIGNAL(renameItemSignal(int)),this,SLOT(renameWaveform(int)));
+    connect(mSpectrogramTree,SIGNAL(renameItemSignal(int)),this,SLOT(renameSpectrogram(int)));
 
     this->setLayout(glayout);
     this->setWindowTitle("Acoustic Workspace Data Manager");
@@ -86,119 +86,119 @@ DataManagerDialog::DataManagerDialog(QList<AbstractWaveform2WaveformMeasure*> *w
 
 void DataManagerDialog::populateW2wTree()
 {
-    w2wTree->clear();
-    for(int i=0; i<w2wPlugins->count(); i++)
+    mW2wTree->clear();
+    for(int i=0; i<mW2wPlugins->count(); i++)
     {
-	QTreeWidgetItem *tmp = new QTreeWidgetItem(QStringList(w2wPlugins->at(i)->name()));
-	w2wTree->addTopLevelItem(tmp);
-	for(int j=0; j<w2wPlugins->at(i)->names().count(); j++)
-	    tmp->addChild(new QTreeWidgetItem(QStringList(w2wPlugins->at(i)->names().at(j))));
-	if(w2wPlugins->at(i)->names().count()>1)
+	QTreeWidgetItem *tmp = new QTreeWidgetItem(QStringList(mW2wPlugins->at(i)->name()));
+	mW2wTree->addTopLevelItem(tmp);
+	for(int j=0; j<mW2wPlugins->at(i)->names().count(); j++)
+	    tmp->addChild(new QTreeWidgetItem(QStringList(mW2wPlugins->at(i)->names().at(j))));
+	if(mW2wPlugins->at(i)->names().count()>1)
 	    tmp->addChild(new QTreeWidgetItem(QStringList(tr("<Run all>"))));
     }
 }
 
 void DataManagerDialog::populateW2sTree()
 {
-    w2sTree->clear();
-    for(int i=0; i<w2sPlugins->count(); i++)
+    mW2sTree->clear();
+    for(int i=0; i<mW2sPlugins->count(); i++)
     {
-	QTreeWidgetItem *tmp = new QTreeWidgetItem(QStringList(w2sPlugins->at(i)->name()));
-	w2sTree->addTopLevelItem(tmp);
-	for(int j=0; j<w2sPlugins->at(i)->names().count(); j++)
-	    tmp->addChild(new QTreeWidgetItem(QStringList(w2sPlugins->at(i)->names().at(j))));
-	if(w2sPlugins->at(i)->names().count()>1)
+	QTreeWidgetItem *tmp = new QTreeWidgetItem(QStringList(mW2sPlugins->at(i)->name()));
+	mW2sTree->addTopLevelItem(tmp);
+	for(int j=0; j<mW2sPlugins->at(i)->names().count(); j++)
+	    tmp->addChild(new QTreeWidgetItem(QStringList(mW2sPlugins->at(i)->names().at(j))));
+	if(mW2sPlugins->at(i)->names().count()>1)
 	    tmp->addChild(new QTreeWidgetItem(QStringList(tr("<Run all>"))));
     }
 }
 
 void DataManagerDialog::populateS2wTree()
 {
-    s2wTree->clear();
-    for(int i=0; i<s2wPlugins->count(); i++)
+    mS2wTree->clear();
+    for(int i=0; i<mS2wPlugins->count(); i++)
     {
-	QTreeWidgetItem *tmp = new QTreeWidgetItem(QStringList(s2wPlugins->at(i)->name()));
-	s2wTree->addTopLevelItem(tmp);
-	for(int j=0; j<s2wPlugins->at(i)->names().count(); j++)
-	    tmp->addChild(new QTreeWidgetItem(QStringList(s2wPlugins->at(i)->names().at(j))));
-	if(s2wPlugins->at(i)->names().count()>1)
+	QTreeWidgetItem *tmp = new QTreeWidgetItem(QStringList(mS2wPlugins->at(i)->name()));
+	mS2wTree->addTopLevelItem(tmp);
+	for(int j=0; j<mS2wPlugins->at(i)->names().count(); j++)
+	    tmp->addChild(new QTreeWidgetItem(QStringList(mS2wPlugins->at(i)->names().at(j))));
+	if(mS2wPlugins->at(i)->names().count()>1)
 	    tmp->addChild(new QTreeWidgetItem(QStringList(tr("<Run all>"))));
     }
 }
 
 void DataManagerDialog::populateS2sTree()
 {
-    s2sTree->clear();
-    for(int i=0; i<s2sPlugins->count(); i++)
+    mS2sTree->clear();
+    for(int i=0; i<mS2sPlugins->count(); i++)
     {
-	QTreeWidgetItem *tmp = new QTreeWidgetItem(QStringList(s2sPlugins->at(i)->name()));
-	s2sTree->addTopLevelItem(tmp);
-	for(int j=0; j<s2sPlugins->at(i)->names().count(); j++)
-	    tmp->addChild(new QTreeWidgetItem(QStringList(s2sPlugins->at(i)->names().at(j))));
-	if(s2sPlugins->at(i)->names().count()>1)
+	QTreeWidgetItem *tmp = new QTreeWidgetItem(QStringList(mS2sPlugins->at(i)->name()));
+	mS2sTree->addTopLevelItem(tmp);
+	for(int j=0; j<mS2sPlugins->at(i)->names().count(); j++)
+	    tmp->addChild(new QTreeWidgetItem(QStringList(mS2sPlugins->at(i)->names().at(j))));
+	if(mS2sPlugins->at(i)->names().count()>1)
 	    tmp->addChild(new QTreeWidgetItem(QStringList(tr("<Run all>"))));
     }
 }
 
 void DataManagerDialog::populateWaveformTree()
 {
-    waveformTree->clear();
-    for(int i=0; i<aWaveformData->count(); i++)
-	waveformTree->addTopLevelItem(new QTreeWidgetItem(QStringList(aWaveformData->at(i)->name())));
+    mWaveformTree->clear();
+    for(int i=0; i<maWaveformData->count(); i++)
+	mWaveformTree->addTopLevelItem(new QTreeWidgetItem(QStringList(maWaveformData->at(i)->name())));
 }
 
 void DataManagerDialog::populateSpectrogramTree()
 {
-    spectrogramTree->clear();
-    for(int i=0; i<aSpectrogramData->count(); i++)
-	spectrogramTree->addTopLevelItem(new QTreeWidgetItem(QStringList(aSpectrogramData->at(i)->name())));
+    mSpectrogramTree->clear();
+    for(int i=0; i<maSpectrogramData->count(); i++)
+	mSpectrogramTree->addTopLevelItem(new QTreeWidgetItem(QStringList(maSpectrogramData->at(i)->name())));
 }
 
 void DataManagerDialog::w2wDrop(int from, int toPlugin, int toSubplugin)
 {
-    w2wPlugins->at(toPlugin)->settings(toSubplugin);
+    mW2wPlugins->at(toPlugin)->settings(toSubplugin);
 
-    if(toSubplugin < w2wPlugins->at(toPlugin)->names().length())
-	w2wPlugins->at(toPlugin)->calculate(toSubplugin,aWaveformData->at(from));
-    else if(toSubplugin == w2wPlugins->at(toPlugin)->names().length())
-	for(int i=0; i<w2wPlugins->at(toPlugin)->names().length(); i++)
-	    w2wPlugins->at(toPlugin)->calculate(i,aWaveformData->at(from));
+    if(toSubplugin < mW2wPlugins->at(toPlugin)->names().length())
+	mW2wPlugins->at(toPlugin)->calculate(toSubplugin,maWaveformData->at(from));
+    else if(toSubplugin == mW2wPlugins->at(toPlugin)->names().length())
+	for(int i=0; i<mW2wPlugins->at(toPlugin)->names().length(); i++)
+	    mW2wPlugins->at(toPlugin)->calculate(i,maWaveformData->at(from));
     populateWaveformTree();
 }
 
 void DataManagerDialog::w2sDrop(int from, int toPlugin, int toSubplugin)
 {
-    w2sPlugins->at(toPlugin)->settings(toSubplugin);
+    mW2sPlugins->at(toPlugin)->settings(toSubplugin);
 
-    if(toSubplugin < w2sPlugins->at(toPlugin)->names().length())
-	w2sPlugins->at(toPlugin)->calculate(toSubplugin,aWaveformData->at(from));
-    else if(toSubplugin == w2sPlugins->at(toPlugin)->names().length())
-	for(int i=0; i<w2sPlugins->at(toPlugin)->names().length(); i++)
-	    w2sPlugins->at(toPlugin)->calculate(i,aWaveformData->at(from));
+    if(toSubplugin < mW2sPlugins->at(toPlugin)->names().length())
+	mW2sPlugins->at(toPlugin)->calculate(toSubplugin,maWaveformData->at(from));
+    else if(toSubplugin == mW2sPlugins->at(toPlugin)->names().length())
+	for(int i=0; i<mW2sPlugins->at(toPlugin)->names().length(); i++)
+	    mW2sPlugins->at(toPlugin)->calculate(i,maWaveformData->at(from));
     populateSpectrogramTree();
 }
 
 void DataManagerDialog::s2wDrop(int from, int toPlugin, int toSubplugin)
 {
-    s2wPlugins->at(toPlugin)->settings(toSubplugin);
+    mS2wPlugins->at(toPlugin)->settings(toSubplugin);
 
-    if(toSubplugin < s2wPlugins->at(toPlugin)->names().length())
-	s2wPlugins->at(toPlugin)->calculate(toSubplugin,aSpectrogramData->at(from));
-    else if(toSubplugin == s2wPlugins->at(toPlugin)->names().length())
-	for(int i=0; i<s2wPlugins->at(toPlugin)->names().length(); i++)
-	    s2wPlugins->at(toPlugin)->calculate(i,aSpectrogramData->at(from));
+    if(toSubplugin < mS2wPlugins->at(toPlugin)->names().length())
+	mS2wPlugins->at(toPlugin)->calculate(toSubplugin,maSpectrogramData->at(from));
+    else if(toSubplugin == mS2wPlugins->at(toPlugin)->names().length())
+	for(int i=0; i<mS2wPlugins->at(toPlugin)->names().length(); i++)
+	    mS2wPlugins->at(toPlugin)->calculate(i,maSpectrogramData->at(from));
     populateWaveformTree();
 }
 
 void DataManagerDialog::s2sDrop(int from, int toPlugin, int toSubplugin)
 {
-    s2sPlugins->at(toPlugin)->settings(toSubplugin);
+    mS2sPlugins->at(toPlugin)->settings(toSubplugin);
 
-    if(toSubplugin < s2sPlugins->at(toPlugin)->names().length())
-	s2sPlugins->at(toPlugin)->calculate(toSubplugin,aSpectrogramData->at(from));
-    else if(toSubplugin == s2sPlugins->at(toPlugin)->names().length())
-	for(int i=0; i<s2sPlugins->at(toPlugin)->names().length(); i++)
-	    s2sPlugins->at(toPlugin)->calculate(i,aSpectrogramData->at(from));
+    if(toSubplugin < mS2sPlugins->at(toPlugin)->names().length())
+	mS2sPlugins->at(toPlugin)->calculate(toSubplugin,maSpectrogramData->at(from));
+    else if(toSubplugin == mS2sPlugins->at(toPlugin)->names().length())
+	for(int i=0; i<mS2sPlugins->at(toPlugin)->names().length(); i++)
+	    mS2sPlugins->at(toPlugin)->calculate(i,maSpectrogramData->at(from));
     populateSpectrogramTree();
 }
 
@@ -222,12 +222,12 @@ void DataManagerDialog::renameWaveform(int index)
 
     QString text = QInputDialog::getText(this, tr("Enter a new label"),
 					 tr("Enter a new label"), QLineEdit::Normal,
-					 aWaveformData->at(index)->name(), &ok);
+					 maWaveformData->at(index)->name(), &ok);
 
     if (ok && !text.isEmpty())
     {
-	aWaveformData->at(index)->setName(text);
-	waveformTree->topLevelItem(index)->setText(0,text);
+	maWaveformData->at(index)->setName(text);
+	mWaveformTree->topLevelItem(index)->setText(0,text);
     }
 }
 
@@ -236,10 +236,10 @@ void DataManagerDialog::renameSpectrogram(int index)
     bool ok;
     QString text = QInputDialog::getText(this, tr("Enter a new label"),
 					 tr("Enter a new label"), QLineEdit::Normal,
-					 aSpectrogramData->at(index)->name(), &ok);
+					 maSpectrogramData->at(index)->name(), &ok);
     if (ok && !text.isEmpty())
     {
-	aSpectrogramData->at(index)->setName(text);
-	spectrogramTree->topLevelItem(index)->setText(0,text);
+	maSpectrogramData->at(index)->setName(text);
+	mSpectrogramTree->topLevelItem(index)->setText(0,text);
     }
 }

@@ -3,7 +3,7 @@
 
 RegressionListItem::RegressionListItem( WaveformData *data , QListWidget * parent, int type ) : QListWidgetItem(parent,type)
 {
-    waveformData = data;
+    mWaveformData = data;
     this->setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
     this->setCheckState(Qt::Unchecked);
     this->setText(text());
@@ -11,17 +11,17 @@ RegressionListItem::RegressionListItem( WaveformData *data , QListWidget * paren
 
 WaveformData* RegressionListItem::data()
 {
-    return waveformData;
+    return mWaveformData;
 }
 
 QString RegressionListItem::text () const
 {
-    return waveformData->name();
+    return mWaveformData->name();
 }
 
 RegressionInteractionListItem::RegressionInteractionListItem( InteractionEffect *data , QListWidget * parent, int type ) : QListWidgetItem(parent,type)
 {
-    interactionData = data;
+    mInteractionData = data;
     this->setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
     this->setCheckState(Qt::Unchecked);
     this->setText(text());
@@ -29,22 +29,22 @@ RegressionInteractionListItem::RegressionInteractionListItem( InteractionEffect 
 
 InteractionEffect* RegressionInteractionListItem::interaction()
 {
-    return interactionData;
+    return mInteractionData;
 }
 
 QString RegressionInteractionListItem::text () const
 {
-    if( interactionData->members.length() == 0 ) { return "<empty>"; }
-    QString retval = interactionData->members.at(0)->name();
-    for(int i=1; i<interactionData->members.length(); i++)
-	retval += " x " + interactionData->members.at(i)->name();
+    if( mInteractionData->members.length() == 0 ) { return "<empty>"; }
+    QString retval = mInteractionData->members.at(0)->name();
+    for(int i=1; i<mInteractionData->members.length(); i++)
+	retval += " x " + mInteractionData->members.at(i)->name();
 
     return retval;
 }
 
 RegressionSpectrogramListItem::RegressionSpectrogramListItem( SpectrogramData *data , QListWidget * parent, int type) : QListWidgetItem(parent,type)
 {
-    spectrogramData = data;
+    mSpectrogramData = data;
     this->setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
     this->setCheckState(Qt::Unchecked);
     this->setText(text());
@@ -52,10 +52,10 @@ RegressionSpectrogramListItem::RegressionSpectrogramListItem( SpectrogramData *d
 
 SpectrogramData* RegressionSpectrogramListItem::data()
 {
-    return spectrogramData;
+    return mSpectrogramData;
 }
 
 QString RegressionSpectrogramListItem::text () const
 {
-    return spectrogramData->name();
+    return mSpectrogramData->name();
 }

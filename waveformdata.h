@@ -28,7 +28,7 @@ public:
       \param nsam Number of samples in the waveform
       \param fs Sampling frequency of the waveform
     */
-    WaveformData(QString name, double *x, double *y, size_t nsam, size_t fs);
+    WaveformData(QString name, double *x, double *y, size_t nsam, size_t mFs);
 
     //! \brief Copy constructor. Performs a deep copy of the data structures
     WaveformData(const WaveformData& other);
@@ -73,10 +73,10 @@ public slots:
     size_t getSampleFromTime(double time);
 
     //! \brief Return the name of the waveform
-    QString name() const { return label; }
+    QString name() const { return mLabel; }
 
     //! \brief Return the name of the waveform stripped of whitespace
-    QString safeName() const { return safeLabel; }
+    QString safeName() const { return mSafeLabel; }
 
     //! \brief Set the name of the waveform
     void setName(QString n);
@@ -88,13 +88,13 @@ public slots:
     void calculateMinMax();
 
 private:
-    QString label;
-    QString safeLabel;
-    size_t fs;
-    double period;
-    double *times;
-    double minimum;
-    double maximum;
+    QString mLabel;
+    QString mSafeLabel;
+    size_t mFs;
+    double mPeriod;
+    double *mTimes;
+    double mMinimum;
+    double mMaximum;
 };
 
 #endif // WAVEFORMDATA_H

@@ -24,18 +24,18 @@ DataEntryDialog::DataEntryDialog(const QStringList* f, QList<QVariant>* v, QStri
     int i;
     for(i=0; i<v->count(); i++)
     {
-	values << v->at(i);
+	mValues << v->at(i);
     }
 
     for(i=0; i<f->length(); i++)
     {
-	edits << new QLineEdit;
+	mEdits << new QLineEdit;
 	if( v->length() > i )
 	{
-	    edits.last()->setText(v->at(i).toString());
+	    mEdits.last()->setText(v->at(i).toString());
 	}
 	layout->addWidget(new QLabel(f->at(i)),i+offset,0,Qt::AlignRight);
-	layout->addWidget(edits.last(),i+offset,3);
+	layout->addWidget(mEdits.last(),i+offset,3);
     }
 
     QPushButton *bSaveAndClose;
@@ -49,11 +49,11 @@ DataEntryDialog::DataEntryDialog(const QStringList* f, QList<QVariant>* v, QStri
 
 void DataEntryDialog::accept()
 {
-    while(values.count() < edits.count() )
-	values << "";
-    for(int i=0; i<edits.count(); i++)
+    while(mValues.count() < mEdits.count() )
+	mValues << "";
+    for(int i=0; i<mEdits.count(); i++)
     {
-	values.replace(i,edits.at(i)->text());
+	mValues.replace(i,mEdits.at(i)->text());
     }
     QDialog::accept();
 }

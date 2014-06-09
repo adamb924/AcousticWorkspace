@@ -114,18 +114,18 @@ public slots:
     void launchSpectrogramSettings(int index);
 
 protected:
-    int widgetHeight;
-    QHBoxLayout *hlayout;
+    int mWidgetHeight;
+    QHBoxLayout *mHlayout;
 
-    bool secondaryAxis;
-    QString label;
-    QwtPlot *qwtPlot;
+    bool mSecondaryAxis;
+    QString mLabel;
+    QwtPlot *mQwtPlot;
 
-    QList<WaveformData*> aWaveformData;
-    QList<SpectrogramData*> aSpectrogramData;
+    QList<WaveformData*> maWaveformData;
+    QList<SpectrogramData*> maSpectrogramData;
 
-    QList<QwtPlotCurve*> aCurves;
-    QList<QwtPlotSpectrogram*> aSpectrograms;
+    QList<QwtPlotCurve*> maCurves;
+    QList<QwtPlotSpectrogram*> maSpectrograms;
 };
 
 #endif // PROSODYINTERFACE_H

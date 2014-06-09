@@ -14,7 +14,7 @@
 SpectrogramSettingsDialog::SpectrogramSettingsDialog(QwtPlotSpectrogram *spectrogram, QwtPlot *parentPlot, QWidget *parent) :
     QDialog(parent)
 {
-    plot = parentPlot;
+    mPlot = parentPlot;
 
     QVBoxLayout *layout = new QVBoxLayout;
 
@@ -44,15 +44,15 @@ SpectrogramSettingsDialog::SpectrogramSettingsDialog(QwtPlotSpectrogram *spectro
 void SpectrogramSettingsDialog::setFrequencyUpperbound(QString text)
 {
     QwtLinearScaleEngine engine;
-    plot->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale(plot->axisScaleDiv(QwtPlot::yLeft).lowerBound(), text.toDouble() ,10, 10) ));
-    plot->replot();
+    mPlot->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale(mPlot->axisScaleDiv(QwtPlot::yLeft).lowerBound(), text.toDouble() ,10, 10) ));
+    mPlot->replot();
 }
 
 void SpectrogramSettingsDialog::setFrequencyLowerbound(QString text)
 {
     QwtLinearScaleEngine engine;
-    plot->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale(text.toDouble(), plot->axisScaleDiv(QwtPlot::yLeft).upperBound(),10, 10) ));
-    plot->replot();
+    mPlot->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale(text.toDouble(), mPlot->axisScaleDiv(QwtPlot::yLeft).upperBound(),10, 10) ));
+    mPlot->replot();
 }
 
 void SpectrogramSettingsDialog::setColorMap()

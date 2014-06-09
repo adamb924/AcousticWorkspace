@@ -40,7 +40,7 @@ public:
       \param windowLength Window length of the spectrogram
       \param timeStep Time step of the spectrogram
     */
-    SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins, double spec_min, double spec_max , double windowLength, double timeStep);
+    SpectrogramData(QString n, double *mData, double *mTimes, size_t mNFrames, double *mFrequencies, size_t mNFreqBins, double mSpecMin, double mSpecMax , double mWindowLength, double mTimeStep);
 
     ~SpectrogramData();
 
@@ -115,21 +115,21 @@ public slots:
     double getFrequencyFromIndex(int i) const;
 
 private:
-    QString label;
-    QString safeLabel;
+    QString mLabel;
+    QString mSafeLabel;
 
-    double *data;
-    double *times;
-    double *frequencies;
+    double *mData;
+    double *mTimes;
+    double *mFrequencies;
 
-    double spec_min;
-    double spec_max;
-    double windowLength;
-    double timeStep;
-    quint32 windowLengthInSamples;
-    quint32 timeStepInSamples;
+    double mSpecMin;
+    double mSpecMax;
+    double mWindowLength;
+    double mTimeStep;
+    quint32 mWindowLengthInSamples;
+    quint32 mTimeStepInSamples;
 
-    quint32 nFrames, nFreqBins;
+    quint32 mNFrames, mNFreqBins;
 };
 
 #endif // SPECTROGRAMDATA_H

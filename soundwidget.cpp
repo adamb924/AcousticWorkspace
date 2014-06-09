@@ -37,20 +37,20 @@
 #include "mdiarea.h"
 
 SoundWidget::SoundWidget(QWidget *parent, MainWindow *wnd) :
-    QWidget(parent), mainWnd(wnd)
+    QWidget(parent), mMainWnd(wnd)
 {
     QVBoxLayout *layout = new QVBoxLayout;
-    plotDisplay = new PlotDisplayAreaWidget;
-    layout->addWidget(plotDisplay);
+    mPlotDisplay = new PlotDisplayAreaWidget;
+    layout->addWidget(mPlotDisplay);
 
     resize(600,400);
 
-    plotDisplay->setTimeAxes(0.0f,0.4f);
+    mPlotDisplay->setTimeAxes(0.0f,0.4f);
 
     this->setLayout(layout);
 
-    menuBar = new QMenuBar(this);
-    layout->setMenuBar(menuBar);
+    mMenuBar = new QMenuBar(this);
+    layout->setMenuBar(mMenuBar);
     setupMenus();
     setupActions();
     setupScripting();
@@ -60,22 +60,22 @@ SoundWidget::SoundWidget(QWidget *parent, MainWindow *wnd) :
 
 SoundWidget::~SoundWidget()
 {
-    qDeleteAll(aWaveformData.begin(), aWaveformData.end());
-    qDeleteAll(aSpectrogramData.begin(), aSpectrogramData.end());
-    qDeleteAll(aRegressions.begin(), aRegressions.end());
+    qDeleteAll(maWaveformData.begin(), maWaveformData.end());
+    qDeleteAll(maSpectrogramData.begin(), maSpectrogramData.end());
+    qDeleteAll(maRegressions.begin(), maRegressions.end());
 
-    aWaveformData.clear();
-    aSpectrogramData.clear();
+    maWaveformData.clear();
+    maSpectrogramData.clear();
 
-    if(engine != 0)
-	delete engine;
+    if(mScriptEngine != 0)
+	delete mScriptEngine;
 }
 
 // Private slots
 
 void SoundWidget::addAnnotationMenu(IntervalAnnotation *annotation)
 {
-    QMenu *tmp = annotationMenu->addMenu(annotation->name);
+    QMenu *tmp = mAnnotationMenu->addMenu(annotation->mName);
     QAction *visible = new QAction(tr("Visible"),tmp);
     visible->setCheckable(true);
     visible->setChecked(true);
@@ -86,24 +86,24 @@ void SoundWidget::addAnnotationMenu(IntervalAnnotation *annotation)
 
     tmp->addAction(visible);
     tmp->addAction(deleteAction);
-    aAnnotationMenus << tmp;
+    maAnnotationMenus << tmp;
 
     connect(tmp,SIGNAL(triggered(QAction*)),this,SLOT(annotationMenuAction(QAction*)));
 }
 
 void SoundWidget::addRegression(RegressionModel *regression)
 {
-    aRegressions << regression;
-    int index = aRegressions.count() - 1;
+    maRegressions << regression;
+    int index = maRegressions.count() - 1;
 
-    QMenu *tmp = regressionMenu->addMenu(regression->name());
+    QMenu *tmp = mRegressionMenu->addMenu(regression->name());
     QAction *editRegression = new QAction(tr("Edit"),tmp);
     editRegression->setData(index);
     QAction *deleteRegression = new QAction(tr("Delete"),tmp);
     deleteRegression->setData(1000+index);
     tmp->addAction(editRegression);
     tmp->addAction(deleteRegression);
-    aRegressionMenus << tmp;
+    maRegressionMenus << tmp;
 
     connect(tmp,SIGNAL(triggered(QAction*)),this,SLOT(regressionMenuAction(QAction*)));
 
@@ -117,7 +117,7 @@ void SoundWidget::addSpectrogram(SpectrogramData *data)
     if(tmp == 0) { return; }
 
     if( this->parentWidget() == tmp->mdiArea()->currentSubWindow() )
-	aSpectrogramData << data;
+	maSpectrogramData << data;
 
     emit scriptDataChanged();
 }
@@ -133,7 +133,7 @@ void SoundWidget::addWaveform(WaveformData *data)
 //    qDebug() << "SoundWidget::addWaveform here1";
 
     if( this->parentWidget() == tmp->mdiArea()->currentSubWindow() )
-	aWaveformData << data;
+	maWaveformData << data;
 
 //    qDebug() << "SoundWidget::addWaveform here2";
 
@@ -144,26 +144,26 @@ void SoundWidget::addWaveform(WaveformData *data)
 
 void SoundWidget::close()
 {
-    if(plotDisplay != 0) { delete plotDisplay; }
-    plotDisplay = new PlotDisplayAreaWidget;
-    this->layout()->addWidget(plotDisplay);
+    if(mPlotDisplay != 0) { delete mPlotDisplay; }
+    mPlotDisplay = new PlotDisplayAreaWidget;
+    this->layout()->addWidget(mPlotDisplay);
 
-    qDeleteAll(aWaveformData.begin(), aWaveformData.end());
-    aWaveformData.clear();
+    qDeleteAll(maWaveformData.begin(), maWaveformData.end());
+    maWaveformData.clear();
 
-    qDeleteAll(aSpectrogramData.begin(), aSpectrogramData.end());
-    aSpectrogramData.clear();
+    qDeleteAll(maSpectrogramData.begin(), maSpectrogramData.end());
+    maSpectrogramData.clear();
 
-    qDeleteAll(aRegressionMenus.begin(), aRegressionMenus.end());
-    aRegressionMenus.clear();
+    qDeleteAll(maRegressionMenus.begin(), maRegressionMenus.end());
+    maRegressionMenus.clear();
 
     this->setWindowTitle(tr("Acoustic Workspace"));
-    closeAction->setEnabled(false);
+    mCloseAction->setEnabled(false);
 }
 
 void SoundWidget::launchDataManager()
 {
-    DataManagerDialog *dm = new DataManagerDialog(mainWnd->w2w(), mainWnd->w2s(), mainWnd->s2w(), mainWnd->s2s(), &aWaveformData,&aSpectrogramData,this);
+    DataManagerDialog *dm = new DataManagerDialog(mMainWnd->w2w(), mMainWnd->w2s(), mMainWnd->s2w(), mMainWnd->s2s(), &maWaveformData,&maSpectrogramData,this);
     connect(dm, SIGNAL(removeWaveform(int)),this,SLOT(removeWaveform(int)));
     connect(dm, SIGNAL(removeSpectrogram(int)),this,SLOT(removeSpectrogram(int)));
 
@@ -177,10 +177,10 @@ void SoundWidget::launchDataManager()
 
 void SoundWidget::launchPlotManager()
 {
-    PlotManagerDialog pm(plotDisplay->plotViews(),&aWaveformData,&aSpectrogramData);
-    connect(&pm,SIGNAL(addProsody(PlotViewWidget*,QString)),this->plotDisplay,SLOT(addPlotView(PlotViewWidget*,QString)));
+    PlotManagerDialog pm(mPlotDisplay->plotViews(),&maWaveformData,&maSpectrogramData);
+    connect(&pm,SIGNAL(addProsody(PlotViewWidget*,QString)),this->mPlotDisplay,SLOT(addPlotView(PlotViewWidget*,QString)));
     pm.exec();
-    disconnect(&pm,SIGNAL(addProsody(PlotViewWidget*,QString)),this->plotDisplay,SLOT(addPlotView(PlotViewWidget*,QString)));
+    disconnect(&pm,SIGNAL(addProsody(PlotViewWidget*,QString)),this->mPlotDisplay,SLOT(addPlotView(PlotViewWidget*,QString)));
 
 //    qDebug() << "end of SoundWidget::launchPlotManager";
 }
@@ -236,19 +236,19 @@ void SoundWidget::loadSound(QString fileName)
 
     QFileInfo info(fileName);
     WaveformData *sound = new WaveformData(info.fileName(),times,data,sndInfo.frames,sndInfo.samplerate);
-    aWaveformData << sound;
+    maWaveformData << sound;
 
     PlotViewWidget *tmp = new PlotViewWidget("Waveform");
-    plotDisplay->addPlotView( tmp ,"Waveform");
+    mPlotDisplay->addPlotView( tmp ,"Waveform");
 
     tmp->addCurveData(sound, false, Qt::blue);
 
     tmp->curves()->last()->setStyle(QwtPlotCurve::Dots);
     tmp->curves()->last()->setRenderHint(QwtPlotItem::RenderAntialiased,false);
 
-    plotDisplay->setTimeMinMax(sound->tMin(),sound->tMax());
+    mPlotDisplay->setTimeMinMax(sound->tMin(),sound->tMax());
 
-    closeAction->setEnabled(true);
+    mCloseAction->setEnabled(true);
 
     this->setWindowTitle(sound->name());
 }
@@ -256,7 +256,7 @@ void SoundWidget::loadSound(QString fileName)
 
 void SoundWidget::importTextGrid()
 {
-    if( plotDisplay->plotViews()->count() <1 )
+    if( mPlotDisplay->plotViews()->count() <1 )
     {
 	QMessageBox::critical(this,tr("Error"),tr("You need at least one plot window to import an annotation."));
 	return;
@@ -278,7 +278,7 @@ void SoundWidget::importTextGrid()
 
 void SoundWidget::readTextGridFromFile(QString fileName)
 {
-    int count = aIntervalAnnotations.count();
+    int count = maIntervalAnnotations.count();
     QFile data(fileName);
     if (data.open(QFile::ReadOnly)) {
 	QTextStream in(&data);
@@ -290,7 +290,7 @@ void SoundWidget::readTextGridFromFile(QString fileName)
 	    //		qDebug() << line;
 	    if( line.contains("class = \"IntervalTier\""))
 	    {
-		aIntervalAnnotations << new IntervalAnnotation;
+		maIntervalAnnotations << new IntervalAnnotation;
 		inInterval = true;
 	    }
 	    else if( line.contains("class = \"TextTier\""))
@@ -303,17 +303,17 @@ void SoundWidget::readTextGridFromFile(QString fileName)
 		rx.indexIn(line);
 		if(rx.captureCount() < 1) { continue; }
 		if(inInterval)
-		    aIntervalAnnotations.last()->name = rx.capturedTexts().at(1);
+		    maIntervalAnnotations.last()->mName = rx.capturedTexts().at(1);
 	    }
 	    else if( line.contains(QRegExp("intervals \\[\\d*\\]:")))
 	    {
 		//		    qDebug() << "Interval" << line;
 		if(inInterval)
-		    aIntervalAnnotations.last()->aIntervals << new Interval;
+		    maIntervalAnnotations.last()->maIntervals << new Interval;
 	    }
 	    else if( line.contains("xmin = "))
 	    {
-		if(inInterval && aIntervalAnnotations.count() > 0 && aIntervalAnnotations.last()->aIntervals.count() > 0)
+		if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
 		{
 		    QRegExp rx("xmin = (\\d*\\.\\d*)"); // will this get the decimal?
 		    rx.indexIn(line);
@@ -321,12 +321,12 @@ void SoundWidget::readTextGridFromFile(QString fileName)
 		    if(rx.captureCount() < 1) { continue; }
 		    QString tmp = rx.capturedTexts().at(1);
 		    //			qDebug() << tmp.toDouble();
-		    aIntervalAnnotations.last()->aIntervals.last()->left = tmp.toDouble();
+		    maIntervalAnnotations.last()->maIntervals.last()->mLeft = tmp.toDouble();
 		}
 	    }
 	    else if( line.contains("xmax = "))
 	    {
-		if(inInterval && aIntervalAnnotations.count() > 0 && aIntervalAnnotations.last()->aIntervals.count() > 0)
+		if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
 		{
 		    QRegExp rx("xmax = (\\d*\\.\\d*)"); // will this get the decimal?
 		    rx.indexIn(line);
@@ -334,29 +334,29 @@ void SoundWidget::readTextGridFromFile(QString fileName)
 		    if(rx.captureCount() < 1) { continue; }
 		    QString tmp = rx.capturedTexts().at(1);
 		    //			qDebug() << tmp.toDouble();
-		    aIntervalAnnotations.last()->aIntervals.last()->right = tmp.toDouble();
+		    maIntervalAnnotations.last()->maIntervals.last()->mRight = tmp.toDouble();
 		}
 	    }
 	    else if( line.contains("text = "))
 	    {
-		if(inInterval && aIntervalAnnotations.count() > 0 && aIntervalAnnotations.last()->aIntervals.count() > 0)
+		if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
 		{
 		    QRegExp rx("\"(.*)\"");
 		    rx.indexIn(line);
 		    //			qDebug() << rx.capturedTexts();
 		    if(rx.captureCount() < 1) { continue; }
 		    QString tmp = rx.capturedTexts().at(1);
-		    aIntervalAnnotations.last()->aIntervals.last()->label = tmp;
+		    maIntervalAnnotations.last()->maIntervals.last()->mLabel = tmp;
 		    //			qDebug() << tmp;
 		}
 	    }
 	}
     }
 
-    for(int i=count; i<aIntervalAnnotations.count(); i++)
+    for(int i=count; i<maIntervalAnnotations.count(); i++)
     {
-	plotDisplay->addAnnotation(new IntervalDisplayWidget(aIntervalAnnotations.at(i),plotDisplay->plotViews()->first(),this));
-	addAnnotationMenu(aIntervalAnnotations.at(i));
+	mPlotDisplay->addAnnotation(new IntervalDisplayWidget(maIntervalAnnotations.at(i),mPlotDisplay->plotViews()->first(),this));
+	addAnnotationMenu(maIntervalAnnotations.at(i));
     }
 
     /*
@@ -373,7 +373,7 @@ void SoundWidget::readTextGridFromFile(QString fileName)
 
 void SoundWidget::newRegression()
 {
-    RegressionDialog *rd = new RegressionDialog(&aWaveformData, &aSpectrogramData,this);
+    RegressionDialog *rd = new RegressionDialog(&maWaveformData, &maSpectrogramData,this);
     connect(rd,SIGNAL(regressionObject(RegressionModel*)),this,SLOT(addRegression(RegressionModel*)));
     rd->exec();
 }
@@ -391,10 +391,10 @@ void SoundWidget::openProject()
 
 void SoundWidget::save()
 {
-    if( currentFilename == "")
+    if( mCurrentFilename == "")
 	saveAs();
     else
-	writeProjectToFile(currentFilename);
+	writeProjectToFile(mCurrentFilename);
 }
 
 void SoundWidget::saveAs()
@@ -442,8 +442,8 @@ void SoundWidget::readFromFile(QString filename)
 		double leftPos = readXmlElement(xml,"left-position").toDouble();
 		double rightPos = readXmlElement(xml,"right-position").toDouble();
 
-		plotDisplay->setTimeMinMax(tMin,tMax);
-		plotDisplay->setTimeAxes(leftPos,rightPos);
+		mPlotDisplay->setTimeMinMax(tMin,tMax);
+		mPlotDisplay->setTimeAxes(leftPos,rightPos);
 	    }
 	    else if( name == "waveform")
 	    {
@@ -464,7 +464,7 @@ void SoundWidget::readFromFile(QString filename)
 		    binaryin >> *(y+i);
 		}
 
-		aWaveformData << new WaveformData(name, x, y, nsam, fs);
+		maWaveformData << new WaveformData(name, x, y, nsam, fs);
 	    }
 	    else if( name == "spectrogram" )
 	    {
@@ -504,7 +504,7 @@ void SoundWidget::readFromFile(QString filename)
 		    if( *(data+i) > spec_max ) { spec_max = *(data+i); }
 		}
 
-		aSpectrogramData << new SpectrogramData(name, data, times, nFrames, frequencies, nFreqBins, spec_min, spec_max , windowLength, timeStep);
+		maSpectrogramData << new SpectrogramData(name, data, times, nFrames, frequencies, nFreqBins, spec_min, spec_max , windowLength, timeStep);
 	    }
 	    else if( name == "plot" )
 	    {
@@ -512,9 +512,9 @@ void SoundWidget::readFromFile(QString filename)
 		bool secondary = xml.attributes().value("secondary-axis").toString().toInt();
 		int height = xml.attributes().value("height").toString().toInt();
 
-		plotDisplay->addPlotView(new PlotViewWidget(name),name);
-		plotDisplay->plotViews()->last()->setHasSecondaryAxis(secondary);
-		plotDisplay->plotViews()->last()->setHeight(height);
+		mPlotDisplay->addPlotView(new PlotViewWidget(name),name);
+		mPlotDisplay->plotViews()->last()->setHasSecondaryAxis(secondary);
+		mPlotDisplay->plotViews()->last()->setHeight(height);
 	    }
 	    else if( name == "curve" )
 	    {
@@ -554,25 +554,25 @@ void SoundWidget::readFromFile(QString filename)
 		if(xml.name().toString() != "antialiased") { qDebug() << "Line " << xml.lineNumber() << ", Column " << xml.columnNumber() << ": " << "File format error: " << xml.name(); return; }
 		bool antialiased = xml.readElementText().toInt();
 
-		if(index >= aWaveformData.length())
+		if(index >= maWaveformData.length())
 		{
 		    QMessageBox::critical(this,tr("Error"),tr("Evidently the file has been corrupted somehow. Quitting..."));
 		    return;
 		}
 
 		// where do I set the name? -- it looks like the name is just redundant information
-		plotDisplay->plotViews()->last()->addCurveData( aWaveformData.at(index), secondary );
+		mPlotDisplay->plotViews()->last()->addCurveData( maWaveformData.at(index), secondary );
 
-		plotDisplay->plotViews()->last()->curves()->last()->setPen(QPen(lineColor,lineWidth));
-		plotDisplay->plotViews()->last()->curves()->last()->setStyle((QwtPlotCurve::CurveStyle)lineStyle);
-		plotDisplay->plotViews()->last()->curves()->last()->setRenderHint(QwtPlotItem::RenderAntialiased,antialiased);
+		mPlotDisplay->plotViews()->last()->curves()->last()->setPen(QPen(lineColor,lineWidth));
+		mPlotDisplay->plotViews()->last()->curves()->last()->setStyle((QwtPlotCurve::CurveStyle)lineStyle);
+		mPlotDisplay->plotViews()->last()->curves()->last()->setRenderHint(QwtPlotItem::RenderAntialiased,antialiased);
 
         QwtSymbol * sym = new QwtSymbol;
         sym->setBrush(QBrush(symbolFillColor));
         sym->setPen(QPen(symbolColor));
         sym->setSize(symbolSize);
         sym->setStyle((QwtSymbol::Style)symbolStyle);
-		plotDisplay->plotViews()->last()->curves()->last()->setSymbol(sym);
+		mPlotDisplay->plotViews()->last()->curves()->last()->setSymbol(sym);
 	    }
 	    else if(name=="spectrogram-plot")
 	    {
@@ -587,10 +587,10 @@ void SoundWidget::readFromFile(QString filename)
 		if(xml.name().toString() != "frequency-upper-bound") { qDebug() << "Line " << xml.lineNumber() << ", Column " << xml.columnNumber() << ": " << "File format error: " << xml.name(); return; }
 		int upperbound = xml.readElementText().toInt();
 
-		plotDisplay->plotViews()->last()->addSpectrogramData( aSpectrogramData.at(index) );
+		mPlotDisplay->plotViews()->last()->addSpectrogramData( maSpectrogramData.at(index) );
 
 		QwtLinearScaleEngine engine;
-		plotDisplay->plotViews()->last()->plot()->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale( lowerbound, upperbound ,10, 10) ));
+		mPlotDisplay->plotViews()->last()->plot()->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale( lowerbound, upperbound ,10, 10) ));
 	    }
 	    else if(name=="regression")
 	    {
@@ -601,48 +601,48 @@ void SoundWidget::readFromFile(QString filename)
 	    }
 	    else if(name=="dependent-spectrogram")
 	    {
-		aRegressions.last()->setDependentSpectrogram( aSpectrogramData.at( xml.readElementText().toInt() ) );
+		maRegressions.last()->setDependentSpectrogram( maSpectrogramData.at( xml.readElementText().toInt() ) );
 	    }
 	    else if(name=="dependent-waveform")
 	    {
-		aRegressions.last()->dependent << aWaveformData.at(xml.readElementText().toInt());
+		maRegressions.last()->mDependent << maWaveformData.at(xml.readElementText().toInt());
 	    }
 	    else if(name=="independent-waveform")
 	    {
-		aRegressions.last()->simple << aWaveformData.at(xml.readElementText().toInt());
+		maRegressions.last()->mSimple << maWaveformData.at(xml.readElementText().toInt());
 	    }
 	    else if(name=="independent-interaction")
 	    {
-		aRegressions.last()->interaction << new InteractionEffect;
+		maRegressions.last()->mInteraction << new InteractionEffect;
 	    }
 	    else if(name=="interaction-member")
 	    {
-		aRegressions.last()->interaction.last()->members << aWaveformData.at(xml.readElementText().toInt());
+		maRegressions.last()->mInteraction.last()->members << maWaveformData.at(xml.readElementText().toInt());
 	    }
 	    else if(name=="interval-annotation")
 	    {
-		aIntervalAnnotations << new IntervalAnnotation;
-		aIntervalAnnotations.last()->name = xml.attributes().value("name").toString();
+		maIntervalAnnotations << new IntervalAnnotation;
+		maIntervalAnnotations.last()->mName = xml.attributes().value("name").toString();
 
-		plotDisplay->addAnnotation(new IntervalDisplayWidget(aIntervalAnnotations.last(),plotDisplay->plotViews()->at(0),0));
-		addAnnotationMenu(aIntervalAnnotations.last());
+		mPlotDisplay->addAnnotation(new IntervalDisplayWidget(maIntervalAnnotations.last(),mPlotDisplay->plotViews()->at(0),0));
+		addAnnotationMenu(maIntervalAnnotations.last());
 	    }
 	    else if(name=="interval")
 	    {
-		aIntervalAnnotations.last()->aIntervals << new Interval(xml.attributes().value("label").toString(), xml.attributes().value("left").toString().toDouble(), xml.attributes().value("right").toString().toDouble());
+		maIntervalAnnotations.last()->maIntervals << new Interval(xml.attributes().value("label").toString(), xml.attributes().value("left").toString().toDouble(), xml.attributes().value("right").toString().toDouble());
 	    }
 	}
     }
 
-    if(aWaveformData.length()>0)
+    if(maWaveformData.length()>0)
     {
-	this->setWindowTitle(aWaveformData.at(0)->name());
-	plotDisplay->setTimeMinMax(aWaveformData.at(0)->tMin(),aWaveformData.at(0)->tMax());
+	this->setWindowTitle(maWaveformData.at(0)->name());
+	mPlotDisplay->setTimeMinMax(maWaveformData.at(0)->tMin(),maWaveformData.at(0)->tMax());
     }
 
-    closeAction->setEnabled(true);
+    mCloseAction->setEnabled(true);
 
-    currentFilename = filename;
+    mCurrentFilename = filename;
     //    plotDisplay->drawVerticalLayout();
 }
 
@@ -683,124 +683,124 @@ void SoundWidget::writeProjectToFile(QString filename)
 
     xs.writeStartElement("interface-settings");
 
-    xs.writeTextElement("time-max",QString::number(plotDisplay->getTMax()));
-    xs.writeTextElement("time-min",QString::number(plotDisplay->getTMin()));
-    xs.writeTextElement("left-position",QString::number(plotDisplay->getLeftPos()));
-    xs.writeTextElement("right-position",QString::number(plotDisplay->getRightPos()));
+    xs.writeTextElement("time-max",QString::number(mPlotDisplay->getTMax()));
+    xs.writeTextElement("time-min",QString::number(mPlotDisplay->getTMin()));
+    xs.writeTextElement("left-position",QString::number(mPlotDisplay->getLeftPos()));
+    xs.writeTextElement("right-position",QString::number(mPlotDisplay->getRightPos()));
 
     xs.writeEndElement(); // interface-settings
 
     xs.writeStartElement("waveform-data");
-    for(int i=0; i<aWaveformData.count(); i++)
+    for(int i=0; i<maWaveformData.count(); i++)
     {
 	xs.writeStartElement("waveform");
 	xs.writeAttribute("id",QString::number(i));
 
-	xs.writeTextElement("label",aWaveformData.at(i)->name());
-	xs.writeTextElement("sample-frequency",QString::number(aWaveformData.at(i)->getSamplingFrequency()));
-	xs.writeTextElement("number-of-samples",QString::number(aWaveformData.at(i)->getNSamples() ));
+	xs.writeTextElement("label",maWaveformData.at(i)->name());
+	xs.writeTextElement("sample-frequency",QString::number(maWaveformData.at(i)->getSamplingFrequency()));
+	xs.writeTextElement("number-of-samples",QString::number(maWaveformData.at(i)->getNSamples() ));
 
 	xs.writeEndElement(); // waveform
 
-	for(quint32 j=0; j<aWaveformData.at(i)->getNSamples(); j++)
+	for(quint32 j=0; j<maWaveformData.at(i)->getNSamples(); j++)
 	{
-        binaryout << aWaveformData.at(i)->xData().at(j);
+        binaryout << maWaveformData.at(i)->xData().at(j);
 	}
-	for(quint32 j=0; j<aWaveformData.at(i)->getNSamples(); j++)
+	for(quint32 j=0; j<maWaveformData.at(i)->getNSamples(); j++)
 	{
-        binaryout << aWaveformData.at(i)->yData().at(j);
+        binaryout << maWaveformData.at(i)->yData().at(j);
 	}
     }
 
     xs.writeEndElement(); // waveform-data
 
     xs.writeStartElement("spectrogram-data");
-    for(int i=0; i<aSpectrogramData.count(); i++)
+    for(int i=0; i<maSpectrogramData.count(); i++)
     {
 	xs.writeStartElement("spectrogram");
 	xs.writeAttribute("id",QString::number(i));
 
-	xs.writeTextElement("label",aSpectrogramData.at(i)->name());
+	xs.writeTextElement("label",maSpectrogramData.at(i)->name());
 
-	xs.writeTextElement("window-length",QString::number(aSpectrogramData.at(i)->getWindowLength()));
-	xs.writeTextElement("time-step",QString::number(aSpectrogramData.at(i)->getTimeStep()));
-	xs.writeTextElement("number-of-time-frames",QString::number(aSpectrogramData.at(i)->getNTimeSteps()));
-	xs.writeTextElement("number-of-frequency-bins",QString::number(aSpectrogramData.at(i)->getNFrequencyBins()));
+	xs.writeTextElement("window-length",QString::number(maSpectrogramData.at(i)->getWindowLength()));
+	xs.writeTextElement("time-step",QString::number(maSpectrogramData.at(i)->getTimeStep()));
+	xs.writeTextElement("number-of-time-frames",QString::number(maSpectrogramData.at(i)->getNTimeSteps()));
+	xs.writeTextElement("number-of-frequency-bins",QString::number(maSpectrogramData.at(i)->getNFrequencyBins()));
 
 	xs.writeEndElement(); // spectrogram
 
-	for(quint32 j=0; j<aSpectrogramData.at(i)->getNTimeSteps(); j++)
+	for(quint32 j=0; j<maSpectrogramData.at(i)->getNTimeSteps(); j++)
 	{
-	    binaryout << aSpectrogramData.at(i)->getTimeFromIndex(j);
+	    binaryout << maSpectrogramData.at(i)->getTimeFromIndex(j);
 	}
-	for(quint32 j=0; j< aSpectrogramData.at(i)->getNFrequencyBins(); j++)
+	for(quint32 j=0; j< maSpectrogramData.at(i)->getNFrequencyBins(); j++)
 	{
-	    binaryout << aSpectrogramData.at(i)->getFrequencyFromIndex(j);
+	    binaryout << maSpectrogramData.at(i)->getFrequencyFromIndex(j);
 	}
-	for(quint32 j=0; j<aSpectrogramData.at(i)->getNTimeSteps() * aSpectrogramData.at(i)->getNFrequencyBins(); j++)
+	for(quint32 j=0; j<maSpectrogramData.at(i)->getNTimeSteps() * maSpectrogramData.at(i)->getNFrequencyBins(); j++)
 	{
-	    binaryout << aSpectrogramData.at(i)->flatdata(j);
+	    binaryout << maSpectrogramData.at(i)->flatdata(j);
 	}
     }
     xs.writeEndElement(); // spectrogram-data
 
     xs.writeStartElement("plots");
-    for(int i=0; i<plotDisplay->plotViews()->count(); i++)
+    for(int i=0; i<mPlotDisplay->plotViews()->count(); i++)
     {
 	xs.writeStartElement("plot");
 	xs.writeAttribute("id",QString::number(i));
-	xs.writeAttribute("name",plotDisplay->plotViews()->at(i)->name());
-	if( plotDisplay->plotViews()->at(i)->hasSecondaryAxis() )
+	xs.writeAttribute("name",mPlotDisplay->plotViews()->at(i)->name());
+	if( mPlotDisplay->plotViews()->at(i)->hasSecondaryAxis() )
 	    xs.writeAttribute("secondary-axis", "1" );
 	else
 	    xs.writeAttribute("secondary-axis", "0" );
-	xs.writeAttribute("height",QString::number(plotDisplay->plotViews()->at(i)->height()));
+	xs.writeAttribute("height",QString::number(mPlotDisplay->plotViews()->at(i)->height()));
 
-	for(int j=0; j< plotDisplay->plotViews()->at(i)->spectrograms()->length(); j++)
+	for(int j=0; j< mPlotDisplay->plotViews()->at(i)->spectrograms()->length(); j++)
 	{
 	    xs.writeStartElement("spectrogram-plot");
-	    xs.writeAttribute("index", QString::number( aSpectrogramData.indexOf(plotDisplay->plotViews()->at(i)->spectrogramData(j) ) ) );
-	    xs.writeAttribute("name", plotDisplay->plotViews()->at(i)->spectrogramData(j)->name());
+	    xs.writeAttribute("index", QString::number( maSpectrogramData.indexOf(mPlotDisplay->plotViews()->at(i)->spectrogramData(j) ) ) );
+	    xs.writeAttribute("name", mPlotDisplay->plotViews()->at(i)->spectrogramData(j)->name());
 
-	    xs.writeTextElement("frequency-lower-bound",QString::number( plotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft).lowerBound() ));
-	    xs.writeTextElement("frequency-upper-bound",QString::number( plotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft).upperBound() ));
+	    xs.writeTextElement("frequency-lower-bound",QString::number( mPlotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft).lowerBound() ));
+	    xs.writeTextElement("frequency-upper-bound",QString::number( mPlotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft).upperBound() ));
 	    xs.writeEndElement();
 	}
 
-	for(int j=0; j< plotDisplay->plotViews()->at(i)->curves()->length(); j++)
+	for(int j=0; j< mPlotDisplay->plotViews()->at(i)->curves()->length(); j++)
 	{
 	    xs.writeStartElement("curve");
-	    xs.writeAttribute("index",QString::number( aWaveformData.indexOf(plotDisplay->plotViews()->at(i)->curveData(j)) ));
-	    xs.writeAttribute("name", plotDisplay->plotViews()->at(i)->curveData(j)->name() );
-	    if( plotDisplay->plotViews()->at(i)->curves()->at(j)->yAxis() == QwtPlot::yLeft )
+	    xs.writeAttribute("index",QString::number( maWaveformData.indexOf(mPlotDisplay->plotViews()->at(i)->curveData(j)) ));
+	    xs.writeAttribute("name", mPlotDisplay->plotViews()->at(i)->curveData(j)->name() );
+	    if( mPlotDisplay->plotViews()->at(i)->curves()->at(j)->yAxis() == QwtPlot::yLeft )
 		xs.writeAttribute("secondary-axis", "0" );
 	    else
 		xs.writeAttribute("secondary-axis", "1" );
 
 	    xs.writeEmptyElement("symbol-color");
-        xs.writeAttribute("r",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().red()));
-        xs.writeAttribute("g",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().green()));
-        xs.writeAttribute("b",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().blue()));
+        xs.writeAttribute("r",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().red()));
+        xs.writeAttribute("g",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().green()));
+        xs.writeAttribute("b",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().blue()));
 
 	    xs.writeEmptyElement("symbol-fill-color");
-        xs.writeAttribute("r",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().red()));
-        xs.writeAttribute("g",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().green()));
-        xs.writeAttribute("b",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().blue()));
+        xs.writeAttribute("r",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().red()));
+        xs.writeAttribute("g",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().green()));
+        xs.writeAttribute("b",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().blue()));
 
-        xs.writeTextElement("symbol-style",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->style()));
+        xs.writeTextElement("symbol-style",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->style()));
 
-        xs.writeTextElement("symbol-size",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->size().height()));
+        xs.writeTextElement("symbol-size",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->size().height()));
 
 	    xs.writeEmptyElement("line-color");
-        xs.writeAttribute("r",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().red()));
-	    xs.writeAttribute("g",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().green()));
-	    xs.writeAttribute("b",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().blue()));
+        xs.writeAttribute("r",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().red()));
+	    xs.writeAttribute("g",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().green()));
+	    xs.writeAttribute("b",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().blue()));
 
-	    xs.writeTextElement("line-style",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->style()));
+	    xs.writeTextElement("line-style",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->style()));
 
-	    xs.writeTextElement("line-width",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->pen().width()));
+	    xs.writeTextElement("line-width",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().width()));
 
-	    xs.writeTextElement("antialiased",QString::number(plotDisplay->plotViews()->at(i)->curves()->at(j)->testRenderHint(QwtPlotItem::RenderAntialiased)));
+	    xs.writeTextElement("antialiased",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->testRenderHint(QwtPlotItem::RenderAntialiased)));
 
 	    xs.writeEndElement();
 	}
@@ -810,18 +810,18 @@ void SoundWidget::writeProjectToFile(QString filename)
     xs.writeEndElement(); // plots
 
     xs.writeStartElement("interval-annotations");
-    for(int i=0; i<aIntervalAnnotations.count(); i++)
+    for(int i=0; i<maIntervalAnnotations.count(); i++)
     {
 	xs.writeStartElement("interval-annotation");
-	xs.writeAttribute("name",aIntervalAnnotations.at(0)->name);
+	xs.writeAttribute("name",maIntervalAnnotations.at(0)->mName);
 
-	for(int j=0; j<aIntervalAnnotations.at(0)->aIntervals.count(); j++)
+	for(int j=0; j<maIntervalAnnotations.at(0)->maIntervals.count(); j++)
 	{
 
 	    xs.writeEmptyElement("interval");
-	    xs.writeAttribute("label",aIntervalAnnotations.at(0)->aIntervals.at(j)->label);
-	    xs.writeAttribute("left",QString::number(aIntervalAnnotations.at(0)->aIntervals.at(j)->left));
-	    xs.writeAttribute("right",QString::number(aIntervalAnnotations.at(0)->aIntervals.at(j)->right));
+	    xs.writeAttribute("label",maIntervalAnnotations.at(0)->maIntervals.at(j)->mLabel);
+	    xs.writeAttribute("left",QString::number(maIntervalAnnotations.at(0)->maIntervals.at(j)->mLeft));
+	    xs.writeAttribute("right",QString::number(maIntervalAnnotations.at(0)->maIntervals.at(j)->mRight));
 	}
 	xs.writeEndElement(); // interval-annotation
     }
@@ -829,35 +829,35 @@ void SoundWidget::writeProjectToFile(QString filename)
 
 
     xs.writeStartElement("regressions");
-    for(int i=0; i<aRegressions.count(); i++)
+    for(int i=0; i<maRegressions.count(); i++)
     {
 	xs.writeStartElement("regression");
-	xs.writeAttribute("name",aRegressions.at(i)->name());
-	xs.writeAttribute("intercept-term",QString::number( aRegressions.at(i)->hasIntercept() ) );
-	xs.writeAttribute("spectrogram-mode",QString::number( aRegressions.at(i)->dependentIsSpectrogram() ) );
+	xs.writeAttribute("name",maRegressions.at(i)->name());
+	xs.writeAttribute("intercept-term",QString::number( maRegressions.at(i)->hasIntercept() ) );
+	xs.writeAttribute("spectrogram-mode",QString::number( maRegressions.at(i)->dependentIsSpectrogram() ) );
 
 	xs.writeStartElement("dependent");
-	if( aRegressions.at(i)->dependentIsSpectrogram() )
-	    xs.writeTextElement( "dependent-spectrogram", QString::number( aSpectrogramData.indexOf( aRegressions.at(i)->dependentSpectrogram ) ) );
+	if( maRegressions.at(i)->dependentIsSpectrogram() )
+	    xs.writeTextElement( "dependent-spectrogram", QString::number( maSpectrogramData.indexOf( maRegressions.at(i)->mDependentSpectrogram ) ) );
 	else
-	    for(int j=0; j<aRegressions.at(i)->dependent.count(); j++)
-		xs.writeTextElement( "dependent-waveform", QString::number( aWaveformData.indexOf( aRegressions.at(i)->dependent.at(j) ) ) );
+	    for(int j=0; j<maRegressions.at(i)->mDependent.count(); j++)
+		xs.writeTextElement( "dependent-waveform", QString::number( maWaveformData.indexOf( maRegressions.at(i)->mDependent.at(j) ) ) );
 
 	xs.writeEndElement(); // dependent
 
 	xs.writeStartElement("independent");
 
 	xs.writeStartElement("simple");
-	for(int j=0; j<aRegressions.at(i)->simple.count(); j++)
-	    xs.writeTextElement("independent-waveform",QString::number( aWaveformData.indexOf( aRegressions.at(i)->simple.at(j) ) ));
+	for(int j=0; j<maRegressions.at(i)->mSimple.count(); j++)
+	    xs.writeTextElement("independent-waveform",QString::number( maWaveformData.indexOf( maRegressions.at(i)->mSimple.at(j) ) ));
 	xs.writeEndElement(); // simple
 
 	xs.writeStartElement("interaction");
-	for(int j=0; j<aRegressions.at(i)->interaction.count(); j++)
+	for(int j=0; j<maRegressions.at(i)->mInteraction.count(); j++)
 	{
 	    xs.writeStartElement("independent-interaction");
-	    for(int k=0; k<aRegressions.at(i)->interaction.at(j)->members.count(); k++)
-		xs.writeTextElement("interaction-member", QString::number( aWaveformData.indexOf( aRegressions.at(i)->interaction.at(j)->members.at(k) ) ) );
+	    for(int k=0; k<maRegressions.at(i)->mInteraction.at(j)->members.count(); k++)
+		xs.writeTextElement("interaction-member", QString::number( maWaveformData.indexOf( maRegressions.at(i)->mInteraction.at(j)->members.at(k) ) ) );
 	    xs.writeEndElement(); // independent-interaction
 	}
 	xs.writeEndElement(); // interaction
@@ -878,98 +878,98 @@ void SoundWidget::writeProjectToFile(QString filename)
 
 void SoundWidget::setupActions()
 {
-    importSoundAction = new QAction(tr("Import sound to create waveform"),this);
-    importSoundAction->setShortcut(QKeySequence("Ctrl+I"));
-    connect(importSoundAction,SIGNAL(triggered()),this,SLOT(importSound()));
+    mImportSoundAction = new QAction(tr("Import sound to create waveform"),this);
+    mImportSoundAction->setShortcut(QKeySequence("Ctrl+I"));
+    connect(mImportSoundAction,SIGNAL(triggered()),this,SLOT(importSound()));
 
-    closeAction = new QAction(tr("Close Sound"),this);
-    closeAction->setShortcut(QKeySequence("Ctrl+F4"));
-    closeAction->setEnabled(false);
-    connect(closeAction,SIGNAL(triggered()),this,SLOT(close()));
+    mCloseAction = new QAction(tr("Close Sound"),this);
+    mCloseAction->setShortcut(QKeySequence("Ctrl+F4"));
+    mCloseAction->setEnabled(false);
+    connect(mCloseAction,SIGNAL(triggered()),this,SLOT(close()));
 
-    openProjectAction = new QAction(tr("Open Sound"),this);
-    openProjectAction->setShortcut(QKeySequence("Ctrl+O"));
-    connect(openProjectAction,SIGNAL(triggered()),this,SLOT(openProject()));
+    mOpenProjectAction = new QAction(tr("Open Sound"),this);
+    mOpenProjectAction->setShortcut(QKeySequence("Ctrl+O"));
+    connect(mOpenProjectAction,SIGNAL(triggered()),this,SLOT(openProject()));
 
-    saveProjectAction = new QAction(tr("Save Sound"),this);
-    saveProjectAction->setShortcut(QKeySequence("Ctrl+S"));
-    connect(saveProjectAction,SIGNAL(triggered()),this,SLOT(save()));
+    mSaveProjectAction = new QAction(tr("Save Sound"),this);
+    mSaveProjectAction->setShortcut(QKeySequence("Ctrl+S"));
+    connect(mSaveProjectAction,SIGNAL(triggered()),this,SLOT(save()));
 
-    saveProjectAsAction = new QAction(tr("Save Sound As"),this);
-    saveProjectAsAction->setShortcut(QKeySequence("Ctrl+Shift+S"));
-    connect(saveProjectAsAction,SIGNAL(triggered()),this,SLOT(saveAs()));
+    mSaveProjectAsAction = new QAction(tr("Save Sound As"),this);
+    mSaveProjectAsAction->setShortcut(QKeySequence("Ctrl+Shift+S"));
+    connect(mSaveProjectAsAction,SIGNAL(triggered()),this,SLOT(saveAs()));
 
-    dataManagerAction = new QAction(tr("Data Manager"),this);
-    dataManagerAction->setShortcut(QKeySequence("Ctrl+D"));
-    connect(dataManagerAction,SIGNAL(triggered()),this,SLOT(launchDataManager()));
+    mDataManagerAction = new QAction(tr("Data Manager"),this);
+    mDataManagerAction->setShortcut(QKeySequence("Ctrl+D"));
+    connect(mDataManagerAction,SIGNAL(triggered()),this,SLOT(launchDataManager()));
 
-    plotManagerAction = new QAction(tr("Plot Manager"),this);
-    plotManagerAction->setShortcut(QKeySequence("Ctrl+M"));
-    connect(plotManagerAction,SIGNAL(triggered()),this,SLOT(launchPlotManager()));
+    mPlotManagerAction = new QAction(tr("Plot Manager"),this);
+    mPlotManagerAction->setShortcut(QKeySequence("Ctrl+M"));
+    connect(mPlotManagerAction,SIGNAL(triggered()),this,SLOT(launchPlotManager()));
 
-    newSoundAction = new QAction(tr("New Sound (new window)"),this);
-    newSoundAction->setShortcut(QKeySequence("Ctrl+N"));
+    mNewSoundAction = new QAction(tr("New Sound (new window)"),this);
+    mNewSoundAction->setShortcut(QKeySequence("Ctrl+N"));
     //    MdiArea* mdi = qobject_cast<MdiArea*>(mainWnd->centralWidget());
     //    qDebug() << mainWnd->mdi();
     //    connect(newSoundAction,SIGNAL(triggered()),mainWnd->mdi(),SLOT(newSoundWindow()));
 
-    newRegressionAction = new QAction(tr("New regression"),this);
-    connect(newRegressionAction,SIGNAL(triggered()),this,SLOT(newRegression()));
-    newRegressionAction->setShortcut(QKeySequence("Ctrl+R"));
+    mNewRegressionAction = new QAction(tr("New regression"),this);
+    connect(mNewRegressionAction,SIGNAL(triggered()),this,SLOT(newRegression()));
+    mNewRegressionAction->setShortcut(QKeySequence("Ctrl+R"));
 
-    importTextGridAction = new QAction(tr("Import TextGrid"),this);
-    connect(importTextGridAction,SIGNAL(triggered()),this,SLOT(importTextGrid()));
-    importTextGridAction->setShortcut(QKeySequence("Ctrl+T"));
+    mImportTextGridAction = new QAction(tr("Import TextGrid"),this);
+    connect(mImportTextGridAction,SIGNAL(triggered()),this,SLOT(importTextGrid()));
+    mImportTextGridAction->setShortcut(QKeySequence("Ctrl+T"));
 
-    fileMenu->addAction(openProjectAction);
-    fileMenu->addAction(saveProjectAction);
-    fileMenu->addAction(saveProjectAsAction);
-    fileMenu->addAction(closeAction);
-    fileMenu->addSeparator();
-    fileMenu->addAction(importSoundAction);
-    fileMenu->addAction(importTextGridAction);
+    mFileMenu->addAction(mOpenProjectAction);
+    mFileMenu->addAction(mSaveProjectAction);
+    mFileMenu->addAction(mSaveProjectAsAction);
+    mFileMenu->addAction(mCloseAction);
+    mFileMenu->addSeparator();
+    mFileMenu->addAction(mImportSoundAction);
+    mFileMenu->addAction(mImportTextGridAction);
     //    fileMenu->addSeparator();
     //    fileMenu->addAction(newSoundAction);
 
-    optionsMenu->addAction(dataManagerAction);
-    optionsMenu->addAction(plotManagerAction);
-    optionsMenu->addSeparator();
+    mOptionsMenu->addAction(mDataManagerAction);
+    mOptionsMenu->addAction(mPlotManagerAction);
+    mOptionsMenu->addSeparator();
 
-    visibilityMenu->addSeparator();
+    mVisibilityMenu->addSeparator();
 
-    regressionMenu->addAction(newRegressionAction);
-    regressionMenu->addSeparator();
+    mRegressionMenu->addAction(mNewRegressionAction);
+    mRegressionMenu->addSeparator();
 
     QAction* runScriptAction = new QAction(tr("Run script..."),this);
-    scriptingMenu->addAction(runScriptAction);
+    mScriptingMenu->addAction(runScriptAction);
     connect(runScriptAction,SIGNAL(triggered()),this,SLOT(runScript()));
 }
 
 void SoundWidget::setupMenus()
 {
-    fileMenu = menuBar->addMenu(tr("File"));
-    optionsMenu = menuBar->addMenu(tr("Options"));
-    visibilityMenu = menuBar->addMenu(tr("Display"));
-    visibilityMenu->setEnabled(false);
-    regressionMenu = menuBar->addMenu(tr("Regressions"));
-    annotationMenu = menuBar->addMenu(tr("Annotations"));
-    scriptingMenu = menuBar->addMenu(tr("Scripting"));
+    mFileMenu = mMenuBar->addMenu(tr("File"));
+    mOptionsMenu = mMenuBar->addMenu(tr("Options"));
+    mVisibilityMenu = mMenuBar->addMenu(tr("Display"));
+    mVisibilityMenu->setEnabled(false);
+    mRegressionMenu = mMenuBar->addMenu(tr("Regressions"));
+    mAnnotationMenu = mMenuBar->addMenu(tr("Annotations"));
+    mScriptingMenu = mMenuBar->addMenu(tr("Scripting"));
 }
 
 void SoundWidget::setupScripting()
 {
-    engine = new QScriptEngine;
+    mScriptEngine = new QScriptEngine;
 
     // set up the connections to receive spectrograms & waveforms that plugins emit
     // this is, technically, broader than just the scripting environment, but I want to make sure that this connection is made before the others
-    for(int i=0; i < mainWnd->w2s()->count(); i++ )
-	connect( mainWnd->w2s()->at(i), SIGNAL(spectrogramCreated(SpectrogramData*)), this, SLOT(addSpectrogram(SpectrogramData*)) );
-    for(int i=0; i < mainWnd->s2s()->count(); i++ )
-	connect( mainWnd->s2s()->at(i), SIGNAL(spectrogramCreated(SpectrogramData*)), this, SLOT(addSpectrogram(SpectrogramData*)) );
-    for(int i=0; i < mainWnd->s2w()->count(); i++ )
-	connect( mainWnd->s2w()->at(i), SIGNAL(waveformCreated(WaveformData*)), this, SLOT(addWaveform(WaveformData*)) );
-    for(int i=0; i < mainWnd->w2w()->count(); i++ )
-	connect( mainWnd->w2w()->at(i), SIGNAL(waveformCreated(WaveformData*)), this, SLOT(addWaveform(WaveformData*)) );
+    for(int i=0; i < mMainWnd->w2s()->count(); i++ )
+	connect( mMainWnd->w2s()->at(i), SIGNAL(spectrogramCreated(SpectrogramData*)), this, SLOT(addSpectrogram(SpectrogramData*)) );
+    for(int i=0; i < mMainWnd->s2s()->count(); i++ )
+	connect( mMainWnd->s2s()->at(i), SIGNAL(spectrogramCreated(SpectrogramData*)), this, SLOT(addSpectrogram(SpectrogramData*)) );
+    for(int i=0; i < mMainWnd->s2w()->count(); i++ )
+	connect( mMainWnd->s2w()->at(i), SIGNAL(waveformCreated(WaveformData*)), this, SLOT(addWaveform(WaveformData*)) );
+    for(int i=0; i < mMainWnd->w2w()->count(); i++ )
+	connect( mMainWnd->w2w()->at(i), SIGNAL(waveformCreated(WaveformData*)), this, SLOT(addWaveform(WaveformData*)) );
 
     // update the script environment when the script requests it
     connect(this,SIGNAL(requestScriptDataRefresh()),this,SLOT(setupScriptEnvironment()));
@@ -980,48 +980,48 @@ void SoundWidget::setupScripting()
 void SoundWidget::regressionMenuAction(QAction *action)
 {
     int actiontype = action->data().toInt();
-    int index = aRegressionMenus.indexOf(  qobject_cast<QMenu*>(action->parentWidget()) );
+    int index = maRegressionMenus.indexOf(  qobject_cast<QMenu*>(action->parentWidget()) );
 
 
     if(actiontype < 1000) // edit
     {
-	RegressionDialog *rd = new RegressionDialog(&aWaveformData, &aSpectrogramData,this);
-	rd->setFromRegression(aRegressions.at(index));
+	RegressionDialog *rd = new RegressionDialog(&maWaveformData, &maSpectrogramData,this);
+	rd->setFromRegression(maRegressions.at(index));
 	connect(rd,SIGNAL(regressionObject(RegressionModel*)),this,SLOT(addRegression(RegressionModel*)));
 	rd->exec();
     }
     else if(actiontype < 2000) // delete
     {
-	delete aRegressions.at(index);
-	aRegressions.removeAt(index);
-	regressionMenu->removeAction(aRegressionMenus.at(index)->menuAction());
-	aRegressionMenus.removeAt(index);
+	delete maRegressions.at(index);
+	maRegressions.removeAt(index);
+	mRegressionMenu->removeAction(maRegressionMenus.at(index)->menuAction());
+	maRegressionMenus.removeAt(index);
     }
 }
 
 void SoundWidget::annotationMenuAction(QAction *action)
 {
     int actiontype = action->data().toInt();
-    int index = aAnnotationMenus.indexOf( qobject_cast<QMenu*>(action->parentWidget()) );
+    int index = maAnnotationMenus.indexOf( qobject_cast<QMenu*>(action->parentWidget()) );
 
     if(actiontype < 1000) // visible
     {
 	if(action->isChecked())
-	    plotDisplay->annotations()->at(index)->show();
+	    mPlotDisplay->annotations()->at(index)->show();
 	else
-	    plotDisplay->annotations()->at(index)->hide();
+	    mPlotDisplay->annotations()->at(index)->hide();
     }
     else if(actiontype < 2000) // delete
     {
-	delete aIntervalAnnotations.at(index);
-	aIntervalAnnotations.removeAt(index);
-	annotationMenu->removeAction(aAnnotationMenus.at(index)->menuAction());
-	aAnnotationMenus.removeAt(index);
+	delete maIntervalAnnotations.at(index);
+	maIntervalAnnotations.removeAt(index);
+	mAnnotationMenu->removeAction(maAnnotationMenus.at(index)->menuAction());
+	maAnnotationMenus.removeAt(index);
 
-	delete plotDisplay->annotations()->at(index);
-	plotDisplay->annotations()->removeAt(index);
+	delete mPlotDisplay->annotations()->at(index);
+	mPlotDisplay->annotations()->removeAt(index);
 
-	plotDisplay->drawVerticalLayout();
+	mPlotDisplay->drawVerticalLayout();
     }
 }
 
@@ -1084,70 +1084,70 @@ void SoundWidget::executeCode(QString code)
 {
     setupScriptEnvironment();
 
-    QScriptSyntaxCheckResult check = engine->checkSyntax(code);
+    QScriptSyntaxCheckResult check = mScriptEngine->checkSyntax(code);
     if( check.state() != QScriptSyntaxCheckResult::Valid )
     {
         QMessageBox::critical(this,tr("Script error"),tr("Line %1, Column %2: %3").arg(check.errorLineNumber()).arg(check.errorColumnNumber()).arg(check.errorMessage()));
         return;
     }
 
-    QScriptValue result = engine->evaluate(code,"error.log");
-    if (engine->hasUncaughtException()) {
-        int line = engine->uncaughtExceptionLineNumber();
+    QScriptValue result = mScriptEngine->evaluate(code,"error.log");
+    if (mScriptEngine->hasUncaughtException()) {
+        int line = mScriptEngine->uncaughtExceptionLineNumber();
         qDebug() << "uncaught exception at line" << line << ":" << result.toString();
     }
 }
 
 void SoundWidget::setupScriptEnvironment()
 {
-    qScriptRegisterMetaType(engine, waveformArrayToScriptValue, waveformArrayFromScriptValue);
-    qScriptRegisterMetaType(engine, spectrogramArrayToScriptValue, spectrogramArrayFromScriptValue);
+    qScriptRegisterMetaType(mScriptEngine, waveformArrayToScriptValue, waveformArrayFromScriptValue);
+    qScriptRegisterMetaType(mScriptEngine, spectrogramArrayToScriptValue, spectrogramArrayFromScriptValue);
 
     QStringList waveformNames;
-    for(int i=0; i<aWaveformData.count(); i++)
-	waveformNames << aWaveformData.at(i)->name();
-    engine->globalObject().setProperty("waveformNames", engine->toScriptValue(waveformNames));
+    for(int i=0; i<maWaveformData.count(); i++)
+	waveformNames << maWaveformData.at(i)->name();
+    mScriptEngine->globalObject().setProperty("waveformNames", mScriptEngine->toScriptValue(waveformNames));
 
     QStringList spectrogramNames;
-    for(int i=0; i<aSpectrogramData.count(); i++)
-	spectrogramNames << aSpectrogramData.at(i)->name();
-    engine->globalObject().setProperty("spectrogramNames", engine->toScriptValue(spectrogramNames));
+    for(int i=0; i<maSpectrogramData.count(); i++)
+	spectrogramNames << maSpectrogramData.at(i)->name();
+    mScriptEngine->globalObject().setProperty("spectrogramNames", mScriptEngine->toScriptValue(spectrogramNames));
 
-    engine->globalObject().setProperty("waveforms", engine->toScriptValue(aWaveformData));
-    engine->globalObject().setProperty("spectrograms", engine->toScriptValue(aSpectrogramData));
+    mScriptEngine->globalObject().setProperty("waveforms", mScriptEngine->toScriptValue(maWaveformData));
+    mScriptEngine->globalObject().setProperty("spectrograms", mScriptEngine->toScriptValue(maSpectrogramData));
 
-    engine->globalObject().setProperty("widget", engine->newQObject(this));
+    mScriptEngine->globalObject().setProperty("widget", mScriptEngine->newQObject(this));
 
     // add the w2s plugins as objects
-    for(int i=0; i<mainWnd->w2s()->count(); i++)
+    for(int i=0; i<mMainWnd->w2s()->count(); i++)
     {
-	QObject *someObject = mainWnd->w2s()->at(i);
-	QScriptValue objectValue = engine->newQObject(someObject);
-	engine->globalObject().setProperty(mainWnd->w2s()->at(i)->scriptName(), objectValue);
+	QObject *someObject = mMainWnd->w2s()->at(i);
+	QScriptValue objectValue = mScriptEngine->newQObject(someObject);
+	mScriptEngine->globalObject().setProperty(mMainWnd->w2s()->at(i)->scriptName(), objectValue);
     }
 
     // add the w2w plugins as objects
-    for(int i=0; i<mainWnd->w2w()->count(); i++)
+    for(int i=0; i<mMainWnd->w2w()->count(); i++)
     {
-	QObject *someObject = mainWnd->w2w()->at(i);
-	QScriptValue objectValue = engine->newQObject(someObject);
-	engine->globalObject().setProperty(mainWnd->w2w()->at(i)->scriptName(), objectValue);
+	QObject *someObject = mMainWnd->w2w()->at(i);
+	QScriptValue objectValue = mScriptEngine->newQObject(someObject);
+	mScriptEngine->globalObject().setProperty(mMainWnd->w2w()->at(i)->scriptName(), objectValue);
     }
 
     // add the s2s plugins as objects
-    for(int i=0; i<mainWnd->s2s()->count(); i++)
+    for(int i=0; i<mMainWnd->s2s()->count(); i++)
     {
-	QObject *someObject = mainWnd->s2s()->at(i);
-	QScriptValue objectValue = engine->newQObject(someObject);
-	engine->globalObject().setProperty(mainWnd->s2s()->at(i)->scriptName(), objectValue);
+	QObject *someObject = mMainWnd->s2s()->at(i);
+	QScriptValue objectValue = mScriptEngine->newQObject(someObject);
+	mScriptEngine->globalObject().setProperty(mMainWnd->s2s()->at(i)->scriptName(), objectValue);
     }
 
     // add the s2w plugins as objects
-    for(int i=0; i<mainWnd->s2w()->count(); i++)
+    for(int i=0; i<mMainWnd->s2w()->count(); i++)
     {
-	QObject *someObject = mainWnd->s2w()->at(i);
-	QScriptValue objectValue = engine->newQObject(someObject);
-	engine->globalObject().setProperty(mainWnd->s2w()->at(i)->scriptName(), objectValue);
+	QObject *someObject = mMainWnd->s2w()->at(i);
+	QScriptValue objectValue = mScriptEngine->newQObject(someObject);
+	mScriptEngine->globalObject().setProperty(mMainWnd->s2w()->at(i)->scriptName(), objectValue);
 
 //        qDebug() << "added" << mainWnd->s2w()->at(i)->scriptName() << engine->globalObject().property(mainWnd->s2w()->at(i)->scriptName()).isQObject();
     }
@@ -1155,38 +1155,38 @@ void SoundWidget::setupScriptEnvironment()
 
 void SoundWidget::removeWaveform(int index)
 {
-    if( !(index < aWaveformData.count()) ) { return; }
+    if( !(index < maWaveformData.count()) ) { return; }
     // first delete it from all the plots
-    for(int i=0; i<plotDisplay->plotViews()->count(); i++) // every plot
+    for(int i=0; i<mPlotDisplay->plotViews()->count(); i++) // every plot
     {
-	for(int j=0; j<plotDisplay->plotViews()->at(i)->curves()->count(); j++) // every plot item
+	for(int j=0; j<mPlotDisplay->plotViews()->at(i)->curves()->count(); j++) // every plot item
 	{
-	    if( plotDisplay->plotViews()->at(i)->curveData(j) == aWaveformData.at(index) ) // see if we're going to delete this curve's data
+	    if( mPlotDisplay->plotViews()->at(i)->curveData(j) == maWaveformData.at(index) ) // see if we're going to delete this curve's data
 	    {
-		plotDisplay->plotViews()->at(i)->removeItemAt(j); // if so, remove the curve
+		mPlotDisplay->plotViews()->at(i)->removeItemAt(j); // if so, remove the curve
 		j--; // back up one since the j-th item is one we haven't looked at yet
 	    }
 	}
     }
     // then delete the data itself
-    delete aWaveformData.takeAt(index);
+    delete maWaveformData.takeAt(index);
 }
 
 void SoundWidget::removeSpectrogram(int index)
 {
-    if( !(index < aSpectrogramData.count()) ) { return; }
+    if( !(index < maSpectrogramData.count()) ) { return; }
     // first delete it from all the plots
-    for(int i=0; i<plotDisplay->plotViews()->count(); i++) // every plot item
+    for(int i=0; i<mPlotDisplay->plotViews()->count(); i++) // every plot item
     {
-	for(int j=0; j<plotDisplay->plotViews()->at(i)->spectrograms()->count(); j++) // every spectrogram
+	for(int j=0; j<mPlotDisplay->plotViews()->at(i)->spectrograms()->count(); j++) // every spectrogram
 	{
-	    if( plotDisplay->plotViews()->at(i)->spectrogramData(j) == aSpectrogramData.at(index) ) // see if we're going to delete this spectrograms's data
+	    if( mPlotDisplay->plotViews()->at(i)->spectrogramData(j) == maSpectrogramData.at(index) ) // see if we're going to delete this spectrograms's data
 	    {
-		plotDisplay->plotViews()->at(i)->removeItemAt(j); // if so, remove the spectrogram
+		mPlotDisplay->plotViews()->at(i)->removeItemAt(j); // if so, remove the spectrogram
 		j--; // back up one since the j-th item is one we haven't looked at yet
 	    }
 	}
     }
     // then delete the data itself
-    delete aSpectrogramData.takeAt(index);
+    delete maSpectrogramData.takeAt(index);
 }

@@ -24,67 +24,67 @@
 
 void PlotViewWidget::setHorizontalAxis(double left, double right)
 {
-    qwtPlot->setAxisScale((int)QwtPlot::xBottom,left,right,0.0f);
-    qwtPlot->replot();
+    mQwtPlot->setAxisScale((int)QwtPlot::xBottom,left,right,0.0f);
+    mQwtPlot->replot();
 }
 
-PlotViewWidget::PlotViewWidget(QString name, QWidget *parent) : QWidget(parent), label(name)
+PlotViewWidget::PlotViewWidget(QString name, QWidget *parent) : QWidget(parent), mLabel(name)
 {
-    widgetHeight = 200;
+    mWidgetHeight = 200;
 
-    hlayout = new QHBoxLayout(this);
+    mHlayout = new QHBoxLayout(this);
 
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    secondaryAxis = false;
+    mSecondaryAxis = false;
 
-    qwtPlot = new QwtPlot(this);
-    qwtPlot->setSizePolicy(sizePolicy);
-    qwtPlot->setMinimumHeight(widgetHeight);
-    qwtPlot->setMaximumHeight(1500);
+    mQwtPlot = new QwtPlot(this);
+    mQwtPlot->setSizePolicy(sizePolicy);
+    mQwtPlot->setMinimumHeight(mWidgetHeight);
+    mQwtPlot->setMaximumHeight(1500);
 
-    qwtPlot->enableAxis(QwtPlot::yLeft);
-    qwtPlot->enableAxis(QwtPlot::yRight);
+    mQwtPlot->enableAxis(QwtPlot::yLeft);
+    mQwtPlot->enableAxis(QwtPlot::yRight);
 
     int scaleWidth = 60;
-    qwtPlot->axisScaleDraw(QwtPlot::yLeft)->setMinimumExtent( scaleWidth );
-    qwtPlot->axisScaleDraw(QwtPlot::yRight)->setMinimumExtent( scaleWidth );
+    mQwtPlot->axisScaleDraw(QwtPlot::yLeft)->setMinimumExtent( scaleWidth );
+    mQwtPlot->axisScaleDraw(QwtPlot::yRight)->setMinimumExtent( scaleWidth );
 
-    hlayout->addWidget(qwtPlot);
+    mHlayout->addWidget(mQwtPlot);
 }
 
 PlotViewWidget::~PlotViewWidget()
 {
-    qDeleteAll(aCurves.begin(), aCurves.end());
+    qDeleteAll(maCurves.begin(), maCurves.end());
 }
 
 QSize PlotViewWidget::sizeHint() const
 {
-    return QSize(750,widgetHeight);
+    return QSize(750,mWidgetHeight);
 }
 
 void PlotViewWidget::addCurveData(WaveformData *curveData, bool secondary, QColor col)
 {
-    aWaveformData << curveData;
+    maWaveformData << curveData;
 
     QwtPlotCurve *waveCurve = new QwtPlotCurve("dummy");
     waveCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
     waveCurve->setPen(QPen(col));
     waveCurve->setSamples( curveData );
-    aCurves << waveCurve;
-    waveCurve->attach(qwtPlot);
+    maCurves << waveCurve;
+    waveCurve->attach(mQwtPlot);
 
-    if( !secondaryAxis || aCurves.length() == 0 ) // no secondary axis or just one plot
+    if( !mSecondaryAxis || maCurves.length() == 0 ) // no secondary axis or just one plot
     {
-	qwtPlot->replot();
-    qwtPlot->setAxisScaleDiv(QwtPlot::yRight, qwtPlot->axisScaleDiv(QwtPlot::yLeft));
-	qwtPlot->replot();
+	mQwtPlot->replot();
+    mQwtPlot->setAxisScaleDiv(QwtPlot::yRight, mQwtPlot->axisScaleDiv(QwtPlot::yLeft));
+	mQwtPlot->replot();
     }
     else
     {
 	if(secondary)
 	{
-	    qwtPlot->setAxisAutoScale(QwtPlot::yRight);
+	    mQwtPlot->setAxisAutoScale(QwtPlot::yRight);
 	    waveCurve->setYAxis(QwtPlot::yRight);
 	}
 	else
@@ -93,12 +93,12 @@ void PlotViewWidget::addCurveData(WaveformData *curveData, bool secondary, QColo
 	}
     }
 
-    qwtPlot->repaint();
+    mQwtPlot->repaint();
 }
 
 void PlotViewWidget::addSpectrogramData(SpectrogramData *spectrogramData)
 {
-    aSpectrogramData << spectrogramData;
+    maSpectrogramData << spectrogramData;
 
     QwtPlotSpectrogram *spectrogram = new QwtPlotSpectrogram();
 
@@ -108,43 +108,43 @@ void PlotViewWidget::addSpectrogramData(SpectrogramData *spectrogramData)
     spectrogram->setData(spectrogramData);
 
     QRectF r = spectrogramData->boundingRect();
-    qwtPlot->setAxisScale( QwtPlot::yLeft , 0, 5000, 1000);
-    qwtPlot->setAxisScale( QwtPlot::yRight , 0, 5000, 1000);
-    qwtPlot->setAxisScale( QwtPlot::xBottom , r.left(), r.right(), 0.1);
+    mQwtPlot->setAxisScale( QwtPlot::yLeft , 0, 5000, 1000);
+    mQwtPlot->setAxisScale( QwtPlot::yRight , 0, 5000, 1000);
+    mQwtPlot->setAxisScale( QwtPlot::xBottom , r.left(), r.right(), 0.1);
 
-    aSpectrograms << spectrogram;
-    spectrogram->attach(qwtPlot);
-    qwtPlot->repaint();
+    maSpectrograms << spectrogram;
+    spectrogram->attach(mQwtPlot);
+    mQwtPlot->repaint();
 }
 
 
 void PlotViewWidget::removeItemAt(int i)
 {
-    aCurves.at(i)->detach();
-    aCurves.removeAt(i);
-    aWaveformData.removeAt(i);
+    maCurves.at(i)->detach();
+    maCurves.removeAt(i);
+    maWaveformData.removeAt(i);
 
-    if( !secondaryAxis || aCurves.length() == 1 ) // no secondary axis or just one plot
+    if( !mSecondaryAxis || maCurves.length() == 1 ) // no secondary axis or just one plot
     {
-	qwtPlot->replot();
-    qwtPlot->setAxisScaleDiv(QwtPlot::yRight, qwtPlot->axisScaleDiv(QwtPlot::yLeft));
-	qwtPlot->replot();
+	mQwtPlot->replot();
+    mQwtPlot->setAxisScaleDiv(QwtPlot::yRight, mQwtPlot->axisScaleDiv(QwtPlot::yLeft));
+	mQwtPlot->replot();
     }
 }
 
 void PlotViewWidget::toggleCurveAxisAssociation(int index)
 {
-    if(index >= aCurves.length()) { return; }
-    if(aCurves.at(index)->yAxis() == QwtPlot::yLeft)
+    if(index >= maCurves.length()) { return; }
+    if(maCurves.at(index)->yAxis() == QwtPlot::yLeft)
     {
-	qwtPlot->setAxisAutoScale(QwtPlot::yRight);
-	aCurves.at(index)->setYAxis(QwtPlot::yRight);
+	mQwtPlot->setAxisAutoScale(QwtPlot::yRight);
+	maCurves.at(index)->setYAxis(QwtPlot::yRight);
     }
     else
     {
-	aCurves.at(index)->setYAxis(QwtPlot::yLeft);
+	maCurves.at(index)->setYAxis(QwtPlot::yLeft);
     }
-    qwtPlot->replot();
+    mQwtPlot->replot();
 }
 
 void PlotViewWidget::mouseMoveEvent ( QMouseEvent * event )
@@ -181,65 +181,65 @@ void PlotViewWidget::contextMenuEvent ( QContextMenuEvent * event )
 {
     QMenu menu(this);
 
-    if( aCurves.count() > 0 )
+    if( maCurves.count() > 0 )
     {
 	QMenu *curveSettingsMenu = menu.addMenu("Curve settings");
-	for(int i=0; i<aCurves.count(); i++)
+	for(int i=0; i<maCurves.count(); i++)
 	{
-	    IndexedAction *tmp = new IndexedAction(countString(i)+aWaveformData.at(i)->name(),i,curveSettingsMenu);
+	    IndexedAction *tmp = new IndexedAction(countString(i)+maWaveformData.at(i)->name(),i,curveSettingsMenu);
 	    curveSettingsMenu->addAction( tmp );
 	    connect(tmp, SIGNAL(indexClicked(int)), this, SLOT(launchCurveSettings(int)) );
 	}
     }
 
-    if( aSpectrograms.count() > 0 )
+    if( maSpectrograms.count() > 0 )
     {
 	QMenu *spectrogramSettingsMenu = menu.addMenu("Spectogram settings");
-	for(int i=0; i<aCurves.count(); i++)
+	for(int i=0; i<maCurves.count(); i++)
 	{
-	    IndexedAction *tmp = new IndexedAction(countString(i)+aSpectrogramData.at(i)->name(),i,spectrogramSettingsMenu);
+	    IndexedAction *tmp = new IndexedAction(countString(i)+maSpectrogramData.at(i)->name(),i,spectrogramSettingsMenu);
 	    spectrogramSettingsMenu->addAction( tmp );
 	    connect(tmp, SIGNAL(indexClicked(int)), this, SLOT(launchSpectrogramSettings(int)) );
 	}
     }
 
-    if( aCurves.count() > 0 )
+    if( maCurves.count() > 0 )
     {
 	menu.addSeparator();
 
 	QMenu *waveformTimesMenu = menu.addMenu("Curve times");
-	for(int i=0; i<aCurves.count(); i++)
+	for(int i=0; i<maCurves.count(); i++)
 	{
-	    IndexedAction *tmp = new IndexedAction(countString(i)+aWaveformData.at(i)->name(),i,waveformTimesMenu);
+	    IndexedAction *tmp = new IndexedAction(countString(i)+maWaveformData.at(i)->name(),i,waveformTimesMenu);
 	    waveformTimesMenu->addAction( tmp );
 	    connect(tmp, SIGNAL(indexClicked(int)), this, SLOT(showCurveTimes(int)) );
 	}
 
 	QMenu *allDataMenu = menu.addMenu("Curve data");
-	for(int i=0; i<aCurves.count(); i++)
+	for(int i=0; i<maCurves.count(); i++)
 	{
-	    IndexedAction *tmp = new IndexedAction(countString(i)+aWaveformData.at(i)->name(),i,allDataMenu);
+	    IndexedAction *tmp = new IndexedAction(countString(i)+maWaveformData.at(i)->name(),i,allDataMenu);
 	    allDataMenu->addAction( tmp );
 	    connect(tmp, SIGNAL(indexClicked(int)), this, SLOT(showCurveTimesData(int)) );
 	}
     }
 
-    if( aSpectrograms.count() > 0 )
+    if( maSpectrograms.count() > 0 )
     {
 	menu.addSeparator();
 
 	QMenu *spectrogramTimeMenu = menu.addMenu("Spectrogram times");
-	for(int i=0; i<aSpectrograms.count(); i++)
+	for(int i=0; i<maSpectrograms.count(); i++)
 	{
-	    IndexedAction *tmp = new IndexedAction(countString(i)+aSpectrogramData.at(i)->name(),i,spectrogramTimeMenu);
+	    IndexedAction *tmp = new IndexedAction(countString(i)+maSpectrogramData.at(i)->name(),i,spectrogramTimeMenu);
 	    spectrogramTimeMenu->addAction( tmp );
 	    connect(tmp, SIGNAL(indexClicked(int)), this, SLOT(showSpectrogramTimes(int)) );
 	}
 
 	QMenu *spectrogramFrequencyMenu = menu.addMenu("Spectrogram frequencies");
-	for(int i=0; i<aSpectrograms.count(); i++)
+	for(int i=0; i<maSpectrograms.count(); i++)
 	{
-	    IndexedAction *tmp = new IndexedAction(countString(i)+aSpectrogramData.at(i)->name(),i,spectrogramFrequencyMenu);
+	    IndexedAction *tmp = new IndexedAction(countString(i)+maSpectrogramData.at(i)->name(),i,spectrogramFrequencyMenu);
 	    spectrogramFrequencyMenu->addAction( tmp );
 	    connect(tmp, SIGNAL(indexClicked(int)), this, SLOT(showSpectrogramFrequencies(int)) );
 	}
@@ -251,9 +251,9 @@ void PlotViewWidget::contextMenuEvent ( QContextMenuEvent * event )
 void PlotViewWidget::showCurveTimes(int index)
 {
     QString str;
-    for(quint32 i=0; i<aWaveformData.at(index)->getNSamples(); i++)
+    for(quint32 i=0; i<maWaveformData.at(index)->getNSamples(); i++)
     {
-    str.append(QString::number(aWaveformData.at(index)->xData().at(i) )+"\n");
+    str.append(QString::number(maWaveformData.at(index)->xData().at(i) )+"\n");
     }
     TextDisplayDialog tdd(str, this);
     tdd.exec();
@@ -262,9 +262,9 @@ void PlotViewWidget::showCurveTimes(int index)
 void PlotViewWidget::showCurveTimesData(int index)
 {
     QString str;
-    for(quint32 i=0; i<aWaveformData.at(index)->getNSamples(); i++)
+    for(quint32 i=0; i<maWaveformData.at(index)->getNSamples(); i++)
     {
-    str.append(QString::number(aWaveformData.at(index)->xData().at(i))+"\t"+QString::number(aWaveformData.at(index)->yData().at(i))+"\n");
+    str.append(QString::number(maWaveformData.at(index)->xData().at(i))+"\t"+QString::number(maWaveformData.at(index)->yData().at(i))+"\n");
     }
     TextDisplayDialog tdd(str, this);
     tdd.exec();
@@ -273,9 +273,9 @@ void PlotViewWidget::showCurveTimesData(int index)
 void PlotViewWidget::showSpectrogramTimes(int index)
 {
     QString str;
-    for(quint32 i=0; i<aSpectrogramData.at(index)->getNTimeSteps(); i++)
+    for(quint32 i=0; i<maSpectrogramData.at(index)->getNTimeSteps(); i++)
     {
-	str.append(QString::number(aSpectrogramData.at(index)->getTimeFromIndex(i) )+"\n");
+	str.append(QString::number(maSpectrogramData.at(index)->getTimeFromIndex(i) )+"\n");
     }
     TextDisplayDialog tdd(str, this);
     tdd.exec();
@@ -284,9 +284,9 @@ void PlotViewWidget::showSpectrogramTimes(int index)
 void PlotViewWidget::showSpectrogramFrequencies(int index)
 {
     QString str;
-    for(quint32 i=0; i<aSpectrogramData.at(index)->getNFrequencyBins(); i++)
+    for(quint32 i=0; i<maSpectrogramData.at(index)->getNFrequencyBins(); i++)
     {
-	str.append(QString::number(aSpectrogramData.at(index)->getFrequencyFromIndex(i))+"\n");
+	str.append(QString::number(maSpectrogramData.at(index)->getFrequencyFromIndex(i))+"\n");
     }
     TextDisplayDialog tdd(str, this);
     tdd.exec();
@@ -295,67 +295,67 @@ void PlotViewWidget::showSpectrogramFrequencies(int index)
 void PlotViewWidget::mouseDoubleClickEvent ( QMouseEvent *event )
 {
     Q_UNUSED(event);
-    if(aCurves.length() > 0)
+    if(maCurves.length() > 0)
 	launchCurveSettings(0);
-    else if(aSpectrograms.length() > 0)
+    else if(maSpectrograms.length() > 0)
 	launchSpectrogramSettings(0);
 }
 
 void PlotViewWidget::launchCurveSettings(int index)
 {
-    if( index >= aCurves.count() ) { return; }
-    CurveSettingsDialog cs(aCurves.at(index), qwtPlot,this);
+    if( index >= maCurves.count() ) { return; }
+    CurveSettingsDialog cs(maCurves.at(index), mQwtPlot,this);
     cs.exec();
 }
 
 void PlotViewWidget::launchSpectrogramSettings(int index)
 {
-    if( index >= aSpectrograms.count() ) { return; }
-    SpectrogramSettingsDialog ss(aSpectrograms.at(index), qwtPlot, this);
+    if( index >= maSpectrograms.count() ) { return; }
+    SpectrogramSettingsDialog ss(maSpectrograms.at(index), mQwtPlot, this);
     ss.exec();
 }
 
 QString PlotViewWidget::name() const
 {
-    return label;
+    return mLabel;
 }
 
 void PlotViewWidget::setName(QString n)
 {
-    label = n;
+    mLabel = n;
 }
 
 QList<QwtPlotCurve*>* PlotViewWidget::curves()
 {
-    return &aCurves;
+    return &maCurves;
 }
 
 QList<QwtPlotSpectrogram*>* PlotViewWidget::spectrograms()
 {
-    return &aSpectrograms;
+    return &maSpectrograms;
 }
 
 WaveformData* PlotViewWidget::curveData(int i)
 {
-    return aWaveformData.at(i);
+    return maWaveformData.at(i);
 }
 
 SpectrogramData* PlotViewWidget::spectrogramData(int i)
 {
-    return aSpectrogramData.at(i);
+    return maSpectrogramData.at(i);
 }
 
 QwtPlot* PlotViewWidget::plot()
 {
-    return qwtPlot;
+    return mQwtPlot;
 }
 
 bool PlotViewWidget::hasSecondaryAxis()
 {
-    return secondaryAxis;
+    return mSecondaryAxis;
 }
 
 void PlotViewWidget::setHasSecondaryAxis(bool hasSecondaryAxis)
 {
-    secondaryAxis = hasSecondaryAxis;
+    mSecondaryAxis = hasSecondaryAxis;
 }

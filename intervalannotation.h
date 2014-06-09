@@ -14,7 +14,7 @@ class Interval {
 public:
     Interval() {}
     //! \brief Initialize the interval with label \a label, the left edge of the interval at \a left seconds, and the right edge at \a right seconds.
-    Interval(QString label, double left, double right);
+    Interval(QString mLabel, double mLeft, double mRight);
 
     //! \brief Return true if the interval overlaps with the range [\a start,\a end], otherwise return false.
     bool inRange(double start, double end);
@@ -22,8 +22,8 @@ public:
     //! \brief Return an interval identical to the current one, but clipped to the range [\a start,\a end].
     Interval* clip(double start, double end);
 
-    double left, right;
-    QString label;
+    double mLeft, mRight;
+    QString mLabel;
 };
 
 /*! \class IntervalAnnotation
@@ -46,8 +46,8 @@ public:
     //! \brief Return false if the \a other has the same number of intervals and same labels as \a this, otherwise return true.
     bool operator!=(const IntervalAnnotation &other) const;
 
-    QString name;
-    QList<Interval*> aIntervals;
+    QString mName;
+    QList<Interval*> maIntervals;
 
     //! \brief Return an interval tier identical to the current one, but clipped to the range [\a start,\a end].
     QList<Interval*> clip(double start, double end);

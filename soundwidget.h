@@ -137,27 +137,27 @@ private slots:
     void setupScripting();
 
 private:
-    MainWindow *mainWnd;
-    PlotDisplayAreaWidget *plotDisplay;
+    MainWindow *mMainWnd;
+    PlotDisplayAreaWidget *mPlotDisplay;
 
-    QScriptEngine* engine;
+    QScriptEngine* mScriptEngine;
 
-    QMenuBar *menuBar;
+    QMenuBar *mMenuBar;
 
-    QString currentFilename;
+    QString mCurrentFilename;
 
-    QMenu *fileMenu, *optionsMenu, *visibilityMenu, *regressionMenu, *annotationMenu, *scriptingMenu;
-    QAction *importSoundAction, *closeAction, *openProjectAction, *saveProjectAction, *saveProjectAsAction, *newSoundAction;
-    QAction *newRegressionAction, *importTextGridAction;
-    QAction *plotManagerAction, *dataManagerAction, *regressionAction;
-    QList<QAction*> visibilityActions;
+    QMenu *mFileMenu, *mOptionsMenu, *mVisibilityMenu, *mRegressionMenu, *mAnnotationMenu, *mScriptingMenu;
+    QAction *mImportSoundAction, *mCloseAction, *mOpenProjectAction, *mSaveProjectAction, *mSaveProjectAsAction, *mNewSoundAction;
+    QAction *mNewRegressionAction, *mImportTextGridAction;
+    QAction *mPlotManagerAction, *mDataManagerAction, *mRegressionAction;
+    QList<QAction*> mVisibilityActions;
 
-    QList<WaveformData*> aWaveformData;
-    QList<SpectrogramData*> aSpectrogramData;
-    QList<RegressionModel*> aRegressions;
-    QList<IntervalAnnotation*> aIntervalAnnotations;
-    QList<QMenu*> aRegressionMenus;
-    QList<QMenu*> aAnnotationMenus;
+    QList<WaveformData*> maWaveformData;
+    QList<SpectrogramData*> maSpectrogramData;
+    QList<RegressionModel*> maRegressions;
+    QList<IntervalAnnotation*> maIntervalAnnotations;
+    QList<QMenu*> maRegressionMenus;
+    QList<QMenu*> maAnnotationMenus;
 
     //! \brief Return the inner text of the next element named \a elementname in \a reader, or an empty string if there is none
     QString readXmlElement(QXmlStreamReader &reader, QString elementname);

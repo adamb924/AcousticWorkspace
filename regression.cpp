@@ -42,7 +42,7 @@ QString InteractionEffect::safeName()
     return ret;
 }
 
-RegressionModel::RegressionModel() : dependentSpectrogram(0), interceptTerm(true), spectrogramMode(false), label("Default name")
+RegressionModel::RegressionModel() : mDependentSpectrogram(0), mInterceptTerm(true), mSpectrogramMode(false), mLabel("Default name")
 {
 }
 
@@ -52,61 +52,61 @@ RegressionModel::~RegressionModel()
 
 bool RegressionModel::hasIntercept() const
 {
-    return interceptTerm;
+    return mInterceptTerm;
 }
 
 void RegressionModel::setInterceptTerm(bool value)
 {
-    interceptTerm = value;
+    mInterceptTerm = value;
 }
 
 void RegressionModel::setDependentSpectrogram(SpectrogramData *dep)
 {
-    dependentSpectrogram = dep;
-    spectrogramMode = true;
+    mDependentSpectrogram = dep;
+    mSpectrogramMode = true;
 }
 
 void RegressionModel::addDependentVariables(QList<RegressionListItem*> dep)
 {
     for(int i=0; i<dep.count(); i++)
-	dependent.append(dep.at(i)->data());
-    spectrogramMode = false;
+	mDependent.append(dep.at(i)->data());
+    mSpectrogramMode = false;
 }
 
 void RegressionModel::addIndependentVariables(QList<RegressionListItem*> simple, QList<RegressionInteractionListItem*> interaction)
 {
     for(int i=0; i<simple.count(); i++)
-	this->simple.append(simple.at(i)->data());
+	this->mSimple.append(simple.at(i)->data());
 
     // make sure that redundant items aren't added
     for(int i=0; i<interaction.count(); i++)
     {
 	bool redundant = false;
-	for(int j=0; j<this->interaction.count(); j++)
+	for(int j=0; j<this->mInteraction.count(); j++)
 	{
-	    if( this->interaction.at(j)->members == interaction.at(i)->interaction()->members )
+	    if( this->mInteraction.at(j)->members == interaction.at(i)->interaction()->members )
 	    {
 		redundant = true;
 		break;
 	    }
 	}
 	if(!redundant)
-	    this->interaction.append(interaction.at(i)->interaction());
+	    this->mInteraction.append(interaction.at(i)->interaction());
     }
 }
 
 void RegressionModel::fit()
 {
-    if( (!spectrogramMode && dependent.count() == 0) || (simple.count() + interaction.count())==0 ) { return; }
+    if( (!mSpectrogramMode && mDependent.count() == 0) || (mSimple.count() + mInteraction.count())==0 ) { return; }
 
     int nrow;
-    if(spectrogramMode)
-	nrow = dependentSpectrogram->getNTimeSteps();
+    if(mSpectrogramMode)
+	nrow = mDependentSpectrogram->getNTimeSteps();
     else
-	nrow = dependent.at(0)->getNSamples();
+	nrow = mDependent.at(0)->getNSamples();
 
-    int ncol = simple.count() + interaction.count();
-    if(interceptTerm)
+    int ncol = mSimple.count() + mInteraction.count();
+    if(mInterceptTerm)
 	ncol++;
 
     gsl_multifit_linear_workspace *workspace = gsl_multifit_linear_alloc(nrow,ncol);
@@ -119,31 +119,31 @@ void RegressionModel::fit()
 
     gsl_matrix *independent = gsl_matrix_alloc(nrow,ncol);
     int ct=0;
-    for(int i=0; i<simple.count(); i++)
+    for(int i=0; i<mSimple.count(); i++)
     {
-	factorNames << simple.at(i)->name();
+	factorNames << mSimple.at(i)->name();
 
-    gsl_vector_const_view tmpView = gsl_vector_const_view_array( simple.at(i)->yData().data() , nrow);
+    gsl_vector_const_view tmpView = gsl_vector_const_view_array( mSimple.at(i)->yData().data() , nrow);
 	gsl_matrix_set_col(independent, ct, &tmpView.vector );
 	ct++;
     }
 
-    for(int i=0; i<interaction.count(); i++)
+    for(int i=0; i<mInteraction.count(); i++)
     {
 	// skip an empty interaction
-	if( interaction.at(i)->members.count() == 0) { continue; }
+	if( mInteraction.at(i)->members.count() == 0) { continue; }
 
-	factorNames << interaction.at(i)->name();
+	factorNames << mInteraction.at(i)->name();
 
 	gsl_vector *tmp = gsl_vector_alloc(nrow);
 
-    gsl_vector_const_view firstView = gsl_vector_const_view_array( interaction.at(i)->members.at(0)->yData().data() , nrow);
+    gsl_vector_const_view firstView = gsl_vector_const_view_array( mInteraction.at(i)->members.at(0)->yData().data() , nrow);
 
 	gsl_vector_memcpy(tmp, &firstView.vector);
 
-	for(int j=1; j<interaction.at(i)->members.count(); j++)
+	for(int j=1; j<mInteraction.at(i)->members.count(); j++)
 	{
-        gsl_vector_const_view tmpView = gsl_vector_const_view_array( interaction.at(i)->members.at(j)->yData().data() , nrow);
+        gsl_vector_const_view tmpView = gsl_vector_const_view_array( mInteraction.at(i)->members.at(j)->yData().data() , nrow);
 	    gsl_vector_mul ( tmp , &(tmpView.vector) );
 	}
 
@@ -154,7 +154,7 @@ void RegressionModel::fit()
 	ct++;
     }
 
-    if(interceptTerm)
+    if(mInterceptTerm)
     {
 	for(int i=0; i<nrow; i++)
 	    gsl_matrix_set(independent,i,ct,1);
@@ -164,23 +164,23 @@ void RegressionModel::fit()
     QString output = "";
 
 
-    if(spectrogramMode)
+    if(mSpectrogramMode)
     {
-	double *rsq = (double*)malloc(sizeof(double)*dependentSpectrogram->getNFrequencyBins());
+	double *rsq = (double*)malloc(sizeof(double)*mDependentSpectrogram->getNFrequencyBins());
 
 	output += "Freq.Bin\tR-squared\tRSS\tTSS\n";
-	for(quint32 i=0; i< dependentSpectrogram->getNFrequencyBins(); i++ )
+	for(quint32 i=0; i< mDependentSpectrogram->getNFrequencyBins(); i++ )
 	{
-	    gsl_vector_view dependent_view = gsl_vector_view_array_with_stride( dependentSpectrogram->pdata()+i, dependentSpectrogram->getNFrequencyBins(), dependentSpectrogram->getNTimeSteps() );
+	    gsl_vector_view dependent_view = gsl_vector_view_array_with_stride( mDependentSpectrogram->pdata()+i, mDependentSpectrogram->getNFrequencyBins(), mDependentSpectrogram->getNTimeSteps() );
 
 	    gsl_multifit_linear(independent, &dependent_view.vector, estimate, cov, &chisq, workspace);
 	    gsl_multifit_linear_residuals(independent, &dependent_view.vector, estimate, residuals);
 
-	    double TSS = gsl_stats_tss(dependentSpectrogram->pdata()+i,dependentSpectrogram->getNFrequencyBins(),dependentSpectrogram->getNTimeSteps());
+	    double TSS = gsl_stats_tss(mDependentSpectrogram->pdata()+i,mDependentSpectrogram->getNFrequencyBins(),mDependentSpectrogram->getNTimeSteps());
 	    double RSS = gsl_stats_tss(residuals->data,1,nrow);
 	    *(rsq+i) = 1- RSS/TSS;
 
-	    output += QString::number(dependentSpectrogram->getFrequencyFromIndex(i)) + "\t" + QString::number(*(rsq+i)) + "\t" + QString::number(RSS) + "\t" + QString::number(TSS) + "\n";
+	    output += QString::number(mDependentSpectrogram->getFrequencyFromIndex(i)) + "\t" + QString::number(*(rsq+i)) + "\t" + QString::number(RSS) + "\t" + QString::number(TSS) + "\n";
 	}
 
 	QwtPlot *qwtPlot = new QwtPlot;
@@ -188,7 +188,7 @@ void RegressionModel::fit()
 	QwtPlotCurve *waveCurve = new QwtPlotCurve("dummy");
 	waveCurve->setRenderHint(QwtPlotItem::RenderAntialiased);
 	waveCurve->setPen(QPen(Qt::blue));
-    waveCurve->setSamples(dependentSpectrogram->pfrequencies(),rsq,dependentSpectrogram->getNFrequencyBins());
+    waveCurve->setSamples(mDependentSpectrogram->pfrequencies(),rsq,mDependentSpectrogram->getNFrequencyBins());
 	waveCurve->attach(qwtPlot);
 
 	qwtPlot->setWindowTitle("R-squared values");
@@ -200,15 +200,15 @@ void RegressionModel::fit()
     }
     else
     {
-	for(int i=0; i< dependent.count(); i++ )
+	for(int i=0; i< mDependent.count(); i++ )
 	{
-	    output += "Report for: "+ dependent.at(i)->name() +"\n";
+	    output += "Report for: "+ mDependent.at(i)->name() +"\n";
 
-        gsl_vector_const_view dependent_view = gsl_vector_const_view_array(dependent.at(i)->yData().data(), nrow);
+        gsl_vector_const_view dependent_view = gsl_vector_const_view_array(mDependent.at(i)->yData().data(), nrow);
 
 	    gsl_multifit_linear(independent, &dependent_view.vector, estimate, cov, &chisq, workspace);
 	    gsl_multifit_linear_residuals(independent, &dependent_view.vector, estimate, residuals);
-        double TSS = gsl_stats_tss(dependent.at(i)->yData().data(),1,nrow);
+        double TSS = gsl_stats_tss(mDependent.at(i)->yData().data(),1,nrow);
 	    double rsq = 1- gsl_stats_tss(residuals->data,1,nrow)/TSS;
 
 	    output += "Estimates\n";
@@ -246,41 +246,41 @@ void RegressionModel::R()
     QString equation = "";
 
     // write dependent variable
-    if(spectrogramMode)
+    if(mSpectrogramMode)
     {
-	QFile file(dependentSpectrogram->safeName());
+	QFile file(mDependentSpectrogram->safeName());
 	QFileInfo info(file);
 
-	code += dependentSpectrogram->safeName() + " <- readBin(con='"+info.absoluteFilePath()+"', what=double(), n = "+QString::number(dependentSpectrogram->getNTimeSteps()*dependentSpectrogram->getNFrequencyBins())+", size = 4);\n";
-	code += dependentSpectrogram->safeName() + " <- matrix(data = "+dependentSpectrogram->safeName()+", nrow = "+QString::number(dependentSpectrogram->getNFrequencyBins())+", ncol = "+QString::number(dependentSpectrogram->getNTimeSteps())+", byrow = F);\n";
+	code += mDependentSpectrogram->safeName() + " <- readBin(con='"+info.absoluteFilePath()+"', what=double(), n = "+QString::number(mDependentSpectrogram->getNTimeSteps()*mDependentSpectrogram->getNFrequencyBins())+", size = 4);\n";
+	code += mDependentSpectrogram->safeName() + " <- matrix(data = "+mDependentSpectrogram->safeName()+", nrow = "+QString::number(mDependentSpectrogram->getNFrequencyBins())+", ncol = "+QString::number(mDependentSpectrogram->getNTimeSteps())+", byrow = F);\n";
 
-	if( file.open(QIODevice::WriteOnly) == false ) { qCritical() << "Error opening " + dependentSpectrogram->safeName(); return; }
+	if( file.open(QIODevice::WriteOnly) == false ) { qCritical() << "Error opening " + mDependentSpectrogram->safeName(); return; }
 	QDataStream out(&file);
 	out.setByteOrder(QDataStream::LittleEndian);
 	out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-	for(quint32 j=0; j< dependentSpectrogram->getNTimeSteps()*dependentSpectrogram->getNFrequencyBins(); j++)
+	for(quint32 j=0; j< mDependentSpectrogram->getNTimeSteps()*mDependentSpectrogram->getNFrequencyBins(); j++)
 	{
-	    out << *(dependentSpectrogram->pdata()+j);
+	    out << *(mDependentSpectrogram->pdata()+j);
 	}
 
 	file.close();
     }
     else
     {
-	for(int i=0; i<dependent.count(); i++)
+	for(int i=0; i<mDependent.count(); i++)
 	{
-	    QFile file(dependent.at(i)->safeName());
+	    QFile file(mDependent.at(i)->safeName());
 	    QFileInfo info(file);
 
-	    code += dependent.at(i)->safeName() + " <- readBin(con='"+info.absoluteFilePath()+"', what=double(), n = "+QString::number(dependent.at(i)->getNSamples())+", size = 4);\n";
+	    code += mDependent.at(i)->safeName() + " <- readBin(con='"+info.absoluteFilePath()+"', what=double(), n = "+QString::number(mDependent.at(i)->getNSamples())+", size = 4);\n";
 
-	    if( file.open(QIODevice::WriteOnly) == false ) { qCritical() << "Error opening " + dependent.at(i)->safeName(); return; }
+	    if( file.open(QIODevice::WriteOnly) == false ) { qCritical() << "Error opening " + mDependent.at(i)->safeName(); return; }
 	    QDataStream out(&file);
 	    out.setByteOrder(QDataStream::LittleEndian);
 	    out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-	    for(quint32 j=0; j< dependent.at(i)->getNSamples(); j++)
+	    for(quint32 j=0; j< mDependent.at(i)->getNSamples(); j++)
 	    {
-        out << dependent.at(i)->yData().at(j);
+        out << mDependent.at(i)->yData().at(j);
 	    }
 
 	    file.close();
@@ -288,54 +288,54 @@ void RegressionModel::R()
     }
 
     // write independent variables
-    for(int i=0; i<simple.count(); i++)
+    for(int i=0; i<mSimple.count(); i++)
     {
-	QFile file(simple.at(i)->safeName());
+	QFile file(mSimple.at(i)->safeName());
 	QFileInfo info(file);
 
-	code += simple.at(i)->safeName() + " <- readBin(con='"+info.absoluteFilePath()+"', what=double(), n = "+QString::number(simple.at(i)->getNSamples())+", size = 4);\n";
+	code += mSimple.at(i)->safeName() + " <- readBin(con='"+info.absoluteFilePath()+"', what=double(), n = "+QString::number(mSimple.at(i)->getNSamples())+", size = 4);\n";
 
-	if( file.open(QIODevice::WriteOnly) == false ) { qCritical() << "Error opening " + simple.at(i)->safeName(); return; }
+	if( file.open(QIODevice::WriteOnly) == false ) { qCritical() << "Error opening " + mSimple.at(i)->safeName(); return; }
 	QDataStream out(&file);
 	out.setByteOrder(QDataStream::LittleEndian);
 	out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-	for(quint32 j=0; j< simple.at(i)->getNSamples(); j++)
+	for(quint32 j=0; j< mSimple.at(i)->getNSamples(); j++)
 	{
-        out << simple.at(i)->yData().at(j);
+        out << mSimple.at(i)->yData().at(j);
 	}
 
 	file.close();
 
-	equation += simple.at(i)->safeName() + " + ";
+	equation += mSimple.at(i)->safeName() + " + ";
     }
 
-    for(int i=0; i<interaction.count(); i++)
+    for(int i=0; i<mInteraction.count(); i++)
     {
-	for(int j=0; j < interaction.at(i)->members.count(); j++)
-	    equation += interaction.at(i)->members.at(j)->safeName() + ":";
+	for(int j=0; j < mInteraction.at(i)->members.count(); j++)
+	    equation += mInteraction.at(i)->members.at(j)->safeName() + ":";
 	equation.replace(QRegExp(":$"),"");
 
 	equation += " + ";
     }
 
-    if( interceptTerm )
+    if( mInterceptTerm )
 	equation += "1";
     else
 	equation += "0";
 
-    if(spectrogramMode)
+    if(mSpectrogramMode)
     {
 	code += "models <- list();\nsummaries <- list();\n";
-	for(quint32 i=1; i< dependentSpectrogram->getNFrequencyBins(); i++)
+	for(quint32 i=1; i< mDependentSpectrogram->getNFrequencyBins(); i++)
 	{
-	    code += "models[["+QString::number(i)+"]] <- lm( "+dependentSpectrogram->safeName()+"["+QString::number(i)+",] ~ "+equation+" );\n";
-	    code += "summaries[["+QString::number(i)+"]] <- summary(lm( "+dependentSpectrogram->safeName()+"["+QString::number(i)+",] ~ "+equation+" ));\n";
+	    code += "models[["+QString::number(i)+"]] <- lm( "+mDependentSpectrogram->safeName()+"["+QString::number(i)+",] ~ "+equation+" );\n";
+	    code += "summaries[["+QString::number(i)+"]] <- summary(lm( "+mDependentSpectrogram->safeName()+"["+QString::number(i)+",] ~ "+equation+" ));\n";
 	}
     }
     else
     {
-	for(int i=0; i<dependent.count(); i++)
-	    code += "model"+QString::number(i+1)+" <- lm("+ dependent.at(i)->safeName() +" ~ "+equation+");\nsummary(model"+QString::number(i+1)+");\n";
+	for(int i=0; i<mDependent.count(); i++)
+	    code += "model"+QString::number(i+1)+" <- lm("+ mDependent.at(i)->safeName() +" ~ "+equation+");\nsummary(model"+QString::number(i+1)+");\n";
     }
 
     QFile file("code.RCode");
@@ -355,16 +355,16 @@ void RegressionModel::R()
 
 void RegressionModel::setName(QString n)
 {
-    label = n;
+    mLabel = n;
 }
 
 
 QString RegressionModel::name() const
 {
-    return label;
+    return mLabel;
 }
 
 bool RegressionModel::dependentIsSpectrogram() const
 {
-    return spectrogramMode;
+    return mSpectrogramMode;
 }

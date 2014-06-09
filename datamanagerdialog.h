@@ -32,7 +32,7 @@ class DataManagerDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit DataManagerDialog(QList<AbstractWaveform2WaveformMeasure*> *w2wPlugins, QList<AbstractWaveform2SpectrogramMeasure*> *w2sPlugins, QList<AbstractSpectrogram2WaveformMeasure*> *s2wPlugins, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2sPlugins, QList<WaveformData*> *wfd, QList<SpectrogramData*> *spd, QWidget *parent = 0);
+    explicit DataManagerDialog(QList<AbstractWaveform2WaveformMeasure*> *mW2wPlugins, QList<AbstractWaveform2SpectrogramMeasure*> *mW2sPlugins, QList<AbstractSpectrogram2WaveformMeasure*> *mS2wPlugins, QList<AbstractSpectrogram2SpectrogramMeasure*> *mS2sPlugins, QList<WaveformData*> *wfd, QList<SpectrogramData*> *spd, QWidget *parent = 0);
 
 private slots:
     //! \brief Populates the tree that displays waveform-to-waveform plugins
@@ -91,17 +91,17 @@ signals:
     void removeSpectrogram(int index);
 
 private:
-    PluginViewTreeWidget *w2wTree, *w2sTree, *s2wTree, *s2sTree;
-    DataSourceTreeWidget *waveformTree, *spectrogramTree;
+    PluginViewTreeWidget *mW2wTree, *mW2sTree, *mS2wTree, *mS2sTree;
+    DataSourceTreeWidget *mWaveformTree, *mSpectrogramTree;
     void drawProsodyViewTree();
 
-    QList<AbstractWaveform2WaveformMeasure*> *w2wPlugins;
-    QList<AbstractWaveform2SpectrogramMeasure*> *w2sPlugins;
-    QList<AbstractSpectrogram2WaveformMeasure*> *s2wPlugins;
-    QList<AbstractSpectrogram2SpectrogramMeasure*> *s2sPlugins;
+    QList<AbstractWaveform2WaveformMeasure*> *mW2wPlugins;
+    QList<AbstractWaveform2SpectrogramMeasure*> *mW2sPlugins;
+    QList<AbstractSpectrogram2WaveformMeasure*> *mS2wPlugins;
+    QList<AbstractSpectrogram2SpectrogramMeasure*> *mS2sPlugins;
 
-    QList<WaveformData*> *aWaveformData;
-    QList<SpectrogramData*> *aSpectrogramData;
+    QList<WaveformData*> *maWaveformData;
+    QList<SpectrogramData*> *maSpectrogramData;
 };
 
 #endif // DATAMANAGER_H

@@ -46,8 +46,8 @@ private slots:
     void rename();
 
 private:
-    QString mimeIdString;
-    QAction *removeAction, *renameAction;
+    QString mMimeIdString;
+    QAction *mRemoveAction, *mRenameAction;
 };
 
 #endif // DATASOURCETREE_H

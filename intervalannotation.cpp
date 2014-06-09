@@ -8,15 +8,15 @@
 
 Interval::Interval(QString label, double left, double right)
 {
-    this->label = label;
-    this->left = left;
-    this->right = right;
+    this->mLabel = label;
+    this->mLeft = left;
+    this->mRight = right;
 }
 
 // this seems too simple
 bool Interval::inRange(double start, double end)
 {
-    if( end < left || start > right )
+    if( end < mLeft || start > mRight )
 	return false;
     else
 	return true;
@@ -24,11 +24,11 @@ bool Interval::inRange(double start, double end)
 
 Interval* Interval::clip(double start, double end)
 {
-    if( left > start )
-	start = left;
-    if( end > right )
-	end = right;
-    return new Interval(label,start,end);
+    if( mLeft > start )
+	start = mLeft;
+    if( end > mRight )
+	end = mRight;
+    return new Interval(mLabel,start,end);
 }
 
 IntervalAnnotation::IntervalAnnotation()
@@ -38,16 +38,16 @@ IntervalAnnotation::IntervalAnnotation()
 QString IntervalAnnotation::toString()
 {
     QString ret;
-    for(int i=0; i<aIntervals.count(); i++)
-	ret += aIntervals.at(i)->label + " ";
+    for(int i=0; i<maIntervals.count(); i++)
+	ret += maIntervals.at(i)->mLabel + " ";
     return ret;
 }
 
 bool IntervalAnnotation::operator==(const IntervalAnnotation &other) const
 {
-    if( this->aIntervals.count() != other.aIntervals.count() ) { return false; }
-    for(int i=0; i< aIntervals.count(); i++)
-	if( aIntervals.at(i)->label != other.aIntervals.at(i)->label )
+    if( this->maIntervals.count() != other.maIntervals.count() ) { return false; }
+    for(int i=0; i< maIntervals.count(); i++)
+	if( maIntervals.at(i)->mLabel != other.maIntervals.at(i)->mLabel )
 	    return false;
     return true;
 }
