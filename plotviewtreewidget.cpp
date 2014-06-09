@@ -9,10 +9,8 @@
 #include <QDragMoveEvent>
 #include <QMimeData>
 
-PlotViewTreeWidget::PlotViewTreeWidget(QList<PlotViewWidget*> *pv, QWidget *parent = 0) : QTreeWidget(parent)
+PlotViewTreeWidget::PlotViewTreeWidget(QList<PlotViewWidget*> *pv, QWidget *parent = 0) : QTreeWidget(parent), maProsodyViews(pv)
 {
-    this->maProsodyViews = pv;
-
     this->setDragEnabled(true);
     this->setDragDropMode(QAbstractItemView::DragDrop);
     this->setAcceptDrops(true);

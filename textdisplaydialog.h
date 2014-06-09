@@ -25,7 +25,7 @@ public:
       \param message The message to be displayed.
       \param parent The parent of the widget
       */
-    explicit TextDisplayDialog(QString message, QWidget *parent) : QDialog(parent)
+    TextDisplayDialog(QString message, QWidget *parent) : QDialog(parent)
     {
 	QPlainTextEdit *txt = new QPlainTextEdit(message,this);
 	QHBoxLayout *layout = new QHBoxLayout;

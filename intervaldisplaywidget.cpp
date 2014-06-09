@@ -12,11 +12,9 @@
 #include "plotviewwidget.h"
 #include "intervalannotation.h"
 
-IntervalDisplayWidget::IntervalDisplayWidget(IntervalAnnotation *annotation, PlotViewWidget *prosody, QWidget *parent) : QWidget(parent)
+IntervalDisplayWidget::IntervalDisplayWidget(IntervalAnnotation *annotation, PlotViewWidget *prosody, QWidget *parent)
+    : QWidget(parent), mAnnotation(annotation), mProsody(prosody)
 {
-    this->mAnnotation = annotation;
-    this->mProsody = prosody;
-
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     this->setSizePolicy(sizePolicy);
 }

@@ -4,13 +4,11 @@
 #include <QDragMoveEvent>
 #include <QMimeData>
 
-PluginViewTreeWidget::PluginViewTreeWidget(QString mime, QWidget *parent) : QTreeWidget(parent)
+PluginViewTreeWidget::PluginViewTreeWidget(QString mime, QWidget *parent) : QTreeWidget(parent), mMime(mime)
 {
     this->setDragDropMode(QAbstractItemView::DropOnly);
     this->setAcceptDrops(true);
     this->viewport()->setAcceptDrops(true);
-
-    this->mMime = mime;
 }
 
 QStringList PluginViewTreeWidget::mimeTypes() const

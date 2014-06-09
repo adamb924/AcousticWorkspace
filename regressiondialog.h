@@ -94,7 +94,7 @@ class RegressionDialog : public QDialog
     Q_OBJECT
 public:
     //! \brief Constructs the dialog, using the data available to the model
-    explicit RegressionDialog(QList<WaveformData*> *wfd, QList<SpectrogramData*> *spd, QWidget *parent = 0);
+    RegressionDialog(QList<WaveformData*> *wfd, QList<SpectrogramData*> *spd, QWidget *parent = 0);
 
     //! \brief Initialize the dialog's widgets from an existing RegressionModel object
     void setFromRegression(RegressionModel *model);

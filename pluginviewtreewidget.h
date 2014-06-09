@@ -17,7 +17,7 @@ class PluginViewTreeWidget : public QTreeWidget
 {
     Q_OBJECT
 public:
-    explicit PluginViewTreeWidget(QString mMime, QWidget *parent = 0);
+    explicit PluginViewTreeWidget(QString mime, QWidget *parent = 0);
 
     //! \brief Indicates that the widget provides text/plain data
     QStringList mimeTypes() const;

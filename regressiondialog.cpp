@@ -10,7 +10,7 @@
 #include "regression.h"
 
 RegressionDialog::RegressionDialog(QList<WaveformData*> *wfd, QList<SpectrogramData*> *spd, QWidget *parent) :
-	QDialog(parent)
+    QDialog(parent)
 {
     this->setSizeGripEnabled(true);
 

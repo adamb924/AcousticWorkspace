@@ -18,14 +18,11 @@
 #include <QtDebug>
 
 ComparisonWidget::ComparisonWidget(const SoundWidget *primary, const QList<SoundWidget*> *sounds, QWidget *parent) :
-	QWidget(parent)
+    QWidget(parent), mPrimary(primary), mSounds(sounds)
 {
     colors << QColor(Qt::red) << QColor(Qt::green) << QColor(Qt::yellow) << QColor(Qt::cyan) << QColor(Qt::black);
 
-    this->setMinimumSize(500,200);
-
-    this->mPrimary = primary;
-    this->mSounds = sounds;
+    setMinimumSize(500,200);
 
     // skip the first because that's just the waveform
     for(int i = 1; i < primary->maWaveformData.count(); i++)

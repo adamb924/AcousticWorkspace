@@ -27,7 +27,7 @@ public:
       \param v A list of values with which the dialog is initialized, and which are subsequently modified.
       \param label A string to be displayed at the top of the dialog. If the string is empty no text is displayed.
       */
-    explicit DataEntryDialog(const QStringList* f, QList<QVariant>* v, QString label, QWidget *parent);
+    DataEntryDialog(const QStringList* f, QList<QVariant>* v, QString label, QWidget *parent);
 
     QList<QLineEdit*> mEdits;
     QList<QVariant> mValues;

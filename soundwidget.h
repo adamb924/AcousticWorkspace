@@ -46,7 +46,7 @@ class SoundWidget : public QWidget
     friend class ComparisonWidget;
 
 public:
-    explicit SoundWidget(QWidget *parent = 0, MainWindow *wnd = 0);
+    SoundWidget(QWidget *parent = 0, MainWindow *wnd = 0);
     ~SoundWidget();
 
 signals:

@@ -29,7 +29,7 @@ class PlotManagerDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit PlotManagerDialog(QList<PlotViewWidget*> *pv, const QList<WaveformData*> *wfd, const QList<SpectrogramData*> *spd, QWidget *parent = 0);
+    PlotManagerDialog(QList<PlotViewWidget*> *pv, const QList<WaveformData*> *wfd, const QList<SpectrogramData*> *spd, QWidget *parent = 0);
 
 signals:
     //! \brief Emitted when the dialog is requesting that a new prosody be added

@@ -20,7 +20,7 @@ public:
     /*!
       \param mime A string that will be prefixed to all of the MIME data
       */
-    explicit DataSourceTreeWidget(QString mime, QWidget *parent = 0);
+    DataSourceTreeWidget(QString mime, QWidget *parent = 0);
 
     //! \brief Indicates that the widget provides text/plain data
     QStringList mimeTypes() const;

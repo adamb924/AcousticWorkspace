@@ -29,7 +29,7 @@ class PlotViewTreeWidget : public QTreeWidget
 {
     Q_OBJECT
 public:
-    explicit PlotViewTreeWidget(QList<PlotViewWidget*> *pv, QWidget *parent);
+    PlotViewTreeWidget(QList<PlotViewWidget*> *pv, QWidget *parent);
 
     //! \brief Fill the tree with plots and their plot items
     void populate();

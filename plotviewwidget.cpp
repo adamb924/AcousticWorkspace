@@ -28,15 +28,11 @@ void PlotViewWidget::setHorizontalAxis(double left, double right)
     mQwtPlot->replot();
 }
 
-PlotViewWidget::PlotViewWidget(QString name, QWidget *parent) : QWidget(parent), mLabel(name)
+PlotViewWidget::PlotViewWidget(QString name, QWidget *parent) : QWidget(parent), mLabel(name), mWidgetHeight(200), mSecondaryAxis(false)
 {
-    mWidgetHeight = 200;
-
     mHlayout = new QHBoxLayout(this);
 
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-
-    mSecondaryAxis = false;
 
     mQwtPlot = new QwtPlot(this);
     mQwtPlot->setSizePolicy(sizePolicy);

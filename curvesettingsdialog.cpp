@@ -20,13 +20,9 @@
 #include <QtDebug>
 #include <QCheckBox>
 
-CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlot, QWidget *parent) : QDialog(parent)
+CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlot, QWidget *parent)
+    : QDialog(parent), mCurve(curve), mParent(parentPlot)
 {
-    this->mCurve = curve;
-    this->mParent = parentPlot;
-
-//    qDebug() << this->curve->pen().color();
-
     QVBoxLayout *vlayout = new QVBoxLayout;
 
     vlayout->addWidget(new QLabel(tr("Symbol Settings")));

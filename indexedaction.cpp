@@ -1,8 +1,7 @@
 #include "indexedaction.h"
 
-IndexedAction::IndexedAction(QString text, int i, QObject *parent) : QAction(text,parent)
+IndexedAction::IndexedAction(QString text, int i, QObject *parent) : QAction(text,parent), mIndex(i)
 {
-    mIndex = i;
     connect(this, SIGNAL(triggered()), this, SLOT(mytrigger()) );
 }
 

@@ -6,9 +6,8 @@
 #include <QContextMenuEvent>
 #include <QtDebug>
 
-DataSourceTreeWidget::DataSourceTreeWidget(QString mime, QWidget *parent) : QTreeWidget(parent)
+DataSourceTreeWidget::DataSourceTreeWidget(QString mime, QWidget *parent) : QTreeWidget(parent), mMimeIdString(mime)
 {
-    mMimeIdString = mime;
     this->setDragEnabled(true);
     this->setDragDropMode(QAbstractItemView::DragOnly);
 

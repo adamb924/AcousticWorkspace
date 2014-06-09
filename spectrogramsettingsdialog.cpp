@@ -12,10 +12,8 @@
 #include <QtDebug>
 
 SpectrogramSettingsDialog::SpectrogramSettingsDialog(QwtPlotSpectrogram *spectrogram, QwtPlot *parentPlot, QWidget *parent) :
-    QDialog(parent)
+    QDialog(parent), mPlot(parentPlot)
 {
-    mPlot = parentPlot;
-
     QVBoxLayout *layout = new QVBoxLayout;
 
     QLineEdit *fromFrequency = new QLineEdit;

@@ -18,13 +18,9 @@
 #include <QLayout>
 
 PlotManagerDialog::PlotManagerDialog(QList<PlotViewWidget*> *pv, const QList<WaveformData*> *wfd, const QList<SpectrogramData*> *spd, QWidget *parent) :
-    QDialog(parent)
+    QDialog(parent), maProsodyViews(pv), maWaveformData(wfd), maSpectrogramData(spd)
 {
     setSizeGripEnabled(true);
-
-    maProsodyViews = pv;
-    maWaveformData = wfd;
-    maSpectrogramData = spd;
 
     QHBoxLayout *hlayout = new QHBoxLayout;
 

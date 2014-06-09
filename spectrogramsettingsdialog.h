@@ -24,7 +24,7 @@ public:
       \param curve The spectrogram plot item that will be modified
       \param parentPlot The plot the spectrogram plot item belongs to
     */
-    explicit SpectrogramSettingsDialog(QwtPlotSpectrogram *spectrogram, QwtPlot *parentPlot, QWidget *parent = 0);
+     SpectrogramSettingsDialog(QwtPlotSpectrogram *spectrogram, QwtPlot *parentPlot, QWidget *parent = 0);
 
 private:
     QwtPlot *mPlot;

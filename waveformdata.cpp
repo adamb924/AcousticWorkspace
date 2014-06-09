@@ -3,11 +3,11 @@
 #include <QFileInfo>
 #include <QtDebug>
 
-WaveformData::WaveformData(QString name, double *x, double *y, size_t nsam, size_t fs) : QObject(), QwtPointArrayData(x, y, nsam)
+WaveformData::WaveformData(QString name, double *x, double *y, size_t nsam, size_t fs) :
+    QObject(), QwtPointArrayData(x, y, nsam),
+    mLabel(name),
+    mFs(fs)
 {
-    this->mLabel = name;
-    this->mFs = fs;
-
     mSafeLabel = mLabel;
     mSafeLabel.replace(QRegExp("[\\W]*"),"");
 

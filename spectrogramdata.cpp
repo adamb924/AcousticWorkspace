@@ -14,20 +14,10 @@ SpectrogramData::SpectrogramData() : mData(0), mTimes(0), mFrequencies(0), mSpec
 }
 
 SpectrogramData::SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins, double spec_min, double spec_max , double windowLength, double timeStep)
+     : mLabel(n), mData(data), mTimes(times), mFrequencies(frequencies), mSpecMin(spec_min), mSpecMax(spec_max), mWindowLength(windowLength), mTimeStep(timeStep), mNFrames(nFrames), mNFreqBins(nFreqBins)
 {
-    this->mLabel = n;
     mSafeLabel = n;
     mSafeLabel.replace(QRegExp("[\\W]*"),"");
-
-    this->mData = data;
-    this->mTimes = times;
-    this->mFrequencies = frequencies;
-    this->mSpecMin = spec_min;
-    this->mSpecMax = spec_max;
-    this->mWindowLength = windowLength;
-    this->mTimeStep = timeStep;
-    this->mNFrames = nFrames;
-    this->mNFreqBins = nFreqBins;
 }
 
 SpectrogramData::~SpectrogramData()

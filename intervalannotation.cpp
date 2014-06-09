@@ -7,10 +7,8 @@
 #include <QRegExp>
 
 Interval::Interval(QString label, double left, double right)
+    : mLabel(label), mLeft(left), mRight(right)
 {
-    this->mLabel = label;
-    this->mLeft = left;
-    this->mRight = right;
 }
 
 // this seems too simple
