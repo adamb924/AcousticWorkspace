@@ -40,7 +40,7 @@ public:
       \param windowLength Window length of the spectrogram
       \param timeStep Time step of the spectrogram
     */
-    SpectrogramData(QString n, double *mData, double *mTimes, size_t mNFrames, double *mFrequencies, size_t mNFreqBins, double mSpecMin, double mSpecMax , double mWindowLength, double mTimeStep);
+    SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins, double specMin, double specMax , double windowLength, double timeStep);
 
     ~SpectrogramData();
 

@@ -20,7 +20,7 @@ class IntervalDisplayWidget : public QWidget
 
 public:
     //! \brief Initializes the widget, given the interval tier \a annotation and a prosody interface (display widget) \a prosody.
-    IntervalDisplayWidget(IntervalAnnotation *mAnnotation, PlotViewWidget *mProsody, QWidget *parent = 0);
+    IntervalDisplayWidget(IntervalAnnotation *annotation, PlotViewWidget *prosody, QWidget *parent = 0);
 
     //! \brief The obligatory overloaded functio
     QSize sizeHint() const;

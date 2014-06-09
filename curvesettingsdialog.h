@@ -32,7 +32,7 @@ public:
       \param curve The curve that will be modified
       \param parentPlot The plot the curve belongs to
     */
-    explicit CurveSettingsDialog(QwtPlotCurve *mCurve, QwtPlot *parentPlot, QWidget *mParent);
+    explicit CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlot, QWidget *parent);
 private:
     QPushButton *mSymbolColor;
     QPushButton *mLineColor;

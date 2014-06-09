@@ -32,7 +32,7 @@ class DataManagerDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit DataManagerDialog(QList<AbstractWaveform2WaveformMeasure*> *mW2wPlugins, QList<AbstractWaveform2SpectrogramMeasure*> *mW2sPlugins, QList<AbstractSpectrogram2WaveformMeasure*> *mS2wPlugins, QList<AbstractSpectrogram2SpectrogramMeasure*> *mS2sPlugins, QList<WaveformData*> *wfd, QList<SpectrogramData*> *spd, QWidget *parent = 0);
+    explicit DataManagerDialog(QList<AbstractWaveform2WaveformMeasure*> *w2wPlugins, QList<AbstractWaveform2SpectrogramMeasure*> *w2sPlugins, QList<AbstractSpectrogram2WaveformMeasure*> *s2wPlugins, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2sPlugins, QList<WaveformData*> *wfd, QList<SpectrogramData*> *spd, QWidget *parent = 0);
 
 private slots:
     //! \brief Populates the tree that displays waveform-to-waveform plugins

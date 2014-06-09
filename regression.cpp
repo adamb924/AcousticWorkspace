@@ -76,7 +76,7 @@ void RegressionModel::addDependentVariables(QList<RegressionListItem*> dep)
 void RegressionModel::addIndependentVariables(QList<RegressionListItem*> simple, QList<RegressionInteractionListItem*> interaction)
 {
     for(int i=0; i<simple.count(); i++)
-	this->mSimple.append(simple.at(i)->data());
+    this->mSimple.append(simple.at(i)->data());
 
     // make sure that redundant items aren't added
     for(int i=0; i<interaction.count(); i++)
@@ -84,14 +84,14 @@ void RegressionModel::addIndependentVariables(QList<RegressionListItem*> simple,
 	bool redundant = false;
 	for(int j=0; j<this->mInteraction.count(); j++)
 	{
-	    if( this->mInteraction.at(j)->members == interaction.at(i)->interaction()->members )
+        if( this->mInteraction.at(j)->members == interaction.at(i)->interaction()->members )
 	    {
 		redundant = true;
 		break;
 	    }
 	}
 	if(!redundant)
-	    this->mInteraction.append(interaction.at(i)->interaction());
+        this->mInteraction.append(interaction.at(i)->interaction());
     }
 }
 

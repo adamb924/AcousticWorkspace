@@ -26,7 +26,7 @@ class ComparisonWidget : public QWidget
     Q_OBJECT
 public:
     //! \brief Prompts the user for input, and creates the window
-    explicit ComparisonWidget(const SoundWidget *mPrimary, const QList<SoundWidget*> *mSounds, QWidget *parent = 0);
+    explicit ComparisonWidget(const SoundWidget *primary, const QList<SoundWidget*> *sounds, QWidget *parent = 0);
     ~ComparisonWidget();
 
 private:

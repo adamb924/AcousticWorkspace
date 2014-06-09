@@ -42,11 +42,11 @@ ComparisonWidget::ComparisonWidget(const SoundWidget *primary, const QList<Sound
 	// choose the intervals
 	bool ok;
 	QStringList items;
-	for(int i=0; i< primary->maIntervalAnnotations.count(); i++)
-	    items << primary->maIntervalAnnotations.at(i)->mName;
+    for(int i=0; i< primary->maIntervalAnnotations.count(); i++)
+        items << primary->maIntervalAnnotations.at(i)->mName;
 	QString item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the interval you want to use"), items, 0, false, &ok);
 	if(!ok) { return; }
-	mPrimaryInterval = primary->maIntervalAnnotations.at( items.indexOf(item) );
+    mPrimaryInterval = primary->maIntervalAnnotations.at( items.indexOf(item) );
 
 	// choose the algorithm
 	items.clear();
@@ -58,8 +58,8 @@ ComparisonWidget::ComparisonWidget(const SoundWidget *primary, const QList<Sound
 	if(mWarpAlgorithm==1)
 	{
 	    items.clear();
-	    for(int i=0; i<primary->maWaveformData.count(); i++)
-		items << primary->maWaveformData.at(i)->name();
+        for(int i=0; i<primary->maWaveformData.count(); i++)
+        items << primary->maWaveformData.at(i)->name();
 	    item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the waveform that contains the spectral change information"), items, 0, false, &ok);
 	    if(!ok) { return; }
 	    mPrimaryChangeMetric = items.indexOf(item);

@@ -74,7 +74,7 @@ public:
       For convenience this function takes a list of pointers to RegressionListItem objects and RegressionInteractionListItem objects, which are used in the RegressionDialog class.
       \param dep A list of pointers to dependent variables.
       */
-    void addIndependentVariables(QList<RegressionListItem*> mSimple, QList<RegressionInteractionListItem*> mInteraction);
+    void addIndependentVariables(QList<RegressionListItem*> simple, QList<RegressionInteractionListItem*> interaction);
 
     //! \brief Fit the regression with FFTW routines, and display a brief summary of the results.
     void fit();

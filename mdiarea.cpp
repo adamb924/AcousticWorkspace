@@ -12,14 +12,14 @@
 MdiArea::MdiArea(QWidget *parent) :
     QMdiArea(parent)
 {
-    mainWnd = qobject_cast<MainWindow*>(parent);
+    mMainWnd = qobject_cast<MainWindow*>(parent);
 
     newSoundWindow();
 }
 
 void MdiArea::newSoundWindow()
 {
-    SoundWidget *tmp = new SoundWidget(this,mainWnd);
+    SoundWidget *tmp = new SoundWidget(this,mMainWnd);
     this->addSubWindow(tmp);
     this->subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
     tmp->show();
@@ -30,7 +30,7 @@ void MdiArea::newComparisonWindow()
     QList<SoundWidget*> *sounds = soundWindows();
     if( sounds->count() < 2 )
     {
-	QMessageBox::critical(mainWnd,tr("Error"),tr("You need at least two different sounds to make a comparison."));
+	QMessageBox::critical(mMainWnd,tr("Error"),tr("You need at least two different sounds to make a comparison."));
 	return;
     }
 
@@ -39,7 +39,7 @@ void MdiArea::newComparisonWindow()
 	items << sounds->at(i)->windowTitle();
 
     bool ok;
-    QString item = QInputDialog::getItem(mainWnd, tr("Acoustic Workspace"),tr("Choose the primary sound for the comparison"), items, 0, false, &ok);
+    QString item = QInputDialog::getItem(mMainWnd, tr("Acoustic Workspace"),tr("Choose the primary sound for the comparison"), items, 0, false, &ok);
     if(!ok) { return; }
     int first = items.indexOf(item);
 

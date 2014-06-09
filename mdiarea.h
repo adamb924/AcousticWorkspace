@@ -23,7 +23,7 @@ public:
 
 
 private:
-    MainWindow *mainWnd; /*!< Pointer to the parent window */
+    MainWindow *mMainWnd; /*!< Pointer to the parent window */
 
     //! \brief Return a pointer to a list of pointers to SoundWidget objects.
     QList<SoundWidget*>* soundWindows();

@@ -14,7 +14,7 @@ class Interval {
 public:
     Interval() {}
     //! \brief Initialize the interval with label \a label, the left edge of the interval at \a left seconds, and the right edge at \a right seconds.
-    Interval(QString mLabel, double mLeft, double mRight);
+    Interval(QString label, double left, double right);
 
     //! \brief Return true if the interval overlaps with the range [\a start,\a end], otherwise return false.
     bool inRange(double start, double end);
