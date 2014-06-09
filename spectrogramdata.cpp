@@ -9,11 +9,8 @@
 #include <QTime>
 #include <QRegExp>
 
-SpectrogramData::SpectrogramData()
+SpectrogramData::SpectrogramData() : data(0), times(0), frequencies(0), spec_min(-1.0f), spec_max(-1.0f), windowLength(-1.0f), timeStep(-1.0f)
 {
-    data = 0;
-    times = 0;
-    frequencies = 0;
 }
 
 SpectrogramData::SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins, double spec_min, double spec_max , double windowLength, double timeStep)
@@ -31,8 +28,6 @@ SpectrogramData::SpectrogramData(QString n, double *data, double *times, size_t 
     this->timeStep = timeStep;
     this->nFrames = nFrames;
     this->nFreqBins = nFreqBins;
-
-//    qDebug() << "SpectrogramData::SpectrogramData" << boundingRect();
 }
 
 SpectrogramData::~SpectrogramData()

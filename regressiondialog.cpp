@@ -104,7 +104,7 @@ QList<RegressionListItem*> RegressionDialog::checkedDependent(RegressionListItem
     QList<RegressionListItem*> list;
     for(int i=0; i<dependentList->count(); i++)
 	if(dependentList->item(i)->checkState() == Qt::Checked && excluding != dependentList->item(i))
-	    list << (RegressionListItem*)dependentList->item(i);
+        list << dynamic_cast<RegressionListItem*>(dependentList->item(i));
     return list;
 }
 
@@ -114,7 +114,7 @@ QList<RegressionListItem*> RegressionDialog::checkedSimple(RegressionListItem *e
     QList<RegressionListItem*> list;
     for(int i=0; i<independentSimpleList->count(); i++)
 	if(independentSimpleList->item(i)->checkState() == Qt::Checked && excluding != independentSimpleList->item(i))
-	    list << (RegressionListItem*)independentSimpleList->item(i);
+        list << dynamic_cast<RegressionListItem*>(independentSimpleList->item(i));
     return list;
 }
 
@@ -212,7 +212,7 @@ void RegressionDialog::dependentChanged(QListWidgetItem* item)
     QList<RegressionListItem*> list = checkedDependent();
     for(int i=0; i<list.count(); i++)
     {
-	if( ! (list.at(i)->data()->checkCongruentWith(((RegressionListItem*)item)->data()) ) )
+    if( ! (list.at(i)->data()->checkCongruentWith(  dynamic_cast<RegressionListItem*>(item)->data()) ) )
 	{
 	    QMessageBox::critical(this,tr("Error"),tr("The times associated with ") + item->text() + tr(" are inconsistent with the other selected dependent variables (e.g., ")+list.at(i)->text()+tr("). You can create separate regression models for those models."));
 	    item->setCheckState(Qt::Unchecked);
@@ -246,14 +246,14 @@ void RegressionDialog::independentSimpleChanged(QListWidgetItem* item)
     {
 	for(int j=0; j<dependent.count(); j++)
 	{
-	    if( ! (dependent.at(j)->data()->checkCongruentWith(((RegressionListItem*)item)->data()) ) )
+        if( ! (dependent.at(j)->data()->checkCongruentWith(dynamic_cast<RegressionListItem*>(item)->data()) ) )
 	    {
 		QMessageBox::critical(this,tr("Error"),tr("The times associated with ") + item->text() + tr(" are inconsistent with the dependent variable(s) you've selected. If you want to include this effect, you need to deselect the dependent variables that are inconsistent with it (e.g., ")+dependent.at(i)->text()+tr(")."));
 		item->setCheckState(Qt::Unchecked);
 		return;
 	    }
 	}
-	if( ! (list.at(i)->data()->checkCongruentWith(((RegressionListItem*)item)->data()) ) )
+    if( ! (list.at(i)->data()->checkCongruentWith(dynamic_cast<RegressionListItem*>(item)->data()) ) )
 	{
 	    QMessageBox::critical(this,tr("Error"),tr("The times associated with ") + item->text() + tr(" are inconsistent with the other selected simple effects. If you want to include this effect, you need to deselect the effects that are inconsistent with it (e.g., ")+list.at(i)->text()+tr(")."));
 	    item->setCheckState(Qt::Unchecked);
@@ -370,7 +370,7 @@ void RegressionDialog::setFromRegression(RegressionModel *model)
     interceptTerm->setChecked(model->hasIntercept());
 
     for(int i=0; i < dependentList->count(); i++)
-	if( model->dependent.contains( ((RegressionListItem*)dependentList->item(i))->data() ) )
+    if( model->dependent.contains( dynamic_cast<RegressionListItem*>(dependentList->item(i))->data() ) )
 	    dependentList->item(i)->setCheckState(Qt::Checked);
 
     if( model->dependentIsSpectrogram() )
@@ -384,7 +384,7 @@ void RegressionDialog::setFromRegression(RegressionModel *model)
 	dependentList->setEnabled(false);
 
     for(int i=0; i< independentSimpleList->count(); i++ )
-	if( model->simple.contains( ((RegressionListItem*)independentSimpleList->item(i))->data() ))
+    if( model->simple.contains( dynamic_cast<RegressionListItem*>(independentSimpleList->item(i))->data() ))
 	    independentSimpleList->item(i)->setCheckState(Qt::Checked);
 
     for(int i=0; i< model->interaction.count(); i++)

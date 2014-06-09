@@ -42,12 +42,8 @@ QString InteractionEffect::safeName()
     return ret;
 }
 
-RegressionModel::RegressionModel()
+RegressionModel::RegressionModel() : dependentSpectrogram(0), interceptTerm(true), spectrogramMode(false), label("Default name")
 {
-    interceptTerm = true;
-    spectrogramMode = false;
-
-    label = "Default name";
 }
 
 RegressionModel::~RegressionModel()

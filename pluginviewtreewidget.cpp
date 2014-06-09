@@ -23,11 +23,11 @@ QStringList PluginViewTreeWidget::mimeTypes() const
 void PluginViewTreeWidget::dropEvent(QDropEvent *event)
 {
     QTreeWidgetItem *target = this->itemAt(event->pos());
-    int index, subindex;
+    int index;
     if( (index = indexOfTopLevelItem(target)) == -1 ) // if it is a second-level item
     {
 	index = indexOfTopLevelItem(target->parent());
-	subindex = target->parent()->indexOfChild(target);
+    int subindex = target->parent()->indexOfChild(target);
 
 	QByteArray encodedData = event->mimeData()->data("text/plain");
 	QDataStream stream(&encodedData, QIODevice::ReadOnly);
@@ -50,8 +50,7 @@ void PluginViewTreeWidget::dropEvent(QDropEvent *event)
 void PluginViewTreeWidget::dragMoveEvent ( QDragMoveEvent *event )
 {
     QTreeWidgetItem *target = this->itemAt(event->pos());
-    int index;
-    if( (index = indexOfTopLevelItem(target)) == -1 ) // if it's a second-level item
+    if( indexOfTopLevelItem(target) == -1 ) // if it's a second-level item
     {
 	QByteArray encodedData = event->mimeData()->data("text/plain");
 	QDataStream stream(&encodedData, QIODevice::ReadOnly);

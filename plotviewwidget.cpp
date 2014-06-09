@@ -28,10 +28,8 @@ void PlotViewWidget::setHorizontalAxis(double left, double right)
     qwtPlot->replot();
 }
 
-PlotViewWidget::PlotViewWidget(QString name, QWidget *parent) : QWidget(parent)
+PlotViewWidget::PlotViewWidget(QString name, QWidget *parent) : QWidget(parent), label(name)
 {
-    label = name;
-
     widgetHeight = 200;
 
     hlayout = new QHBoxLayout(this);
@@ -296,6 +294,7 @@ void PlotViewWidget::showSpectrogramFrequencies(int index)
 
 void PlotViewWidget::mouseDoubleClickEvent ( QMouseEvent *event )
 {
+    Q_UNUSED(event);
     if(aCurves.length() > 0)
 	launchCurveSettings(0);
     else if(aSpectrograms.length() > 0)

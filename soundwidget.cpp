@@ -37,12 +37,8 @@
 #include "mdiarea.h"
 
 SoundWidget::SoundWidget(QWidget *parent, MainWindow *wnd) :
-	QWidget(parent)
+    QWidget(parent), mainWnd(wnd)
 {
-    mainWnd = wnd;
-
-    currentFilename = "";
-
     QVBoxLayout *layout = new QVBoxLayout;
     plotDisplay = new PlotDisplayAreaWidget;
     layout->addWidget(plotDisplay);
@@ -282,7 +278,6 @@ void SoundWidget::importTextGrid()
 
 void SoundWidget::readTextGridFromFile(QString fileName)
 {
-    bool inInterval = false;
     int count = aIntervalAnnotations.count();
     QFile data(fileName);
     if (data.open(QFile::ReadOnly)) {
@@ -290,7 +285,8 @@ void SoundWidget::readTextGridFromFile(QString fileName)
 
 	while( !in.atEnd() )
 	{
-	    QString line = in.readLine();
+        bool inInterval = false;
+        QString line = in.readLine();
 	    //		qDebug() << line;
 	    if( line.contains("class = \"IntervalTier\""))
 	    {
@@ -984,7 +980,8 @@ void SoundWidget::setupScripting()
 void SoundWidget::regressionMenuAction(QAction *action)
 {
     int actiontype = action->data().toInt();
-    int index = aRegressionMenus.indexOf((QMenu*)action->parentWidget());
+    int index = aRegressionMenus.indexOf(  qobject_cast<QMenu*>(action->parentWidget()) );
+
 
     if(actiontype < 1000) // edit
     {
@@ -1005,7 +1002,7 @@ void SoundWidget::regressionMenuAction(QAction *action)
 void SoundWidget::annotationMenuAction(QAction *action)
 {
     int actiontype = action->data().toInt();
-    int index = aAnnotationMenus.indexOf((QMenu*)action->parentWidget());
+    int index = aAnnotationMenus.indexOf( qobject_cast<QMenu*>(action->parentWidget()) );
 
     if(actiontype < 1000) // visible
     {
@@ -1043,6 +1040,8 @@ QScriptValue waveformArrayToScriptValue(QScriptEngine *engine, const QList<Wavef
 
 void waveformArrayFromScriptValue(const QScriptValue &obj, QList<WaveformData*> &aWaveformData)
 {
+    Q_UNUSED(obj);
+    Q_UNUSED(aWaveformData);
     /* At this point I don't see a point to implementing this function. */
 }
 
@@ -1060,6 +1059,8 @@ QScriptValue spectrogramArrayToScriptValue(QScriptEngine *engine, const QList<Sp
 
 void spectrogramArrayFromScriptValue(const QScriptValue &obj, QList<SpectrogramData*> &aSpectrogramData)
 {
+    Q_UNUSED(obj);
+    Q_UNUSED(aSpectrogramData);
     /* At this point I don't see a point to implementing this function. */
 }
 
