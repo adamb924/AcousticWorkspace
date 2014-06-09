@@ -11,7 +11,7 @@
 
 #include <QWidget>
 #include <QDialog>
-#include <qwt/qwt_symbol.h>
+#include <qwt_symbol.h>
 
 class QPushButton;
 class QBrush;

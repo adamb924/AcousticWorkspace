@@ -1,20 +1,20 @@
 #include "soundwidget.h"
 
 
-#include <qwt/qwt_plot.h>
-#include <qwt/qwt_plot_marker.h>
-#include <qwt/qwt_plot_curve.h>
-#include <qwt/qwt_legend.h>
-#include <qwt/qwt_series_data.h>
-#include <qwt/qwt_text.h>
-#include <qwt/qwt_math.h>
-#include <qwt/qwt_color_map.h>
-#include <qwt/qwt_scale_engine.h>
-#include <qwt/qwt_text_label.h>
-#include <qwt/qwt_slider.h>
-#include <qwt/qwt_symbol.h>
-#include <qwt/qwt_plot_curve.h>
-#include <qwt/qwt_scale_engine.h>
+#include <qwt_plot.h>
+#include <qwt_plot_marker.h>
+#include <qwt_plot_curve.h>
+#include <qwt_legend.h>
+#include <qwt_series_data.h>
+#include <qwt_text.h>
+#include <qwt_math.h>
+#include <qwt_color_map.h>
+#include <qwt_scale_engine.h>
+#include <qwt_text_label.h>
+#include <qwt_slider.h>
+#include <qwt_symbol.h>
+#include <qwt_plot_curve.h>
+#include <qwt_scale_engine.h>
 
 #include <QtWidgets>
 #include <QString>

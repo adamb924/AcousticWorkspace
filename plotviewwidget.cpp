@@ -1,11 +1,11 @@
 #include "plotviewwidget.h"
 #include "waveformdata.h"
-#include <qwt/qwt_plot_curve.h>
-#include <qwt/qwt_text_label.h>
-#include <qwt/qwt_color_map.h>
-#include <qwt/qwt_scale_div.h>
-#include <qwt/qwt_scale_draw.h>
-#include <qwt/qwt_scale_widget.h>
+#include <qwt_plot_curve.h>
+#include <qwt_text_label.h>
+#include <qwt_color_map.h>
+#include <qwt_scale_div.h>
+#include <qwt_scale_draw.h>
+#include <qwt_scale_widget.h>
 
 #include <QtDebug>
 #include <QHBoxLayout>
@@ -20,7 +20,7 @@
 
 #include "curvesettingsdialog.h"
 #include "spectrogramsettingsdialog.h"
-#include <qwt/qwt_plot.h>
+#include <qwt_plot.h>
 
 void PlotViewWidget::setHorizontalAxis(double left, double right)
 {

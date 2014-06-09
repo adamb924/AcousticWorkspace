@@ -1,6 +1,6 @@
 #include "plotviewtreewidget.h"
 
-#include <qwt/qwt_plot.h>
+#include <qwt_plot.h>
 
 #include "curvesettingsdialog.h"
 #include "spectrogramsettingsdialog.h"

@@ -12,8 +12,8 @@
 #include <QWidget>
 #include <QList>
 
-#include <qwt/qwt_plot_curve.h>
-#include <qwt/qwt_plot_spectrogram.h>
+#include <qwt_plot_curve.h>
+#include <qwt_plot_spectrogram.h>
 
 #include "waveformdata.h"
 #include "spectrogramdata.h"

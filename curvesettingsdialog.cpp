@@ -1,8 +1,8 @@
 #include "curvesettingsdialog.h"
 
-#include <qwt/qwt_symbol.h>
-#include <qwt/qwt_plot_curve.h>
-#include <qwt/qwt_plot.h>
+#include <qwt_symbol.h>
+#include <qwt_plot_curve.h>
+#include <qwt_plot.h>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>

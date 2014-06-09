@@ -2,7 +2,7 @@
 
 #include <QtWidgets>
 
-#include <qwt/qwt_slider.h>
+#include <qwt_slider.h>
 
 #include "plotviewwidget.h"
 #include "intervaldisplaywidget.h"

@@ -5,9 +5,9 @@
 //#include <QPaintEvent>
 #include <QtDebug>
 
-#include <qwt/qwt_plot.h>
-#include <qwt/qwt_plot_canvas.h>
-#include <qwt/qwt_scale_widget.h>
+#include <qwt_plot.h>
+#include <qwt_plot_canvas.h>
+#include <qwt_scale_widget.h>
 
 #include "plotviewwidget.h"
 #include "intervalannotation.h"

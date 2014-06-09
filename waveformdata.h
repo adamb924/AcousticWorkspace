@@ -12,7 +12,7 @@
 #define WAVEFORMDATA_H
 
 #include <QObject>
-#include <qwt/qwt_point_data.h>
+#include <qwt_point_data.h>
 
 class QString;
 

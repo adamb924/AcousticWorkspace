@@ -7,8 +7,8 @@
 #include <gsl/gsl_multifit.h>
 #include <gsl/gsl_statistics_double.h>
 
-#include <qwt/qwt_plot.h>
-#include <qwt/qwt_plot_curve.h>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
 
 #include <QtWidgets>
 #include <QtDebug>

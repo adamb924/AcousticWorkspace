@@ -11,7 +11,7 @@
 
 #include <QMetaType>
 #include <QWidget>
-#include <qwt/qwt_slider.h>
+#include <qwt_slider.h>
 
 class QVBoxLayout;
 class ProsodyViewWidget;
@@ -36,8 +36,8 @@ class RegressionModel;
 class IntervalAnnotation;
 class QScriptEngine;
 
-Q_DECLARE_METATYPE(QList<WaveformData*>)
-Q_DECLARE_METATYPE(QList<SpectrogramData*>)
+//Q_DECLARE_METATYPE(QList<WaveformData*>)
+//Q_DECLARE_METATYPE(QList<SpectrogramData*>)
 
 class SoundWidget : public QWidget
 {

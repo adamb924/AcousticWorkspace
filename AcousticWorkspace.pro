@@ -4,6 +4,7 @@
 TARGET = AcousticWorkspace
 TEMPLATE = app
 QT += script widgets core gui
+CONFIG += qwt
 SOURCES += main.cpp \
     mainwindow.cpp \
     dataentrywidget.cpp \
@@ -51,8 +52,7 @@ HEADERS += mainwindow.h \
     datamanagerdialog.h \
     mdiarea.h
 LIBS += -L./ \
-    -lqwt \
     -llibsndfile-1 \
-    -llibfftw3 \
+    -lfftw3 \
     -lm \
     -lgsl
