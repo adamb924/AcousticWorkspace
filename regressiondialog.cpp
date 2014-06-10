@@ -123,7 +123,7 @@ QList<RegressionInteractionListItem*> RegressionDialog::checkedInteraction(Regre
     QList<RegressionInteractionListItem*> list;
     for(int i=0; i<mIndependentInteractionList->count(); i++)
 	if(mIndependentInteractionList->item(i)->checkState() == Qt::Checked && excluding != mIndependentInteractionList->item(i))
-	    list << (RegressionInteractionListItem*)mIndependentInteractionList->item(i);
+        list << dynamic_cast<RegressionInteractionListItem*>(mIndependentInteractionList->item(i));
     return list;
 }
 
@@ -281,8 +281,9 @@ void RegressionDialog::calculateRegression()
 	for(int i=0; i<mDependentSpectrogramList->count(); i++)
 	{
 	    if( mDependentSpectrogramList->item(i)->checkState() == Qt::Checked )
+
 	    {
-		r->setDependentSpectrogram(((RegressionSpectrogramListItem*)(mDependentSpectrogramList->item(i)))->data());
+        r->setDependentSpectrogram(dynamic_cast<RegressionSpectrogramListItem*>(mDependentSpectrogramList->item(i))->data());
 		break;
 	    }
 	}
@@ -316,7 +317,7 @@ void RegressionDialog::createRDataCode()
 	{
 	    if( mDependentSpectrogramList->item(i)->checkState() == Qt::Checked )
 	    {
-		r->setDependentSpectrogram(((RegressionSpectrogramListItem*)(mDependentSpectrogramList->item(i)))->data());
+        r->setDependentSpectrogram(dynamic_cast<RegressionSpectrogramListItem*>(mDependentSpectrogramList->item(i))->data());
 		break;
 	    }
 	}
@@ -352,7 +353,7 @@ void RegressionDialog::saveRegression()
 	{
 	    if( mDependentSpectrogramList->item(i)->checkState() == Qt::Checked )
 	    {
-		r->setDependentSpectrogram(((RegressionSpectrogramListItem*)(mDependentSpectrogramList->item(i)))->data());
+        r->setDependentSpectrogram(dynamic_cast<RegressionSpectrogramListItem*>(mDependentSpectrogramList->item(i))->data());
 		break;
 	    }
 	}
@@ -375,7 +376,7 @@ void RegressionDialog::setFromRegression(RegressionModel *model)
 
     if( model->dependentIsSpectrogram() )
 	for(int i=0; i < mDependentSpectrogramList->count(); i++)
-	    if( model->mDependentSpectrogram == ((RegressionSpectrogramListItem*)mDependentSpectrogramList->item(i))->data() )
+        if( model->mDependentSpectrogram == dynamic_cast<RegressionSpectrogramListItem*>(mDependentSpectrogramList->item(i))->data() )
 		mDependentSpectrogramList->item(i)->setCheckState(Qt::Checked);
 
     if( model->mDependent.count() > 1 )

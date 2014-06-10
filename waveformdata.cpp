@@ -16,14 +16,9 @@ WaveformData::WaveformData(QString name, double *x, double *y, size_t nsam, size
     calculateMinMax();
 }
 
-WaveformData::WaveformData(const WaveformData& other) : QObject(), QwtPointArrayData(other)
+WaveformData::WaveformData(const WaveformData& other) : QObject(), QwtPointArrayData(other),
+    mLabel(other.mLabel), mSafeLabel(other.mSafeLabel), mFs(other.mFs), mPeriod(other.mPeriod), mTimes(0), mMinimum(other.mMinimum), mMaximum(other.mMaximum)
 {
-    mLabel = other.mLabel;
-    mFs = other.mFs;
-    mPeriod = other.mPeriod;
-    mMaximum = other.mMaximum;
-    mMinimum = other.mMinimum;
-    mSafeLabel = other.mSafeLabel;
 }
 
 void WaveformData::calculateMinMax()
