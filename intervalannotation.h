@@ -22,8 +22,8 @@ public:
     //! \brief Return an interval identical to the current one, but clipped to the range [\a start,\a end].
     Interval* clip(double start, double end);
 
-    double mLeft, mRight;
     QString mLabel;
+    double mLeft, mRight;
 };
 
 /*! \class IntervalAnnotation

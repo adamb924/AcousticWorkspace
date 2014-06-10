@@ -30,7 +30,7 @@ void WaveformData::calculateMinMax()
 {
     mMinimum = 99999999999.0f;
     mMaximum = -99999999999.0f;
-    for(quint32 i=0; i<yData().size(); i++)
+    for(int i=0; i<yData().size(); i++)
     {
         if( yData().at(i) < mMinimum ) { mMinimum = yData().at(i); }
         if( yData().at(i) > mMaximum ) { mMaximum = yData().at(i); }
@@ -88,7 +88,7 @@ size_t WaveformData::getSampleFromTime(double time)
 {
     if( time <= tMin() ) { return 0; }
     if( time >= tMax() ) { return xData().size()-1-1; }
-    for(size_t i=0; i<xData().size()-1; i++)
+    for(int i=0; i<xData().size()-1; i++)
         if( xData().at(i+1) > time )
             return i;
     return 99999999;

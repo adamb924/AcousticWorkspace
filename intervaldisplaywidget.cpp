@@ -26,6 +26,7 @@ QSize IntervalDisplayWidget::sizeHint() const
 
 void IntervalDisplayWidget::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event);
     QPainter painter(this);
 
     double left, right;

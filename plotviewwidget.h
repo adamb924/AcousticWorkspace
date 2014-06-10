@@ -114,11 +114,11 @@ public slots:
     void launchSpectrogramSettings(int index);
 
 protected:
+    QString mLabel;
     int mWidgetHeight;
     QHBoxLayout *mHlayout;
 
     bool mSecondaryAxis;
-    QString mLabel;
     QwtPlot *mQwtPlot;
 
     QList<WaveformData*> maWaveformData;
