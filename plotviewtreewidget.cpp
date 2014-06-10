@@ -11,10 +11,10 @@
 
 PlotViewTreeWidget::PlotViewTreeWidget(QList<PlotViewWidget*> *pv, QWidget *parent = 0) : QTreeWidget(parent), maProsodyViews(pv)
 {
-    this->setDragEnabled(true);
-    this->setDragDropMode(QAbstractItemView::DragDrop);
-    this->setAcceptDrops(true);
-    this->viewport()->setAcceptDrops(true);
+    setDragEnabled(true);
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setAcceptDrops(true);
+    viewport()->setAcceptDrops(true);
 
     mRemoveAction = new QAction(tr("Remove"),this);
     connect(mRemoveAction,SIGNAL(triggered()),this,SLOT(remove()));
@@ -34,11 +34,11 @@ PlotViewTreeWidget::PlotViewTreeWidget(QList<PlotViewWidget*> *pv, QWidget *pare
 
 void PlotViewTreeWidget::populate()
 {
-    this->clear();
+    clear();
     for(int i=0; i<maProsodyViews->count(); i++)
     {
     QTreeWidgetItem *top = new QTreeWidgetItem(QStringList(maProsodyViews->at(i)->name()),i);
-    this->addTopLevelItem(top);
+    addTopLevelItem(top);
 
     for(int j=0; j<maProsodyViews->at(i)->spectrograms()->count(); j++)
     {
@@ -52,7 +52,7 @@ void PlotViewTreeWidget::populate()
         top->addChild(child);
     }
     }
-    this->expandAll();
+    expandAll();
 }
 
 QStringList PlotViewTreeWidget::mimeTypes() const
@@ -66,7 +66,7 @@ void PlotViewTreeWidget::dropEvent(QDropEvent *event)
 {
     if(event->source() != this)
     {
-    QTreeWidgetItem *target = this->itemAt(event->pos());
+    QTreeWidgetItem *target = itemAt(event->pos());
     int index;
     if( (index = indexOfTopLevelItem(target)) == -1 )
     {
@@ -130,7 +130,7 @@ void PlotViewTreeWidget::dropEvent(QDropEvent *event)
 
 void PlotViewTreeWidget::dragMoveEvent ( QDragMoveEvent *event )
 {
-    QTreeWidgetItem *target = this->itemAt(event->pos());
+    QTreeWidgetItem *target = itemAt(event->pos());
     if( indexOfTopLevelItem(target) == -1 ) // if it's a second-level item
     {
     event->ignore();
@@ -154,7 +154,7 @@ bool PlotViewTreeWidget::isSpectrogram(int plotIndex, int &index)
 
 void PlotViewTreeWidget::contextMenuEvent ( QContextMenuEvent * event )
 {
-    QTreeWidgetItem *target = this->itemAt(event->pos());
+    QTreeWidgetItem *target = itemAt(event->pos());
     if(target == 0 ) { return; }
     int index;
     if( (index = indexOfTopLevelItem(target)) == -1 ) // if it's a second-level item
@@ -203,7 +203,7 @@ QMimeData * PlotViewTreeWidget::mimeData ( const QList<QTreeWidgetItem *> items 
         else // second-level item
         {
             index = indexOfTopLevelItem(items.at(i)->parent());
-            stream << QString::number(index) + "+" + QString::number( this->topLevelItem(index)->indexOfChild(items.at(i)) );
+            stream << QString::number(index) + "+" + QString::number( topLevelItem(index)->indexOfChild(items.at(i)) );
         }
     }
 
@@ -239,7 +239,7 @@ void PlotViewTreeWidget::doubleClick(QTreeWidgetItem * item, int column)
 
 void PlotViewTreeWidget::remove()
 {
-    QTreeWidgetItem *target = this->currentItem();
+    QTreeWidgetItem *target = currentItem();
     if(target==0) { return; }
 
     int index;
@@ -261,7 +261,7 @@ void PlotViewTreeWidget::remove()
 
 void PlotViewTreeWidget::settings()
 {
-    QTreeWidgetItem *target = this->currentItem();
+    QTreeWidgetItem *target = currentItem();
     if(target==0) { return; }
 
     int index;
@@ -286,7 +286,7 @@ void PlotViewTreeWidget::settings()
 
 void PlotViewTreeWidget::secondary(bool does)
 {
-    QTreeWidgetItem *target = this->currentItem();
+    QTreeWidgetItem *target = currentItem();
     if(target==0) { return; }
 
     int index;
@@ -298,7 +298,7 @@ void PlotViewTreeWidget::secondary(bool does)
 
 void PlotViewTreeWidget::moveToOtherAxis()
 {
-    QTreeWidgetItem *target = this->currentItem();
+    QTreeWidgetItem *target = currentItem();
     if(target == 0 ) { return; }
     int index = indexOfTopLevelItem(target);
     if( index == -1 ) // if it's a second-level item

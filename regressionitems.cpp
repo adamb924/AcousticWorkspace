@@ -4,9 +4,9 @@
 RegressionListItem::RegressionListItem( WaveformData *data , QListWidget * parent, int type ) : QListWidgetItem(parent,type)
 {
     mWaveformData = data;
-    this->setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-    this->setCheckState(Qt::Unchecked);
-    this->setText(text());
+    setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+    setCheckState(Qt::Unchecked);
+    setText(text());
 }
 
 WaveformData* RegressionListItem::data()
@@ -22,9 +22,9 @@ QString RegressionListItem::text () const
 RegressionInteractionListItem::RegressionInteractionListItem( InteractionEffect *data , QListWidget * parent, int type ) : QListWidgetItem(parent,type)
 {
     mInteractionData = data;
-    this->setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-    this->setCheckState(Qt::Unchecked);
-    this->setText(text());
+    setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+    setCheckState(Qt::Unchecked);
+    setText(text());
 }
 
 InteractionEffect* RegressionInteractionListItem::interaction()
@@ -45,9 +45,9 @@ QString RegressionInteractionListItem::text () const
 RegressionSpectrogramListItem::RegressionSpectrogramListItem( SpectrogramData *data , QListWidget * parent, int type) : QListWidgetItem(parent,type)
 {
     mSpectrogramData = data;
-    this->setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
-    this->setCheckState(Qt::Unchecked);
-    this->setText(text());
+    setFlags(Qt::ItemIsSelectable|Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+    setCheckState(Qt::Unchecked);
+    setText(text());
 }
 
 SpectrogramData* RegressionSpectrogramListItem::data()

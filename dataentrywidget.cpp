@@ -44,7 +44,7 @@ DataEntryDialog::DataEntryDialog(const QStringList* f, QList<QVariant>* v, QStri
 
     connect(bSaveAndClose,SIGNAL(clicked()),this,SLOT(accept()));
 
-    this->setLayout(layout);
+    setLayout(layout);
 }
 
 void DataEntryDialog::accept()

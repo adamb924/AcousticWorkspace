@@ -30,7 +30,7 @@ public:
 	QPlainTextEdit *txt = new QPlainTextEdit(message,this);
 	QHBoxLayout *layout = new QHBoxLayout;
 	layout->addWidget(txt);
-	this->setLayout(layout);
+	setLayout(layout);
     }
 };
 

@@ -43,7 +43,7 @@ QString IntervalAnnotation::toString()
 
 bool IntervalAnnotation::operator==(const IntervalAnnotation &other) const
 {
-    if( this->maIntervals.count() != other.maIntervals.count() ) { return false; }
+    if( maIntervals.count() != other.maIntervals.count() ) { return false; }
     for(int i=0; i< maIntervals.count(); i++)
 	if( maIntervals.at(i)->mLabel != other.maIntervals.at(i)->mLabel )
 	    return false;

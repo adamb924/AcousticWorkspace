@@ -47,7 +47,7 @@ SoundWidget::SoundWidget(QWidget *parent, MainWindow *wnd) :
 
     mPlotDisplay->setTimeAxes(0.0f,0.4f);
 
-    this->setLayout(layout);
+    setLayout(layout);
 
     mMenuBar = new QMenuBar(this);
     layout->setMenuBar(mMenuBar);
@@ -55,7 +55,7 @@ SoundWidget::SoundWidget(QWidget *parent, MainWindow *wnd) :
     setupActions();
     setupScripting();
 
-    this->setWindowTitle(tr("Acoustic Workspace"));
+    setWindowTitle(tr("Acoustic Workspace"));
 }
 
 SoundWidget::~SoundWidget()
@@ -113,10 +113,10 @@ void SoundWidget::addRegression(RegressionModel *regression)
 void SoundWidget::addSpectrogram(SpectrogramData *data)
 {
     // the need for this test arises because the plugins live in the MainWindow, and emitting a signal from a plugin, while advantageous for other reasons, sends the signal to all of the child windows
-    QMdiSubWindow* tmp = qobject_cast<QMdiSubWindow*>(this->parentWidget());
+    QMdiSubWindow* tmp = qobject_cast<QMdiSubWindow*>(parentWidget());
     if(tmp == 0) { return; }
 
-    if( this->parentWidget() == tmp->mdiArea()->currentSubWindow() )
+    if( parentWidget() == tmp->mdiArea()->currentSubWindow() )
 	maSpectrogramData << data;
 
     emit scriptDataChanged();
@@ -127,12 +127,12 @@ void SoundWidget::addWaveform(WaveformData *data)
 //    qDebug() << "SoundWidget::addWaveform data" << data;
 
     // the need for this test arises because the plugins live in the MainWindow, and emitting a signal from a plugin, while advantageous for other reasons, sends the signal to all of the child windows
-    QMdiSubWindow* tmp = qobject_cast<QMdiSubWindow*>(this->parentWidget());
+    QMdiSubWindow* tmp = qobject_cast<QMdiSubWindow*>(parentWidget());
     if(tmp == 0) { return; }
 
 //    qDebug() << "SoundWidget::addWaveform here1";
 
-    if( this->parentWidget() == tmp->mdiArea()->currentSubWindow() )
+    if( parentWidget() == tmp->mdiArea()->currentSubWindow() )
 	maWaveformData << data;
 
 //    qDebug() << "SoundWidget::addWaveform here2";
@@ -146,7 +146,7 @@ void SoundWidget::close()
 {
     if(mPlotDisplay != 0) { delete mPlotDisplay; }
     mPlotDisplay = new PlotDisplayAreaWidget;
-    this->layout()->addWidget(mPlotDisplay);
+    layout()->addWidget(mPlotDisplay);
 
     qDeleteAll(maWaveformData.begin(), maWaveformData.end());
     maWaveformData.clear();
@@ -157,7 +157,7 @@ void SoundWidget::close()
     qDeleteAll(maRegressionMenus.begin(), maRegressionMenus.end());
     maRegressionMenus.clear();
 
-    this->setWindowTitle(tr("Acoustic Workspace"));
+    setWindowTitle(tr("Acoustic Workspace"));
     mCloseAction->setEnabled(false);
 }
 
@@ -178,9 +178,9 @@ void SoundWidget::launchDataManager()
 void SoundWidget::launchPlotManager()
 {
     PlotManagerDialog pm(mPlotDisplay->plotViews(),&maWaveformData,&maSpectrogramData);
-    connect(&pm,SIGNAL(addProsody(PlotViewWidget*,QString)),this->mPlotDisplay,SLOT(addPlotView(PlotViewWidget*,QString)));
+    connect(&pm,SIGNAL(addProsody(PlotViewWidget*,QString)),mPlotDisplay,SLOT(addPlotView(PlotViewWidget*,QString)));
     pm.exec();
-    disconnect(&pm,SIGNAL(addProsody(PlotViewWidget*,QString)),this->mPlotDisplay,SLOT(addPlotView(PlotViewWidget*,QString)));
+    disconnect(&pm,SIGNAL(addProsody(PlotViewWidget*,QString)),mPlotDisplay,SLOT(addPlotView(PlotViewWidget*,QString)));
 
 //    qDebug() << "end of SoundWidget::launchPlotManager";
 }
@@ -250,7 +250,7 @@ void SoundWidget::loadSound(QString fileName)
 
     mCloseAction->setEnabled(true);
 
-    this->setWindowTitle(sound->name());
+    setWindowTitle(sound->name());
 }
 
 
@@ -636,7 +636,7 @@ void SoundWidget::readFromFile(QString filename)
 
     if(maWaveformData.length()>0)
     {
-	this->setWindowTitle(maWaveformData.at(0)->name());
+	setWindowTitle(maWaveformData.at(0)->name());
 	mPlotDisplay->setTimeMinMax(maWaveformData.at(0)->tMin(),maWaveformData.at(0)->tMax());
     }
 

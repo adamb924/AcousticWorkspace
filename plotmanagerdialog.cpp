@@ -58,14 +58,14 @@ PlotManagerDialog::PlotManagerDialog(QList<PlotViewWidget*> *pv, const QList<Wav
     vlayout2->addWidget(addPlot);
     hlayout->addLayout(vlayout2);
     hlayout->addLayout(vlayout);
-    this->setLayout(hlayout);
+    setLayout(hlayout);
 
     connect(mPvt,SIGNAL(addSpectrogram(int,int)),this,SLOT(addSpectrogram(int,int)));
     connect(mPvt,SIGNAL(addWaveform(int,int)),this,SLOT(addWaveform(int,int)));
 
     connect(addPlot,SIGNAL(clicked()),this,SLOT(addPlot()));
 
-    this->setWindowTitle("Acoustic Workspace Plot Manager");
+    setWindowTitle("Acoustic Workspace Plot Manager");
 }
 
 void PlotManagerDialog::addWaveform(int plot, int waveform)

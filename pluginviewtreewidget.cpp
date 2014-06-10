@@ -6,9 +6,9 @@
 
 PluginViewTreeWidget::PluginViewTreeWidget(QString mime, QWidget *parent) : QTreeWidget(parent), mMime(mime)
 {
-    this->setDragDropMode(QAbstractItemView::DropOnly);
-    this->setAcceptDrops(true);
-    this->viewport()->setAcceptDrops(true);
+    setDragDropMode(QAbstractItemView::DropOnly);
+    setAcceptDrops(true);
+    viewport()->setAcceptDrops(true);
 }
 
 QStringList PluginViewTreeWidget::mimeTypes() const
@@ -20,7 +20,7 @@ QStringList PluginViewTreeWidget::mimeTypes() const
 
 void PluginViewTreeWidget::dropEvent(QDropEvent *event)
 {
-    QTreeWidgetItem *target = this->itemAt(event->pos());
+    QTreeWidgetItem *target = itemAt(event->pos());
     int index;
     if( (index = indexOfTopLevelItem(target)) == -1 ) // if it is a second-level item
     {
@@ -47,7 +47,7 @@ void PluginViewTreeWidget::dropEvent(QDropEvent *event)
 
 void PluginViewTreeWidget::dragMoveEvent ( QDragMoveEvent *event )
 {
-    QTreeWidgetItem *target = this->itemAt(event->pos());
+    QTreeWidgetItem *target = itemAt(event->pos());
     if( indexOfTopLevelItem(target) == -1 ) // if it's a second-level item
     {
 	QByteArray encodedData = event->mimeData()->data("text/plain");

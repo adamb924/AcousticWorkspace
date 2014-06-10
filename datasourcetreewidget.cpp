@@ -8,8 +8,8 @@
 
 DataSourceTreeWidget::DataSourceTreeWidget(QString mime, QWidget *parent) : QTreeWidget(parent), mMimeIdString(mime)
 {
-    this->setDragEnabled(true);
-    this->setDragDropMode(QAbstractItemView::DragOnly);
+    setDragEnabled(true);
+    setDragDropMode(QAbstractItemView::DragOnly);
 
     mRemoveAction = new QAction(tr("Remove"),this);
     connect(mRemoveAction,SIGNAL(triggered()),this,SLOT(remove()));
@@ -50,7 +50,7 @@ void DataSourceTreeWidget::contextMenuEvent ( QContextMenuEvent * event )
 
 void DataSourceTreeWidget::remove()
 {
-    QTreeWidgetItem *target = this->currentItem();
+    QTreeWidgetItem *target = currentItem();
     if(target==0) { return; }
 
     int index;
@@ -62,7 +62,7 @@ void DataSourceTreeWidget::remove()
 
 void DataSourceTreeWidget::rename()
 {
-    QTreeWidgetItem *target = this->currentItem();
+    QTreeWidgetItem *target = currentItem();
     if(target==0) { return; }
 
     int index;

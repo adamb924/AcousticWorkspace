@@ -20,8 +20,8 @@ MdiArea::MdiArea(QWidget *parent) :
 void MdiArea::newSoundWindow()
 {
     SoundWidget *tmp = new SoundWidget(this,mMainWnd);
-    this->addSubWindow(tmp);
-    this->subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
+    addSubWindow(tmp);
+    subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
     tmp->show();
 }
 
@@ -45,18 +45,18 @@ void MdiArea::newComparisonWindow()
 
 
     ComparisonWidget *tmp = new ComparisonWidget(sounds->at(first), sounds);
-    this->addSubWindow(tmp);
-    this->subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
+    addSubWindow(tmp);
+    subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
     tmp->show();
 }
 
 QList<SoundWidget*>* MdiArea::soundWindows()
 {
     QList<SoundWidget*> *sounds = new QList<SoundWidget*>;
-    for(int i=0; i< this->subWindowList().count(); i++)
+    for(int i=0; i< subWindowList().count(); i++)
     {
-	SoundWidget* tmp = qobject_cast<SoundWidget*>(this->subWindowList().at(i)->widget());
-	if( tmp != 0 && this->subWindowList().at(i)->windowTitle() != tr("Acoustic Workspace") ) // this is a cheap way to tell if the window is uninitialized
+	SoundWidget* tmp = qobject_cast<SoundWidget*>(subWindowList().at(i)->widget());
+	if( tmp != 0 && subWindowList().at(i)->windowTitle() != tr("Acoustic Workspace") ) // this is a cheap way to tell if the window is uninitialized
 	    *sounds << tmp;
     }
     return sounds;

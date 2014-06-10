@@ -145,14 +145,14 @@ void PlotViewWidget::toggleCurveAxisAssociation(int index)
 
 void PlotViewWidget::mouseMoveEvent ( QMouseEvent * event )
 {
-    if( event->pos().y() >= (this->rect().bottom()-2) || event->buttons() == Qt::LeftButton  )
+    if( event->pos().y() >= (rect().bottom()-2) || event->buttons() == Qt::LeftButton  )
     {
 /*
 	setCursor(QCursor(Qt::SizeVerCursor));
 	if( event->buttons() == Qt::LeftButton )
 	{
 	    widgetHeight = event->pos().y();
-	    resize( QSize(this->width(), widgetHeight ));
+	    resize( QSize(width(), widgetHeight ));
 	    qwtPlot->replot();
 	}
 */
@@ -165,7 +165,7 @@ void PlotViewWidget::mouseMoveEvent ( QMouseEvent * event )
 
 void PlotViewWidget::setHeight(int height)
 {
-    resize( QSize(this->width(), height ));
+    resize( QSize(width(), height ));
 }
 
 inline QString countString(int i)

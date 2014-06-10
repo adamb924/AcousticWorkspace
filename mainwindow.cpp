@@ -18,8 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     setupMenus();
 
-    this->setWindowTitle(tr("Acoustic Workspace"));
-    this->setCentralWidget(mMdiWindow);
+    setWindowTitle(tr("Acoustic Workspace"));
+    setCentralWidget(mMdiWindow);
 }
 
 

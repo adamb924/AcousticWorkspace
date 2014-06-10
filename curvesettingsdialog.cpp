@@ -75,7 +75,7 @@ CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlo
     connect(antialiased,SIGNAL(toggled(bool)),this,SLOT(LineAntialiased(bool)));
     vlayout->addWidget(antialiased);
 
-    this->setLayout(vlayout);
+    setLayout(vlayout);
 }
 
 void CurveSettingsDialog::SymbolBorderColor()

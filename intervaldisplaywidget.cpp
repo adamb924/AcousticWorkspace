@@ -16,7 +16,7 @@ IntervalDisplayWidget::IntervalDisplayWidget(IntervalAnnotation *annotation, Plo
     : QWidget(parent), mAnnotation(annotation), mProsody(prosody)
 {
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    this->setSizePolicy(sizePolicy);
+    setSizePolicy(sizePolicy);
 }
 
 QSize IntervalDisplayWidget::sizeHint() const
@@ -30,7 +30,7 @@ void IntervalDisplayWidget::paintEvent(QPaintEvent *event)
 
     double left, right;
     int pLeft, pRight;
-    int pHeight = this->height();
+    int pHeight = height();
     left = mProsody->plot()->axisScaleDiv(QwtPlot::xBottom).lowerBound();
     right = mProsody->plot()->axisScaleDiv(QwtPlot::xBottom).upperBound();
     pLeft = mProsody->plot()->pos().x() + mProsody->plot()->canvas()->pos().x() + mProsody->plot()->canvasMap(QwtPlot::xBottom).transform(left);

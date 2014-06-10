@@ -12,7 +12,7 @@
 RegressionDialog::RegressionDialog(QList<WaveformData*> *wfd, QList<SpectrogramData*> *spd, QWidget *parent) :
     QDialog(parent)
 {
-    this->setSizeGripEnabled(true);
+    setSizeGripEnabled(true);
 
     QHBoxLayout *layout = new QHBoxLayout;
 
@@ -96,7 +96,7 @@ RegressionDialog::RegressionDialog(QList<WaveformData*> *wfd, QList<SpectrogramD
     connect(createRDataCode,SIGNAL(clicked()),this,SLOT(createRDataCode()));
     connect(saveRegression,SIGNAL(clicked()),this,SLOT(saveRegression()));
 
-    this->setLayout(layout);
+    setLayout(layout);
 }
 
 QList<RegressionListItem*> RegressionDialog::checkedDependent(RegressionListItem *excluding = 0)
@@ -293,7 +293,7 @@ void RegressionDialog::calculateRegression()
 
     delete r;
 
-    this->close();
+    close();
 }
 
 void RegressionDialog::createRDataCode()
@@ -327,7 +327,7 @@ void RegressionDialog::createRDataCode()
 
     delete r;
 
-    this->close();
+    close();
 }
 
 void RegressionDialog::saveRegression()
@@ -361,7 +361,7 @@ void RegressionDialog::saveRegression()
 
     emit regressionObject(r);
 
-    this->close();
+    close();
 }
 
 void RegressionDialog::setFromRegression(RegressionModel *model)

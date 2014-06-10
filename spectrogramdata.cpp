@@ -36,32 +36,32 @@ SpectrogramData* SpectrogramData::copy() const
 {
     SpectrogramData *copy = new SpectrogramData;
 
-    copy->mWindowLength = this->mWindowLength;
-    copy->mTimeStep = this->mTimeStep;
-    copy->mWindowLengthInSamples = this->mWindowLengthInSamples;
-    copy->mTimeStepInSamples = this->mTimeStepInSamples;
-    copy->mNFrames = this->mNFrames;
-    copy->mNFreqBins = this->mNFreqBins;
-    copy->mSpecMax = this->mSpecMax;
-    copy->mSafeLabel = this->mSafeLabel;
+    copy->mWindowLength = mWindowLength;
+    copy->mTimeStep = mTimeStep;
+    copy->mWindowLengthInSamples = mWindowLengthInSamples;
+    copy->mTimeStepInSamples = mTimeStepInSamples;
+    copy->mNFrames = mNFrames;
+    copy->mNFreqBins = mNFreqBins;
+    copy->mSpecMax = mSpecMax;
+    copy->mSafeLabel = mSafeLabel;
 
     quint32 i;
     copy->mTimes = (double*)malloc(sizeof(double)*mNFrames);
     for(i=0; i<mNFrames; i++)
     {
-	*(copy->mTimes+i) = *(this->mTimes+i);
+	*(copy->mTimes+i) = *(mTimes+i);
     }
 
     copy->mFrequencies = (double*)malloc(sizeof(double)*mNFreqBins);
     for(i=0; i<mNFreqBins; i++)
     {
-	*(copy->mFrequencies+i) = *(this->mFrequencies+i);
+	*(copy->mFrequencies+i) = *(mFrequencies+i);
     }
 
     copy->mData = (double*)malloc(sizeof(double)*mNFreqBins*mNFrames);
     for(i=0; i<mNFreqBins*mNFrames; i++)
     {
-	*(copy->mData+i) = *(this->mData+i);
+	*(copy->mData+i) = *(mData+i);
     }
 
     return copy;

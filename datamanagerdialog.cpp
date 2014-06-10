@@ -21,10 +21,10 @@ DataManagerDialog::DataManagerDialog(QList<AbstractWaveform2WaveformMeasure*> *w
     maWaveformData = wfd;
     maSpectrogramData = spd;
 
-    this->mW2wPlugins = w2wPlugins;
-    this->mW2sPlugins = w2sPlugins;
-    this->mS2wPlugins = s2wPlugins;
-    this->mS2sPlugins = s2sPlugins;
+    mW2wPlugins = w2wPlugins;
+    mW2sPlugins = w2sPlugins;
+    mS2wPlugins = s2wPlugins;
+    mS2sPlugins = s2sPlugins;
 
     QGridLayout *glayout = new QGridLayout(this);
 
@@ -77,10 +77,10 @@ DataManagerDialog::DataManagerDialog(QList<AbstractWaveform2WaveformMeasure*> *w
     connect(mWaveformTree,SIGNAL(renameItemSignal(int)),this,SLOT(renameWaveform(int)));
     connect(mSpectrogramTree,SIGNAL(renameItemSignal(int)),this,SLOT(renameSpectrogram(int)));
 
-    this->setLayout(glayout);
-    this->setWindowTitle("Acoustic Workspace Data Manager");
+    setLayout(glayout);
+    setWindowTitle("Acoustic Workspace Data Manager");
 
-    //    qDebug() << "Constructor this" << this->windowTitle();
+    //    qDebug() << "Constructor this" << windowTitle();
     //    w2wDrop(0,0,0);
 }
 

@@ -45,7 +45,7 @@ PlotDisplayAreaWidget::PlotDisplayAreaWidget(QWidget *parent) :
     connect(bAll,SIGNAL(clicked()),this,SLOT(all()));
     connect(bSel,SIGNAL(clicked()),this,SLOT(sel()));
 
-    //    this->setStyleSheet("QPushButton { margin: 10px;  };");
+    //    setStyleSheet("QPushButton { margin: 10px;  };");
     mVerticalLayout = new QVBoxLayout(mScrollAreaWidget);
     mVerticalLayout->setSizeConstraint(QLayout::SetMinimumSize);
     mVerticalLayout->setContentsMargins(0,0,0,0);
@@ -59,7 +59,7 @@ PlotDisplayAreaWidget::PlotDisplayAreaWidget(QWidget *parent) :
     mainLayout->addLayout(controlLayout,0);
     mainLayout->addWidget(scrollArea,1);
 
-    this->setLayout(mainLayout);
+    setLayout(mainLayout);
     layout()->setContentsMargins(0,0,0,0);
 
     resize(600,400);

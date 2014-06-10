@@ -101,7 +101,7 @@ QRectF WaveformData::boundingRect() const
 
 bool WaveformData::checkCongruentWith(const WaveformData *other) const
 {
-    if( this->tMin() == other->tMin() && this->tMax() == other->tMax() && this->getNSamples() == other->getNSamples() )
+    if( tMin() == other->tMin() && tMax() == other->tMax() && getNSamples() == other->getNSamples() )
 	return true;
     else
 	return false;

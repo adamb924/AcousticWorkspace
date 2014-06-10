@@ -36,7 +36,7 @@ SpectrogramSettingsDialog::SpectrogramSettingsDialog(QwtPlotSpectrogram *spectro
     layout->addWidget(new QLabel(tr("To frequency (Hz)")));
     layout->addWidget(toFrequency);
 
-    this->setLayout(layout);
+    setLayout(layout);
 }
 
 void SpectrogramSettingsDialog::setFrequencyUpperbound(QString text)

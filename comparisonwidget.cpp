@@ -31,7 +31,7 @@ ComparisonWidget::ComparisonWidget(const SoundWidget *primary, const QList<Sound
     mDisplayWidget = new PlotDisplayAreaWidget;
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(mDisplayWidget);
-    this->setLayout(layout);
+    setLayout(layout);
 
     mPrimaryInterval = 0;
     if( primary->maIntervalAnnotations.count() > 0 && QMessageBox::Yes == QMessageBox::question(this, tr("Acoustic Workspace"), tr("Will you be aligning the sounds with an interval annotation?"), QMessageBox::Yes | QMessageBox::No) )
@@ -77,7 +77,7 @@ ComparisonWidget::ComparisonWidget(const SoundWidget *primary, const QList<Sound
 	drawCurves();
     }
 
-    this->setWindowTitle(createWindowTitle());
+    setWindowTitle(createWindowTitle());
 }
 
 ComparisonWidget::~ComparisonWidget()
@@ -400,5 +400,5 @@ void ComparisonWidget::drawCurves()
     if(mPrimaryInterval != 0)
 	mDisplayWidget->addAnnotation(new IntervalDisplayWidget(mPrimaryInterval,mDisplayWidget->plotViews()->first()));
 
-    this->layout()->addWidget(mDisplayWidget);
+    layout()->addWidget(mDisplayWidget);
 }
