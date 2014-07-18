@@ -32,9 +32,6 @@ public slots:
     void calculate(int index, WaveformData *data);
     void calculate(QString name, WaveformData *data);
 
-signals:
-    void spectrogramCreated(SpectrogramData *data);
-
 private:
     QStringList pluginNames;
     double *window;

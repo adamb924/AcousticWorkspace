@@ -44,9 +44,6 @@ private:
     size_t nframes;
     double *times;
     double *values;
-
-signals:
-    void waveformCreated(WaveformData *data);
 };
 
 #endif

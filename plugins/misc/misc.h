@@ -37,9 +37,6 @@ private:
 
     QStringList settingsLabels;
     QList<QVariant> settingsValues;
-
-signals:
-    void waveformCreated(WaveformData *data);
 };
 
 #endif

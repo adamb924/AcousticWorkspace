@@ -35,9 +35,6 @@ private:
 
     QStringList settingsLabels;
     QList<QVariant> settingsValues;
-
-signals:
-    void spectrogramCreated(SpectrogramData *data);
 };
 
 #endif
