@@ -71,21 +71,17 @@ void MainWindow::loadPlugins()
 
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 	QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
-	/*
-    QLibrary *tmp = new QLibrary(pluginsDir.absoluteFilePath(fileName));
-    qDebug() << tmp->load();
-    qDebug() << tmp->errorString();
-*/
-	QObject *plugin = loader.instance();
+
+    QObject *plugin = loader.instance();
 	if (plugin) {
 	    loadPlugin(plugin);
 	    pluginFileNames += fileName;
 	}
-/*	else
-	{
-	    qDebug() << fileName << loader.errorString();
-	}
-*/
+    else
+    {
+        if( fileName.right(3) == "dll" )
+        qDebug() << fileName << loader.errorString();
+    }
     }
 }
 
@@ -102,6 +98,9 @@ void MainWindow::loadPlugin(QObject *plugin)
     AbstractSpectrogram2WaveformMeasure *sw = qobject_cast<AbstractSpectrogram2WaveformMeasure*>(plugin);
     if (sw)
 	mS2wPlugins << sw;
+
+    if(sw)
+    qDebug() << sw->name();
 
     AbstractSpectrogram2SpectrogramMeasure *ss = qobject_cast<AbstractSpectrogram2SpectrogramMeasure*>(plugin);
     if (ss)

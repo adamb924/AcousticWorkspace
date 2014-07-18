@@ -7,8 +7,9 @@
 #include <QVariant>
 
 #include <qwt_series_data.h>
-#include "waveformdata.h"
-#include "spectrogramdata.h"
+
+class WaveformData;
+class SpectrogramData;
 
 /*! \class AbstractMeasurement
     \ingroup Plugin

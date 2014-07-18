@@ -1,4 +1,5 @@
-#include "interfaces.h"
+#include "waveformdata.h"
+
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QtDebug>

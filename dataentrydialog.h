@@ -5,8 +5,8 @@
     This class provides a convenient way to collect parameters from users. There is no data checking. The QVariant data class is used for maximum flexibility.
   */
 
-#ifndef DATAENTRYWIDGET_H
-#define DATAENTRYWIDGET_H
+#ifndef DATAENTRYDIALOG_H
+#define DATAENTRYDIALOG_H
 
 #include <QDialog>
 #include <QWidget>
@@ -29,15 +29,17 @@ public:
       */
     DataEntryDialog(const QStringList* f, QList<QVariant>* v, QString label, QWidget *parent);
 
-    QList<QLineEdit*> mEdits;
-    QList<QVariant> mValues;
+    QList<QLineEdit*> *edits();
+    QList<QVariant> *values();
 
 signals:
 
 public slots:
     //! \brief Copies the values from the QLineEdits into list of QVariants
     void accept();
-
+private:
+    QList<QLineEdit*> mEdits;
+    QList<QVariant> mValues;
 };
 
-#endif // DATAENTRYWIDGET_H
+#endif // DATAENTRYDIALOG_H

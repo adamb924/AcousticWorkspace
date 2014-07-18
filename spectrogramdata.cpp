@@ -1,6 +1,5 @@
 #include <qwt_raster_data.h>
 
-#include "fftw3.h"
 #include <math.h>
 
 #include "spectrogramdata.h"

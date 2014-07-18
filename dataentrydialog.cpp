@@ -1,4 +1,4 @@
-#include "dataentrywidget.h"
+#include "dataentrydialog.h"
 
 #include <QGridLayout>
 #include <QLineEdit>
@@ -45,6 +45,16 @@ DataEntryDialog::DataEntryDialog(const QStringList* f, QList<QVariant>* v, QStri
     connect(bSaveAndClose,SIGNAL(clicked()),this,SLOT(accept()));
 
     setLayout(layout);
+}
+
+QList<QLineEdit *> *DataEntryDialog::edits()
+{
+    return &mEdits;
+}
+
+QList<QVariant> *DataEntryDialog::values()
+{
+    return &mValues;
 }
 
 void DataEntryDialog::accept()
