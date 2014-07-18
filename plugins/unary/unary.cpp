@@ -42,6 +42,7 @@ UnaryPlugin* UnaryPlugin::copy() const
 
 void UnaryPlugin::settings(int i)
 {
+    Q_UNUSED(i);
 }
 
 void UnaryPlugin::calculate(QString name, WaveformData *data)
@@ -93,6 +94,7 @@ void UnaryPlugin::calculate(int index, WaveformData *data)
 
 void UnaryPlugin::setParameter(QString label, QVariant value)
 {
-
+    Q_UNUSED(label);
+    Q_UNUSED(value);
 }
 

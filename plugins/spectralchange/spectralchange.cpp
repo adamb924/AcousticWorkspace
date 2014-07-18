@@ -50,6 +50,7 @@ SpectralChangePlugin* SpectralChangePlugin::copy() const
 
 void SpectralChangePlugin::settings(int i)
 {
+    Q_UNUSED(i);
     DataEntryDialog dew(&settingsLabels, &settingsValues, "", 0);
     if( dew.exec() == QDialog::Accepted)
     {
@@ -70,6 +71,7 @@ void SpectralChangePlugin::calculate(QString name, SpectrogramData *data)
 
 void SpectralChangePlugin::calculate(int index, SpectrogramData *data)
 {
+    Q_UNUSED(index);
     int fromCC = settingsValues.at(0).toInt();
     int toCC = settingsValues.at(1).toInt();
     int N = settingsValues.at(2).toInt();

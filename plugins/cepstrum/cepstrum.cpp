@@ -42,6 +42,7 @@ CepstrumPlugin* CepstrumPlugin::copy() const
 
 void CepstrumPlugin::settings(int i)
 {
+    Q_UNUSED(i);
     DataEntryDialog dew(&settingsLabels, &settingsValues, "", 0);
     if( dew.exec() == QDialog::Accepted)
     {
@@ -61,6 +62,7 @@ void CepstrumPlugin::calculate(QString name, SpectrogramData *data)
 
 void CepstrumPlugin::calculate(int index, SpectrogramData *data)
 {
+    Q_UNUSED(index);
     size_t nFrames = data->getNTimeSteps();
     size_t windowLengthInSamples = data->getNFrequencyBins();
     size_t ncoeff = settingsValues.at(0).toInt();

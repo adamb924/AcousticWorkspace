@@ -38,6 +38,7 @@ MomentsPlugin* MomentsPlugin::copy() const
 
 void MomentsPlugin::settings(int i)
 {
+    Q_UNUSED(i);
     DataEntryDialog dew(&settingsLabels, &settingsValues, "", 0);
     if( dew.exec() == QDialog::Accepted)
     {

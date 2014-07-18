@@ -45,6 +45,7 @@ SpectrogramPlugin* SpectrogramPlugin::copy() const
 
 void SpectrogramPlugin::settings(int i)
 {
+    Q_UNUSED(i);
     DataEntryDialog dew(&settingsLabels, &settingsValues, "", 0);
     if( dew.exec() == QDialog::Accepted)
     {
@@ -65,6 +66,7 @@ void SpectrogramPlugin::calculate(QString name, WaveformData *data)
 
 void SpectrogramPlugin::calculate(int index, WaveformData *data)
 {
+    Q_UNUSED(index);
     WaveformData *sound = data;
 
     //				    x, y, width, height

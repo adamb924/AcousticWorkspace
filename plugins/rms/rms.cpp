@@ -38,6 +38,7 @@ RmsPlugin* RmsPlugin::copy() const
 
 void RmsPlugin::settings(int i)
 {
+    Q_UNUSED(i);
     DataEntryDialog dew(&settingsLabels, &settingsValues, "", 0);
     if( dew.exec() == QDialog::Accepted)
     {
@@ -50,6 +51,7 @@ void RmsPlugin::settings(int i)
 
 void RmsPlugin::calculate(int i, WaveformData *data)
 {
+    Q_UNUSED(i);
     double windowLength = settingsValues.at(0).toDouble()/1000.0f;
     double timeStep = settingsValues.at(1).toDouble() / 1000.0f;
     quint32 s_wl = windowLength * data->getSamplingFrequency();

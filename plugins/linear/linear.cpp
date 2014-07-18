@@ -43,6 +43,7 @@ LinearPlugin* LinearPlugin::copy() const
 
 void LinearPlugin::settings(int i)
 {
+    Q_UNUSED(i);
     DataEntryDialog dew(&settingsLabels, &settingsValues, "", 0);
     if( dew.exec() == QDialog::Accepted)
     {

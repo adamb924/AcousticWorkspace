@@ -48,6 +48,7 @@ PcaReportPlugin* PcaReportPlugin::copy() const
 
 void PcaReportPlugin::settings(int i)
 {
+    Q_UNUSED(i);
     DataEntryDialog dew(&settingsLabels, &settingsValues, "", 0);
     if( dew.exec() == QDialog::Accepted)
     {
@@ -67,6 +68,7 @@ void PcaReportPlugin::calculate(QString name, SpectrogramData *data)
 
 void PcaReportPlugin::calculate(int index, SpectrogramData *data)
 {
+    Q_UNUSED(index);
     quint32 nrow = data->getNTimeSteps();
     quint32 ncol = data->getNFrequencyBins();
     double *matrix = (double*)malloc( sizeof(double) * nrow * ncol );
