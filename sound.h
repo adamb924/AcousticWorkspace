@@ -12,6 +12,8 @@ class SpectrogramData;
 class RegressionModel;
 class IntervalAnnotation;
 
+#include "soundview.h"
+
 class Sound : public QObject
 {
     Q_OBJECT
@@ -36,6 +38,8 @@ public:
     void writeProjectToFile(const QString &filename);
     void readTextGridFromFile(const QString &fileName);
 
+    const SoundView * soundView() const;
+
 public slots:
 
     //! \brief Adds the spectrogram to the project, if the project is in a focused window.
@@ -59,6 +63,7 @@ private:
     QList<SpectrogramData*> maSpectrogramData;
     QList<RegressionModel*> maRegressions;
     QList<IntervalAnnotation*> maIntervalAnnotations;
+    SoundView mSoundView;
 
     void readFromFile(const QString & filename);
     QString readXmlElement(QXmlStreamReader &reader, QString elementname);

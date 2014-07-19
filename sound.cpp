@@ -2,6 +2,9 @@
 
 #include <QtWidgets>
 
+#include "curveparameters.h"
+#include "spectrogramparameters.h"
+
 #include "waveformdata.h"
 #include "spectrogramdata.h"
 #include "regression.h"
@@ -104,9 +107,10 @@ void Sound::readFromFile(const QString & filename)
                 double leftPos = readXmlElement(xml,"left-position").toDouble();
                 double rightPos = readXmlElement(xml,"right-position").toDouble();
 
-                /// @todo handle this information
-                //                mPlotDisplay->setTimeMinMax(tMin,tMax);
-                //                mPlotDisplay->setTimeAxes(leftPos,rightPos);
+                mSoundView.setTMax(tMax);
+                mSoundView.setTMin(tMin);
+                mSoundView.setLeftPos(leftPos);
+                mSoundView.setRightPos(rightPos);
             }
             else if( name == "waveform")
             {
@@ -175,10 +179,10 @@ void Sound::readFromFile(const QString & filename)
                 bool secondary = xml.attributes().value("secondary-axis").toString().toInt();
                 int height = xml.attributes().value("height").toString().toInt();
 
-                /// @todo handle this information
-                //                mPlotDisplay->addPlotView(new PlotViewWidget(name),name);
-                //                mPlotDisplay->plotViews()->last()->setHasSecondaryAxis(secondary);
-                //                mPlotDisplay->plotViews()->last()->setHeight(height);
+                mSoundView.plotParameters()->append( new PlotParameters );
+                mSoundView.plotParameters()->last()->setName(name);
+                mSoundView.plotParameters()->last()->setHasSecondaryAxis(secondary);
+                mSoundView.plotParameters()->last()->setHeight(height);
             }
             else if( name == "curve" )
             {
@@ -224,20 +228,17 @@ void Sound::readFromFile(const QString & filename)
                     return;
                 }
 
-                // where do I set the name? -- it looks like the name is just redundant information
-                /// @todo handle this information
-                //                mPlotDisplay->plotViews()->last()->addCurveData( maWaveformData.at(index), secondary );
-
-                //                mPlotDisplay->plotViews()->last()->curves()->last()->setPen(QPen(lineColor,lineWidth));
-                //                mPlotDisplay->plotViews()->last()->curves()->last()->setStyle((QwtPlotCurve::CurveStyle)lineStyle);
-                //                mPlotDisplay->plotViews()->last()->curves()->last()->setRenderHint(QwtPlotItem::RenderAntialiased,antialiased);
-
-                //                QwtSymbol * sym = new QwtSymbol;
-                //                sym->setBrush(QBrush(symbolFillColor));
-                //                sym->setPen(QPen(symbolColor));
-                //                sym->setSize(symbolSize);
-                //                sym->setStyle((QwtSymbol::Style)symbolStyle);
-                //                mPlotDisplay->plotViews()->last()->curves()->last()->setSymbol(sym);
+                CurveParameters *cp = new CurveParameters;
+                cp->setWaveformData(maWaveformData.at(index));
+                cp->setIsSecondary(secondary);
+                cp->setPen(QPen(lineColor,lineWidth));
+                cp->setCurveStyle((QwtPlotCurve::CurveStyle)lineStyle);
+                cp->setAntialiased(antialiased);
+                cp->setSymbolBrush(QBrush(symbolFillColor));
+                cp->setSymbolPen(QPen(symbolColor));
+                cp->setSymbolSize(symbolSize);
+                cp->setSymbolStyle((QwtSymbol::Style)symbolStyle);
+                mSoundView.plotParameters()->last()->curveParameters()->append(cp);
             }
             else if(name=="spectrogram-plot")
             {
@@ -252,11 +253,12 @@ void Sound::readFromFile(const QString & filename)
                 if(xml.name().toString() != "frequency-upper-bound") { qDebug() << "Line " << xml.lineNumber() << ", Column " << xml.columnNumber() << ": " << "File format error: " << xml.name(); return; }
                 int upperbound = xml.readElementText().toInt();
 
-                /// @todo handle this information
-                //                mPlotDisplay->plotViews()->last()->addSpectrogramData( maSpectrogramData.at(index) );
-
-                //                QwtLinearScaleEngine engine;
-                //                mPlotDisplay->plotViews()->last()->plot()->setAxisScaleDiv(QwtPlot::yLeft,QwtScaleDiv( engine.divideScale( lowerbound, upperbound ,10, 10) ));
+                SpectrogramParameters *sp = new SpectrogramParameters;
+                sp->setName(name);
+                sp->setLowerBound(lowerbound);
+                sp->setUpperBound(upperbound);
+                sp->setSpectrogramData(maSpectrogramData.at(index));
+                mSoundView.plotParameters()->last()->spectrogramParameters().append(sp);
             }
             else if(name=="regression")
             {
@@ -289,23 +291,12 @@ void Sound::readFromFile(const QString & filename)
             {
                 maIntervalAnnotations << new IntervalAnnotation;
                 maIntervalAnnotations.last()->mName = xml.attributes().value("name").toString();
-
-                /// @todo handle this information
-                //                mPlotDisplay->addAnnotation(new IntervalDisplayWidget(maIntervalAnnotations.last(),mPlotDisplay->plotViews()->at(0),0));
-                //                addAnnotationMenu(maIntervalAnnotations.last());
             }
             else if(name=="interval")
             {
                 maIntervalAnnotations.last()->maIntervals << new Interval(xml.attributes().value("label").toString(), xml.attributes().value("left").toString().toDouble(), xml.attributes().value("right").toString().toDouble());
             }
         }
-    }
-
-    if(maWaveformData.length()>0)
-    {
-        /// @todo handle this information
-        //        setWindowTitle(maWaveformData.at(0)->name());
-        //        mPlotDisplay->setTimeMinMax(maWaveformData.at(0)->tMin(),maWaveformData.at(0)->tMax());
     }
 
     mFilename = filename;
@@ -659,5 +650,10 @@ void Sound::readTextGridFromFile(const QString & fileName)
 //    {
 //        mPlotDisplay->addAnnotation(new IntervalDisplayWidget(maIntervalAnnotations.at(i),mPlotDisplay->plotViews()->first(),this));
 //        addAnnotationMenu(maIntervalAnnotations.at(i));
-//    }
+    //    }
+}
+
+const SoundView *Sound::soundView() const
+{
+    return &mSoundView;
 }
