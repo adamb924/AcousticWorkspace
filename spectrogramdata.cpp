@@ -21,6 +21,7 @@ SpectrogramData::SpectrogramData(QString n, double *data, double *times, size_t 
 
 SpectrogramData::~SpectrogramData()
 {
+    qDebug() << "SpectrogramData::~SpectrogramData()";
     if(mData) { free(mData); }
     if(mTimes){ free(mTimes); }
     if(mFrequencies) { free(mFrequencies); }

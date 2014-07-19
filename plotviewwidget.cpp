@@ -51,7 +51,7 @@ PlotViewWidget::PlotViewWidget(QString name, QWidget *parent) : QWidget(parent),
 
 PlotViewWidget::~PlotViewWidget()
 {
-    qDeleteAll(maCurves.begin(), maCurves.end());
+//    qDeleteAll(maCurves.begin(), maCurves.end());
 }
 
 QSize PlotViewWidget::sizeHint() const

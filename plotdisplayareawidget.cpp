@@ -69,9 +69,9 @@ PlotDisplayAreaWidget::PlotDisplayAreaWidget(QWidget *parent) :
 
 PlotDisplayAreaWidget::~PlotDisplayAreaWidget()
 {
-    qDeleteAll(maPlotViewWidgets.begin(), maPlotViewWidgets.end());
+//    qDeleteAll(maPlotViewWidgets.begin(), maPlotViewWidgets.end());
 
-    maPlotViewWidgets.clear();
+//    maPlotViewWidgets.clear();
 }
 
 void PlotDisplayAreaWidget::all()

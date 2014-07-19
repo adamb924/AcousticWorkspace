@@ -37,7 +37,7 @@
 #include "mdiarea.h"
 
 SoundWidget::SoundWidget(QWidget *parent, MainWindow *wnd) :
-    QWidget(parent), mMainWnd(wnd)
+    QWidget(parent), mMainWnd(wnd), mScriptEngine(0)
 {
     QVBoxLayout *layout = new QVBoxLayout;
     mPlotDisplay = new PlotDisplayAreaWidget;
@@ -60,15 +60,31 @@ SoundWidget::SoundWidget(QWidget *parent, MainWindow *wnd) :
 
 SoundWidget::~SoundWidget()
 {
-    qDeleteAll(maWaveformData.begin(), maWaveformData.end());
-    qDeleteAll(maSpectrogramData.begin(), maSpectrogramData.end());
-    qDeleteAll(maRegressions.begin(), maRegressions.end());
+    // THIS CAUSES A CRASH
+    qDebug() << "SoundWidget::~SoundWidget() maWaveformData";
+    for(int i=0; i<maSpectrogramData.count(); i++)
+    {
+        qDebug() << maSpectrogramData.at(i);
+        qDebug() << maSpectrogramData.at(i)->name();
+        delete maSpectrogramData.at(i);
+    }
 
-    maWaveformData.clear();
-    maSpectrogramData.clear();
+    for(int i=0; i<maWaveformData.count(); i++)
+    {
+        qDebug() << maWaveformData.at(i);
+        qDebug() << maWaveformData.at(i)->name();
+        // latest: this line
+        delete maWaveformData.at(i);
+    }
+
+//    qDeleteAll(maWaveformData);
+    qDebug() << "SoundWidget::~SoundWidget() maSpectrogramData";
+//    qDeleteAll(maSpectrogramData);
+    qDebug() << "SoundWidget::~SoundWidget() maRegressions";
+//    qDeleteAll(maRegressions);
 
     if(mScriptEngine != 0)
-	delete mScriptEngine;
+        delete mScriptEngine;
 }
 
 // Private slots
@@ -148,13 +164,15 @@ void SoundWidget::close()
     mPlotDisplay = new PlotDisplayAreaWidget;
     layout()->addWidget(mPlotDisplay);
 
-    qDeleteAll(maWaveformData.begin(), maWaveformData.end());
+    qDebug() << "SoundWidget::close() deleting...";
+
+    qDeleteAll(maWaveformData);
     maWaveformData.clear();
 
-    qDeleteAll(maSpectrogramData.begin(), maSpectrogramData.end());
+    qDeleteAll(maSpectrogramData);
     maSpectrogramData.clear();
 
-    qDeleteAll(maRegressionMenus.begin(), maRegressionMenus.end());
+    qDeleteAll(maRegressionMenus);
     maRegressionMenus.clear();
 
     setWindowTitle(tr("Acoustic Workspace"));
