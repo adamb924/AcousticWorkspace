@@ -34,7 +34,11 @@ class QXmlStreamReader;
 #include <QList>
 #include <QDir>
 
-class MdiArea;
+class SoundWidget;
+
+namespace Ui {
+    class MainWindow;
+}
 
 class MainWindow : public QMainWindow
 {
@@ -43,12 +47,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-    //! \brief Returns a pointer to the MdiArea object (i.e., the MDI area)
-    inline MdiArea* mdi() const { return mMdiWindow; }
-
-    //! \brief Sets up the menus for the window
-    void setupMenus();
 
     //! \brief Returns a pointer to a list of pointers to the plugins that make waveforms from waveforms
     inline QList<AbstractWaveform2WaveformMeasure*>* w2w() { return &mW2wPlugins; }
@@ -62,7 +60,17 @@ public:
     //! \brief Returns a pointer to a list of pointers to the plugins that make spectrograms from spectrograms
     inline QList<AbstractSpectrogram2SpectrogramMeasure*>* s2s() { return &mS2sPlugins; }
 
+private slots:
+    //! \brief Create a new sound-display child window
+    void newSoundWindow();
+
+    //! \brief Create a new sound-comparison child window
+    void newComparisonWindow();
+
 private:
+    //! \brief Return a pointer to a list of pointers to SoundWidget objects.
+    QList<SoundWidget*>* soundWindows();
+
     //! \brief Reads the plugins from the application's plugins folder, invoking loadPlugin for each one
     void loadPlugins();
 
@@ -74,8 +82,9 @@ private:
     QList<AbstractSpectrogram2WaveformMeasure*> mS2wPlugins;
     QList<AbstractSpectrogram2SpectrogramMeasure*> mS2sPlugins;
 
+    Ui::MainWindow *ui;
+
     QList<QAction*> mPluginOptionActions;
-    MdiArea *mMdiWindow;
 };
 
 #endif // MAINWINDOW_H

@@ -46,7 +46,8 @@ class SoundWidget : public QWidget
     friend class ComparisonWidget;
 
 public:
-    SoundWidget(QWidget *parent = 0, MainWindow *wnd = 0);
+    SoundWidget(QList<AbstractWaveform2WaveformMeasure*> *w2w, QList<AbstractWaveform2SpectrogramMeasure*> *w2s, QList<AbstractSpectrogram2WaveformMeasure*> *s2w, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2s, QWidget *parent = 0);
+
     ~SoundWidget();
 
 signals:
@@ -151,6 +152,11 @@ private:
     QAction *mNewRegressionAction, *mImportTextGridAction;
     QAction *mPlotManagerAction, *mDataManagerAction, *mRegressionAction;
     QList<QAction*> mVisibilityActions;
+
+    QList<AbstractWaveform2WaveformMeasure*> *mW2wPlugins;
+    QList<AbstractWaveform2SpectrogramMeasure*> *mW2sPlugins;
+    QList<AbstractSpectrogram2WaveformMeasure*> *mS2wPlugins;
+    QList<AbstractSpectrogram2SpectrogramMeasure*> *mS2sPlugins;
 
     QList<WaveformData*> maWaveformData;
     QList<SpectrogramData*> maSpectrogramData;

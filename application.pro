@@ -24,7 +24,6 @@ SOURCES += main.cpp \
     waveformdata.cpp \
     curvesettingsdialog.cpp \
     datamanagerdialog.cpp \
-    mdiarea.cpp \
     datasourcetreewidget.cpp \
     indexedaction.cpp \
     dataentrydialog.cpp
@@ -49,10 +48,12 @@ HEADERS += mainwindow.h \
     datasourcetreewidget.h \
     curvesettingsdialog.h \
     datamanagerdialog.h \
-    mdiarea.h \
     dataentrydialog.h
 LIBS += -L./ \
     -llibsndfile-1 \
     -lfftw3 \
     -lm \
     -lgsl
+
+FORMS += \
+    mainwindow.ui

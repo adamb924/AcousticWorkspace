@@ -34,10 +34,14 @@
 #include "datamanagerdialog.h"
 #include "plotdisplayareawidget.h"
 #include "intervalannotation.h"
-#include "mdiarea.h"
 
-SoundWidget::SoundWidget(QWidget *parent, MainWindow *wnd) :
-    QWidget(parent), mMainWnd(wnd), mScriptEngine(0)
+SoundWidget::SoundWidget(QList<AbstractWaveform2WaveformMeasure*> *w2w, QList<AbstractWaveform2SpectrogramMeasure*> *w2s, QList<AbstractSpectrogram2WaveformMeasure*> *s2w, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2s, QWidget *parent) :
+    QWidget(parent),
+    mScriptEngine(0),
+    mW2wPlugins(w2w),
+    mW2sPlugins(w2s),
+    mS2wPlugins(s2w),
+    mS2sPlugins(s2s)
 {
     QVBoxLayout *layout = new QVBoxLayout;
     mPlotDisplay = new PlotDisplayAreaWidget;
@@ -181,7 +185,7 @@ void SoundWidget::close()
 
 void SoundWidget::launchDataManager()
 {
-    DataManagerDialog *dm = new DataManagerDialog(mMainWnd->w2w(), mMainWnd->w2s(), mMainWnd->s2w(), mMainWnd->s2s(), &maWaveformData,&maSpectrogramData,this);
+    DataManagerDialog *dm = new DataManagerDialog(mW2wPlugins, mW2sPlugins, mS2wPlugins, mS2sPlugins, &maWaveformData,&maSpectrogramData,this);
     connect(dm, SIGNAL(removeWaveform(int)),this,SLOT(removeWaveform(int)));
     connect(dm, SIGNAL(removeSpectrogram(int)),this,SLOT(removeSpectrogram(int)));
 
@@ -980,14 +984,14 @@ void SoundWidget::setupScripting()
 
     // set up the connections to receive spectrograms & waveforms that plugins emit
     // this is, technically, broader than just the scripting environment, but I want to make sure that this connection is made before the others
-    for(int i=0; i < mMainWnd->w2s()->count(); i++ )
-	connect( mMainWnd->w2s()->at(i), SIGNAL(spectrogramCreated(SpectrogramData*)), this, SLOT(addSpectrogram(SpectrogramData*)) );
-    for(int i=0; i < mMainWnd->s2s()->count(); i++ )
-	connect( mMainWnd->s2s()->at(i), SIGNAL(spectrogramCreated(SpectrogramData*)), this, SLOT(addSpectrogram(SpectrogramData*)) );
-    for(int i=0; i < mMainWnd->s2w()->count(); i++ )
-	connect( mMainWnd->s2w()->at(i), SIGNAL(waveformCreated(WaveformData*)), this, SLOT(addWaveform(WaveformData*)) );
-    for(int i=0; i < mMainWnd->w2w()->count(); i++ )
-	connect( mMainWnd->w2w()->at(i), SIGNAL(waveformCreated(WaveformData*)), this, SLOT(addWaveform(WaveformData*)) );
+    for(int i=0; i < mW2sPlugins->count(); i++ )
+    connect( mW2sPlugins->at(i), SIGNAL(spectrogramCreated(SpectrogramData*)), this, SLOT(addSpectrogram(SpectrogramData*)) );
+    for(int i=0; i < mS2sPlugins->count(); i++ )
+    connect( mS2sPlugins->at(i), SIGNAL(spectrogramCreated(SpectrogramData*)), this, SLOT(addSpectrogram(SpectrogramData*)) );
+    for(int i=0; i < mS2wPlugins->count(); i++ )
+    connect( mS2wPlugins->at(i), SIGNAL(waveformCreated(WaveformData*)), this, SLOT(addWaveform(WaveformData*)) );
+    for(int i=0; i < mW2wPlugins->count(); i++ )
+    connect( mW2wPlugins->at(i), SIGNAL(waveformCreated(WaveformData*)), this, SLOT(addWaveform(WaveformData*)) );
 
     // update the script environment when the script requests it
     connect(this,SIGNAL(requestScriptDataRefresh()),this,SLOT(setupScriptEnvironment()));
@@ -1137,35 +1141,35 @@ void SoundWidget::setupScriptEnvironment()
     mScriptEngine->globalObject().setProperty("widget", mScriptEngine->newQObject(this));
 
     // add the w2s plugins as objects
-    for(int i=0; i<mMainWnd->w2s()->count(); i++)
+    for(int i=0; i<mW2sPlugins->count(); i++)
     {
-	QObject *someObject = mMainWnd->w2s()->at(i);
+    QObject *someObject = mW2sPlugins->at(i);
 	QScriptValue objectValue = mScriptEngine->newQObject(someObject);
-	mScriptEngine->globalObject().setProperty(mMainWnd->w2s()->at(i)->scriptName(), objectValue);
+    mScriptEngine->globalObject().setProperty(mW2sPlugins->at(i)->scriptName(), objectValue);
     }
 
     // add the w2w plugins as objects
-    for(int i=0; i<mMainWnd->w2w()->count(); i++)
+    for(int i=0; i<mW2wPlugins->count(); i++)
     {
-	QObject *someObject = mMainWnd->w2w()->at(i);
+    QObject *someObject = mW2wPlugins->at(i);
 	QScriptValue objectValue = mScriptEngine->newQObject(someObject);
-	mScriptEngine->globalObject().setProperty(mMainWnd->w2w()->at(i)->scriptName(), objectValue);
+    mScriptEngine->globalObject().setProperty(mW2wPlugins->at(i)->scriptName(), objectValue);
     }
 
     // add the s2s plugins as objects
-    for(int i=0; i<mMainWnd->s2s()->count(); i++)
+    for(int i=0; i<mS2sPlugins->count(); i++)
     {
-	QObject *someObject = mMainWnd->s2s()->at(i);
+    QObject *someObject = mS2sPlugins->at(i);
 	QScriptValue objectValue = mScriptEngine->newQObject(someObject);
-	mScriptEngine->globalObject().setProperty(mMainWnd->s2s()->at(i)->scriptName(), objectValue);
+    mScriptEngine->globalObject().setProperty(mS2sPlugins->at(i)->scriptName(), objectValue);
     }
 
     // add the s2w plugins as objects
-    for(int i=0; i<mMainWnd->s2w()->count(); i++)
+    for(int i=0; i<mS2wPlugins->count(); i++)
     {
-	QObject *someObject = mMainWnd->s2w()->at(i);
+    QObject *someObject = mS2wPlugins->at(i);
 	QScriptValue objectValue = mScriptEngine->newQObject(someObject);
-	mScriptEngine->globalObject().setProperty(mMainWnd->s2w()->at(i)->scriptName(), objectValue);
+    mScriptEngine->globalObject().setProperty(mS2wPlugins->at(i)->scriptName(), objectValue);
 
 //        qDebug() << "added" << mainWnd->s2w()->at(i)->scriptName() << engine->globalObject().property(mainWnd->s2w()->at(i)->scriptName()).isQObject();
     }

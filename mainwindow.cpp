@@ -1,50 +1,31 @@
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 
-#include "mdiarea.h"
 #include <QDebug>
 #include <QPluginLoader>
 #include <QApplication>
-#include "interfaces.h"
 #include <QAction>
 #include <QMenuBar>
+#include <QMdiSubWindow>
+#include <QMessageBox>
+#include <QInputDialog>
 
+#include "soundwidget.h"
+#include "comparisonwidget.h"
+#include "interfaces.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow)
 {
+    ui->setupUi(this);
     loadPlugins();
-
-    mMdiWindow = new MdiArea(this);
-
-    setupMenus();
-
-    setWindowTitle(tr("Acoustic Workspace"));
-    setCentralWidget(mMdiWindow);
 }
 
 
 MainWindow::~MainWindow()
 {
 
-}
-
-void MainWindow::setupMenus()
-{
-    QAction *newAction = new QAction(tr("New sound window"),this);
-    newAction->setShortcut(QKeySequence("Ctrl+Z"));
-    connect(newAction,SIGNAL(triggered()),mMdiWindow,SLOT(newSoundWindow()));
-
-    QAction *newComparison = new QAction(tr("New comparison window"),this);
-    newComparison->setShortcut(QKeySequence("Ctrl+C"));
-    connect(newComparison,SIGNAL(triggered()),mMdiWindow,SLOT(newComparisonWindow()));
-
-    menuBar()->addAction(newAction);
-    menuBar()->addAction(newComparison);
-
-    QMenu *windows = new QMenu(tr("Windows"));
-    menuBar()->addMenu(windows);
-    windows->addAction(tr("Tile Windows"),mMdiWindow,SLOT(tileSubWindows()));
-    windows->addAction(tr("Cascade Windows"),mMdiWindow,SLOT(cascadeSubWindows()));
 }
 
 void MainWindow::loadPlugins()
@@ -102,4 +83,49 @@ void MainWindow::loadPlugin(QObject *plugin)
     AbstractSpectrogram2SpectrogramMeasure *ss = qobject_cast<AbstractSpectrogram2SpectrogramMeasure*>(plugin);
     if (ss)
 	mS2sPlugins << ss;
+}
+
+void MainWindow::newSoundWindow()
+{
+    SoundWidget *tmp = new SoundWidget(&mW2wPlugins,&mW2sPlugins,&mS2wPlugins,&mS2sPlugins,this);
+    ui->mdiArea->addSubWindow(tmp);
+    ui->mdiArea->subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
+    tmp->show();
+}
+
+void MainWindow::newComparisonWindow()
+{
+    QList<SoundWidget*> *sounds = soundWindows();
+    if( sounds->count() < 2 )
+    {
+    QMessageBox::critical(this,tr("Error"),tr("You need at least two different sounds to make a comparison."));
+    return;
+    }
+
+    QStringList items;
+    for(int i=0; i< sounds->count(); i++)
+    items << sounds->at(i)->windowTitle();
+
+    bool ok;
+    QString item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the primary sound for the comparison"), items, 0, false, &ok);
+    if(!ok) { return; }
+    int first = items.indexOf(item);
+
+
+    ComparisonWidget *tmp = new ComparisonWidget(sounds->at(first), sounds);
+    ui->mdiArea->addSubWindow(tmp);
+    ui->mdiArea->subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
+    tmp->show();
+}
+
+QList<SoundWidget*>* MainWindow::soundWindows()
+{
+    QList<SoundWidget*> *sounds = new QList<SoundWidget*>;
+    for(int i=0; i< ui->mdiArea->subWindowList().count(); i++)
+    {
+    SoundWidget* tmp = qobject_cast<SoundWidget*>(ui->mdiArea->subWindowList().at(i)->widget());
+    if( tmp != 0 && ui->mdiArea->subWindowList().at(i)->windowTitle() != tr("Acoustic Workspace") ) // this is a cheap way to tell if the window is uninitialized
+        *sounds << tmp;
+    }
+    return sounds;
 }
