@@ -9,7 +9,9 @@
 #include <QMdiSubWindow>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QFileDialog>
 
+#include "sound.h"
 #include "soundwidget.h"
 #include "comparisonwidget.h"
 #include "interfaces.h"
@@ -20,12 +22,28 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     loadPlugins();
+
+    connect(ui->actionOpen_Sound, SIGNAL(triggered()), this, SLOT(openSound()));
 }
 
 
 MainWindow::~MainWindow()
 {
+    qDeleteAll(mSounds);
+}
 
+void MainWindow::openSound()
+{
+    QString fileName;
+    fileName= QFileDialog::getOpenFileName(this, tr("Open Project"), "", tr("Project files (*.xml)"));
+    if(!fileName.isNull())
+    {
+        Sound * newSound = new Sound(fileName);
+        if( newSound->readState() == Sound::Success )
+        {
+            mSounds.append( newSound );
+        }
+    }
 }
 
 void MainWindow::loadPlugins()
@@ -85,9 +103,9 @@ void MainWindow::loadPlugin(QObject *plugin)
 	mS2sPlugins << ss;
 }
 
-void MainWindow::newSoundWindow()
+void MainWindow::newSoundWindow(Sound *snd)
 {
-    SoundWidget *tmp = new SoundWidget(&mW2wPlugins,&mW2sPlugins,&mS2wPlugins,&mS2sPlugins,this);
+    SoundWidget *tmp = new SoundWidget(snd, &mW2wPlugins,&mW2sPlugins,&mS2wPlugins,&mS2sPlugins,this);
     ui->mdiArea->addSubWindow(tmp);
     ui->mdiArea->subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
     tmp->show();

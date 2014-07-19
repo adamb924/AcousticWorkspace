@@ -35,6 +35,7 @@ class PlotDisplayAreaWidget;
 class RegressionModel;
 class IntervalAnnotation;
 class QScriptEngine;
+class Sound;
 
 //Q_DECLARE_METATYPE(QList<WaveformData*>)
 //Q_DECLARE_METATYPE(QList<SpectrogramData*>)
@@ -46,7 +47,7 @@ class SoundWidget : public QWidget
     friend class ComparisonWidget;
 
 public:
-    SoundWidget(QList<AbstractWaveform2WaveformMeasure*> *w2w, QList<AbstractWaveform2SpectrogramMeasure*> *w2s, QList<AbstractSpectrogram2WaveformMeasure*> *s2w, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2s, QWidget *parent = 0);
+    SoundWidget(Sound * snd, QList<AbstractWaveform2WaveformMeasure*> *w2w, QList<AbstractWaveform2SpectrogramMeasure*> *w2s, QList<AbstractSpectrogram2WaveformMeasure*> *s2w, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2s, QWidget *parent = 0);
 
     ~SoundWidget();
 
@@ -140,6 +141,8 @@ private slots:
 private:
     MainWindow *mMainWnd;
     PlotDisplayAreaWidget *mPlotDisplay;
+
+    Sound * mSound;
 
     QScriptEngine* mScriptEngine;
 

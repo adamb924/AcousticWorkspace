@@ -33,9 +33,11 @@
 #include "datamanagerdialog.h"
 #include "plotdisplayareawidget.h"
 #include "intervalannotation.h"
+#include "sound.h"
 
-SoundWidget::SoundWidget(QList<AbstractWaveform2WaveformMeasure*> *w2w, QList<AbstractWaveform2SpectrogramMeasure*> *w2s, QList<AbstractSpectrogram2WaveformMeasure*> *s2w, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2s, QWidget *parent) :
+SoundWidget::SoundWidget(Sound * snd, QList<AbstractWaveform2WaveformMeasure*> *w2w, QList<AbstractWaveform2SpectrogramMeasure*> *w2s, QList<AbstractSpectrogram2WaveformMeasure*> *s2w, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2s, QWidget *parent) :
     QWidget(parent),
+    mSound(snd),
     mScriptEngine(0),
     mW2wPlugins(w2w),
     mW2sPlugins(w2s),

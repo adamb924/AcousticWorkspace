@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     datamanagerdialog.cpp \
     datasourcetreewidget.cpp \
     indexedaction.cpp \
-    dataentrydialog.cpp
+    dataentrydialog.cpp \
+    sound.cpp
 HEADERS += mainwindow.h \
     interfaces.h \
     plotmanagerdialog.h \
@@ -48,7 +49,8 @@ HEADERS += mainwindow.h \
     datasourcetreewidget.h \
     curvesettingsdialog.h \
     datamanagerdialog.h \
-    dataentrydialog.h
+    dataentrydialog.h \
+    sound.h
 LIBS += -L./ \
     -llibsndfile-1 \
     -lfftw3 \

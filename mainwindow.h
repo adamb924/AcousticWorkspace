@@ -29,6 +29,7 @@ class AbstractWaveform2SpectrogramMeasure;
 class AbstractSpectrogram2WaveformMeasure;
 class AbstractSpectrogram2SpectrogramMeasure;
 class QXmlStreamReader;
+class Sound;
 
 
 #include <QList>
@@ -61,8 +62,10 @@ public:
     inline QList<AbstractSpectrogram2SpectrogramMeasure*>* s2s() { return &mS2sPlugins; }
 
 private slots:
+    void openSound();
+
     //! \brief Create a new sound-display child window
-    void newSoundWindow();
+    void newSoundWindow(Sound * snd);
 
     //! \brief Create a new sound-comparison child window
     void newComparisonWindow();
@@ -85,6 +88,7 @@ private:
     Ui::MainWindow *ui;
 
     QList<QAction*> mPluginOptionActions;
+    QList<Sound*> mSounds;
 };
 
 #endif // MAINWINDOW_H
