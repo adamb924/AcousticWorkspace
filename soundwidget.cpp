@@ -1,6 +1,5 @@
 #include "soundwidget.h"
 
-
 #include <qwt_plot.h>
 #include <qwt_plot_marker.h>
 #include <qwt_plot_curve.h>
