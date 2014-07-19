@@ -13,6 +13,7 @@
 
 #include <QWidget>
 
+class Sound;
 class SoundWidget;
 class WaveformData;
 class QContextMenuEvent;
@@ -26,7 +27,7 @@ class ComparisonWidget : public QWidget
     Q_OBJECT
 public:
     //! \brief Prompts the user for input, and creates the window
-    ComparisonWidget(const SoundWidget *primary, const QList<SoundWidget*> *sounds, QWidget *parent = 0);
+    ComparisonWidget(const Sound *primary, const QList<Sound*> *sounds, QWidget *parent = 0);
     ~ComparisonWidget();
 
 private:
@@ -63,8 +64,8 @@ private:
     //! \brief Return a name for the comparison window
     QString createWindowTitle() const;
 
-    const SoundWidget *mPrimary;
-    const QList<SoundWidget*> *mSounds;
+    const Sound *mPrimary;
+    const QList<Sound*> *mSounds;
 
     QList<QColor> colors;
 

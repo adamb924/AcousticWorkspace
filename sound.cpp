@@ -9,10 +9,17 @@
 
 Sound::Sound(const QString & filename, QObject *parent) :
     QObject(parent),
-    mCurrentFilename(filename),
+    mFilename(filename),
     mReadState(Sound::NoAttempt)
 {
-    readFromFile(mCurrentFilename);
+    readFromFile(mFilename);
+}
+
+Sound::Sound(WaveformData *sound, QObject *parent) :
+    QObject(parent),
+    mReadState(Sound::Success)
+{
+    addWaveform(sound);
 }
 
 Sound::~Sound()
@@ -26,6 +33,36 @@ Sound::~Sound()
 Sound::ReadState Sound::readState() const
 {
     return mReadState;
+}
+
+QString Sound::name() const
+{
+    return QFileInfo(mFilename).fileName();
+}
+
+QList<WaveformData *> *Sound::waveformData()
+{
+    return &maWaveformData;
+}
+
+QList<SpectrogramData *> *Sound::spectrogramData()
+{
+    return &maSpectrogramData;
+}
+
+const QList<WaveformData *> *Sound::waveformData() const
+{
+    return &maWaveformData;
+}
+
+const QList<SpectrogramData *> *Sound::spectrogramData() const
+{
+    return &maSpectrogramData;
+}
+
+const QList<IntervalAnnotation *> *Sound::intervals() const
+{
+    return &maIntervalAnnotations;
 }
 
 void Sound::readFromFile(const QString & filename)
@@ -271,9 +308,227 @@ void Sound::readFromFile(const QString & filename)
         //        mPlotDisplay->setTimeMinMax(maWaveformData.at(0)->tMin(),maWaveformData.at(0)->tMax());
     }
 
-    mCurrentFilename = filename;
+    mFilename = filename;
 
     mReadState = Sound::Success;
+}
+
+void Sound::writeProjectToFile(const QString & filename)
+{
+    // open the binary file
+    QFileInfo info(filename);
+    QFile binaryfile(info.completeBaseName() + ".bin");
+    binaryfile.open(QIODevice::WriteOnly);
+    QDataStream binaryout(&binaryfile);   // we will serialize the data into the file
+    binaryout.setByteOrder(QDataStream::LittleEndian);
+    binaryout.setFloatingPointPrecision(QDataStream::DoublePrecision);
+
+    // open the xml file
+    QFile xmlfile(filename);
+    xmlfile.open(QFile::WriteOnly | QFile::Text);
+    QXmlStreamWriter xs(&xmlfile);
+
+    xs.setAutoFormatting(true);
+    xs.writeStartDocument();
+    xs.setCodec("UTF-8");
+
+    xs.writeStartElement("root");
+
+    xs.writeStartElement("interface-settings");
+
+    /// @todo replace this functionality
+    //    xs.writeTextElement("time-max",QString::number(mPlotDisplay->getTMax()));
+    //    xs.writeTextElement("time-min",QString::number(mPlotDisplay->getTMin()));
+    //    xs.writeTextElement("left-position",QString::number(mPlotDisplay->getLeftPos()));
+    //    xs.writeTextElement("right-position",QString::number(mPlotDisplay->getRightPos()));
+
+    xs.writeEndElement(); // interface-settings
+
+    xs.writeStartElement("waveform-data");
+    for(int i=0; i<maWaveformData.count(); i++)
+    {
+        xs.writeStartElement("waveform");
+        xs.writeAttribute("id",QString::number(i));
+
+        xs.writeTextElement("label",maWaveformData.at(i)->name());
+        xs.writeTextElement("sample-frequency",QString::number(maWaveformData.at(i)->getSamplingFrequency()));
+        xs.writeTextElement("number-of-samples",QString::number(maWaveformData.at(i)->getNSamples() ));
+
+        xs.writeEndElement(); // waveform
+
+        for(quint32 j=0; j<maWaveformData.at(i)->getNSamples(); j++)
+        {
+            binaryout << maWaveformData.at(i)->xData().at(j);
+        }
+        for(quint32 j=0; j<maWaveformData.at(i)->getNSamples(); j++)
+        {
+            binaryout << maWaveformData.at(i)->yData().at(j);
+        }
+    }
+
+    xs.writeEndElement(); // waveform-data
+
+    xs.writeStartElement("spectrogram-data");
+    for(int i=0; i<maSpectrogramData.count(); i++)
+    {
+        xs.writeStartElement("spectrogram");
+        xs.writeAttribute("id",QString::number(i));
+
+        xs.writeTextElement("label",maSpectrogramData.at(i)->name());
+
+        xs.writeTextElement("window-length",QString::number(maSpectrogramData.at(i)->getWindowLength()));
+        xs.writeTextElement("time-step",QString::number(maSpectrogramData.at(i)->getTimeStep()));
+        xs.writeTextElement("number-of-time-frames",QString::number(maSpectrogramData.at(i)->getNTimeSteps()));
+        xs.writeTextElement("number-of-frequency-bins",QString::number(maSpectrogramData.at(i)->getNFrequencyBins()));
+
+        xs.writeEndElement(); // spectrogram
+
+        for(quint32 j=0; j<maSpectrogramData.at(i)->getNTimeSteps(); j++)
+        {
+            binaryout << maSpectrogramData.at(i)->getTimeFromIndex(j);
+        }
+        for(quint32 j=0; j< maSpectrogramData.at(i)->getNFrequencyBins(); j++)
+        {
+            binaryout << maSpectrogramData.at(i)->getFrequencyFromIndex(j);
+        }
+        for(quint32 j=0; j<maSpectrogramData.at(i)->getNTimeSteps() * maSpectrogramData.at(i)->getNFrequencyBins(); j++)
+        {
+            binaryout << maSpectrogramData.at(i)->flatdata(j);
+        }
+    }
+    xs.writeEndElement(); // spectrogram-data
+
+    /// @todo replace this functionality
+    //    xs.writeStartElement("plots");
+    //    for(int i=0; i<mPlotDisplay->plotViews()->count(); i++)
+    //    {
+    //    xs.writeStartElement("plot");
+    //    xs.writeAttribute("id",QString::number(i));
+    //    xs.writeAttribute("name",mPlotDisplay->plotViews()->at(i)->name());
+    //    if( mPlotDisplay->plotViews()->at(i)->hasSecondaryAxis() )
+    //        xs.writeAttribute("secondary-axis", "1" );
+    //    else
+    //        xs.writeAttribute("secondary-axis", "0" );
+    //    xs.writeAttribute("height",QString::number(mPlotDisplay->plotViews()->at(i)->height()));
+
+    //    for(int j=0; j< mPlotDisplay->plotViews()->at(i)->spectrograms()->length(); j++)
+    //    {
+    //        xs.writeStartElement("spectrogram-plot");
+    //        xs.writeAttribute("index", QString::number( maSpectrogramData.indexOf(mPlotDisplay->plotViews()->at(i)->spectrogramData(j) ) ) );
+    //        xs.writeAttribute("name", mPlotDisplay->plotViews()->at(i)->spectrogramData(j)->name());
+
+    //        xs.writeTextElement("frequency-lower-bound",QString::number( mPlotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft).lowerBound() ));
+    //        xs.writeTextElement("frequency-upper-bound",QString::number( mPlotDisplay->plotViews()->at(i)->plot()->axisScaleDiv(QwtPlot::yLeft).upperBound() ));
+    //        xs.writeEndElement();
+    //    }
+
+    //    for(int j=0; j< mPlotDisplay->plotViews()->at(i)->curves()->length(); j++)
+    //    {
+    //        xs.writeStartElement("curve");
+    //        xs.writeAttribute("index",QString::number( maWaveformData.indexOf(mPlotDisplay->plotViews()->at(i)->curveData(j)) ));
+    //        xs.writeAttribute("name", mPlotDisplay->plotViews()->at(i)->curveData(j)->name() );
+    //        if( mPlotDisplay->plotViews()->at(i)->curves()->at(j)->yAxis() == QwtPlot::yLeft )
+    //        xs.writeAttribute("secondary-axis", "0" );
+    //        else
+    //        xs.writeAttribute("secondary-axis", "1" );
+
+    //        xs.writeEmptyElement("symbol-color");
+    //        xs.writeAttribute("r",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().red()));
+    //        xs.writeAttribute("g",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().green()));
+    //        xs.writeAttribute("b",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().blue()));
+
+    //        xs.writeEmptyElement("symbol-fill-color");
+    //        xs.writeAttribute("r",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().red()));
+    //        xs.writeAttribute("g",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().green()));
+    //        xs.writeAttribute("b",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().blue()));
+
+    //        xs.writeTextElement("symbol-style",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->style()));
+
+    //        xs.writeTextElement("symbol-size",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->size().height()));
+
+    //        xs.writeEmptyElement("line-color");
+    //        xs.writeAttribute("r",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().red()));
+    //        xs.writeAttribute("g",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().green()));
+    //        xs.writeAttribute("b",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().blue()));
+
+    //        xs.writeTextElement("line-style",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->style()));
+
+    //        xs.writeTextElement("line-width",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().width()));
+
+    //        xs.writeTextElement("antialiased",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->testRenderHint(QwtPlotItem::RenderAntialiased)));
+
+    //        xs.writeEndElement();
+    //    }
+
+    //    xs.writeEndElement(); // plot
+    //    }
+    //    xs.writeEndElement(); // plots
+
+    xs.writeStartElement("interval-annotations");
+    for(int i=0; i<maIntervalAnnotations.count(); i++)
+    {
+        xs.writeStartElement("interval-annotation");
+        xs.writeAttribute("name",maIntervalAnnotations.at(0)->mName);
+
+        for(int j=0; j<maIntervalAnnotations.at(0)->maIntervals.count(); j++)
+        {
+
+            xs.writeEmptyElement("interval");
+            xs.writeAttribute("label",maIntervalAnnotations.at(0)->maIntervals.at(j)->mLabel);
+            xs.writeAttribute("left",QString::number(maIntervalAnnotations.at(0)->maIntervals.at(j)->mLeft));
+            xs.writeAttribute("right",QString::number(maIntervalAnnotations.at(0)->maIntervals.at(j)->mRight));
+        }
+        xs.writeEndElement(); // interval-annotation
+    }
+    xs.writeEndElement(); // interval-annotations
+
+
+    xs.writeStartElement("regressions");
+    for(int i=0; i<maRegressions.count(); i++)
+    {
+        xs.writeStartElement("regression");
+        xs.writeAttribute("name",maRegressions.at(i)->name());
+        xs.writeAttribute("intercept-term",QString::number( maRegressions.at(i)->hasIntercept() ) );
+        xs.writeAttribute("spectrogram-mode",QString::number( maRegressions.at(i)->dependentIsSpectrogram() ) );
+
+        xs.writeStartElement("dependent");
+        if( maRegressions.at(i)->dependentIsSpectrogram() )
+            xs.writeTextElement( "dependent-spectrogram", QString::number( maSpectrogramData.indexOf( maRegressions.at(i)->mDependentSpectrogram ) ) );
+        else
+            for(int j=0; j<maRegressions.at(i)->mDependent.count(); j++)
+                xs.writeTextElement( "dependent-waveform", QString::number( maWaveformData.indexOf( maRegressions.at(i)->mDependent.at(j) ) ) );
+
+        xs.writeEndElement(); // dependent
+
+        xs.writeStartElement("independent");
+
+        xs.writeStartElement("simple");
+        for(int j=0; j<maRegressions.at(i)->mSimple.count(); j++)
+            xs.writeTextElement("independent-waveform",QString::number( maWaveformData.indexOf( maRegressions.at(i)->mSimple.at(j) ) ));
+        xs.writeEndElement(); // simple
+
+        xs.writeStartElement("interaction");
+        for(int j=0; j<maRegressions.at(i)->mInteraction.count(); j++)
+        {
+            xs.writeStartElement("independent-interaction");
+            for(int k=0; k<maRegressions.at(i)->mInteraction.at(j)->members.count(); k++)
+                xs.writeTextElement("interaction-member", QString::number( maWaveformData.indexOf( maRegressions.at(i)->mInteraction.at(j)->members.at(k) ) ) );
+            xs.writeEndElement(); // independent-interaction
+        }
+        xs.writeEndElement(); // interaction
+
+        xs.writeEndElement(); // independent
+
+        xs.writeEndElement(); // regression
+    }
+    xs.writeEndElement(); // regressions
+
+    xs.writeEndElement(); // root
+
+    xs.writeEndDocument();
+
+    xmlfile.close();
+    binaryfile.close();
 }
 
 QString Sound::readXmlElement(QXmlStreamReader &reader, QString elementname)
@@ -295,16 +550,114 @@ void Sound::addRegression(RegressionModel *regression)
     maRegressions << regression;
 
     /// @todo Recover this functionality
-//    int index = maRegressions.count() - 1;
-//    QMenu *tmp = mRegressionMenu->addMenu(regression->name());
-//    QAction *editRegression = new QAction(tr("Edit"),tmp);
-//    editRegression->setData(index);
-//    QAction *deleteRegression = new QAction(tr("Delete"),tmp);
-//    deleteRegression->setData(1000+index);
-//    tmp->addAction(editRegression);
-//    tmp->addAction(deleteRegression);
-//    maRegressionMenus << tmp;
-//    connect(tmp,SIGNAL(triggered(QAction*)),this,SLOT(regressionMenuAction(QAction*)));
+    //    int index = maRegressions.count() - 1;
+    //    QMenu *tmp = mRegressionMenu->addMenu(regression->name());
+    //    QAction *editRegression = new QAction(tr("Edit"),tmp);
+    //    editRegression->setData(index);
+    //    QAction *deleteRegression = new QAction(tr("Delete"),tmp);
+    //    deleteRegression->setData(1000+index);
+    //    tmp->addAction(editRegression);
+    //    tmp->addAction(deleteRegression);
+    //    maRegressionMenus << tmp;
+    //    connect(tmp,SIGNAL(triggered(QAction*)),this,SLOT(regressionMenuAction(QAction*)));
 
     emit scriptDataChanged();
+}
+
+void Sound::addSpectrogram(SpectrogramData *data)
+{
+    maSpectrogramData << data;
+    emit scriptDataChanged();
+}
+
+void Sound::addWaveform(WaveformData *data)
+{
+    maWaveformData << data;
+    emit scriptDataChanged();
+}
+
+void Sound::readTextGridFromFile(const QString & fileName)
+{
+    int count = maIntervalAnnotations.count();
+    QFile data(fileName);
+    if (data.open(QFile::ReadOnly))
+    {
+        QTextStream in(&data);
+
+        while( !in.atEnd() )
+        {
+            bool inInterval = false;
+            QString line = in.readLine();
+            //		qDebug() << line;
+            if( line.contains("class = \"IntervalTier\""))
+            {
+                maIntervalAnnotations << new IntervalAnnotation;
+                inInterval = true;
+            }
+            else if( line.contains("class = \"TextTier\""))
+            {
+                inInterval = false;
+            }
+            else if( line.contains("name = \""))
+            {
+                QRegExp rx("\"(.*)\"");
+                rx.indexIn(line);
+                if(rx.captureCount() < 1) { continue; }
+                if(inInterval)
+                    maIntervalAnnotations.last()->mName = rx.capturedTexts().at(1);
+            }
+            else if( line.contains(QRegExp("intervals \\[\\d*\\]:")))
+            {
+                //		    qDebug() << "Interval" << line;
+                if(inInterval)
+                    maIntervalAnnotations.last()->maIntervals << new Interval;
+            }
+            else if( line.contains("xmin = "))
+            {
+                if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
+                {
+                    QRegExp rx("xmin = (\\d*\\.\\d*)"); // will this get the decimal?
+                    rx.indexIn(line);
+                    //			qDebug() << rx.capturedTexts();
+                    if(rx.captureCount() < 1) { continue; }
+                    QString tmp = rx.capturedTexts().at(1);
+                    //			qDebug() << tmp.toDouble();
+                    maIntervalAnnotations.last()->maIntervals.last()->mLeft = tmp.toDouble();
+                }
+            }
+            else if( line.contains("xmax = "))
+            {
+                if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
+                {
+                    QRegExp rx("xmax = (\\d*\\.\\d*)"); // will this get the decimal?
+                    rx.indexIn(line);
+                    //			qDebug() << rx.capturedTexts() << rx.captureCount();
+                    if(rx.captureCount() < 1) { continue; }
+                    QString tmp = rx.capturedTexts().at(1);
+                    //			qDebug() << tmp.toDouble();
+                    maIntervalAnnotations.last()->maIntervals.last()->mRight = tmp.toDouble();
+                }
+            }
+            else if( line.contains("text = "))
+            {
+                if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
+                {
+                    QRegExp rx("\"(.*)\"");
+                    rx.indexIn(line);
+                    //			qDebug() << rx.capturedTexts();
+                    if(rx.captureCount() < 1) { continue; }
+                    QString tmp = rx.capturedTexts().at(1);
+                    maIntervalAnnotations.last()->maIntervals.last()->mLabel = tmp;
+                    //			qDebug() << tmp;
+                }
+            }
+        }
+    }
+
+    /// @todo Update this functionality
+//    for(int i=count; i<maIntervalAnnotations.count(); i++)
+//    {
+//        mPlotDisplay->addAnnotation(new IntervalDisplayWidget(maIntervalAnnotations.at(i),mPlotDisplay->plotViews()->first(),this));
+//        addAnnotationMenu(maIntervalAnnotations.at(i));
+//    }
 }

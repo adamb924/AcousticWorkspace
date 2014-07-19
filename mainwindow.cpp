@@ -15,6 +15,9 @@
 #include "soundwidget.h"
 #include "comparisonwidget.h"
 #include "interfaces.h"
+#include "waveformdata.h"
+
+#include "sndfile.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -24,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     loadPlugins();
 
     connect(ui->actionOpen_Sound, SIGNAL(triggered()), this, SLOT(openSound()));
+    connect(ui->actionImport_sound_to_create_waveform, SIGNAL(triggered()), this, SLOT(importSoundFile()) );
 }
 
 
@@ -42,8 +46,65 @@ void MainWindow::openSound()
         if( newSound->readState() == Sound::Success )
         {
             mSounds.append( newSound );
+            newSoundWindow( newSound );
         }
     }
+}
+
+void MainWindow::importSoundFile()
+{
+    QString fileName;
+    fileName= QFileDialog::getOpenFileName(this, tr("Open Sound"), "", tr("Sound files (*.*)"));
+    if(!fileName.isNull())
+    {
+        QFileInfo info(fileName);
+        if(!info.exists())
+        {
+            QMessageBox::critical(0,"Error","The file "+fileName+" does not exist.");
+            return;
+        }
+        loadSound(fileName);
+    }
+}
+
+void MainWindow::loadSound(const QString &fileName)
+{
+    SF_INFO sndInfo;
+    SNDFILE *sndFile = sf_open(fileName.toUtf8(), SFM_READ, &sndInfo);
+    if(sndFile==NULL)
+    {
+        QMessageBox::critical(0,"Error","The file "+fileName+" could not be opened.");
+        return;
+    }
+
+    if(sndInfo.channels > 1)
+    {
+        QMessageBox::warning(0,"Warning","The file has more than one channel, but only the first channel is going to be read.");
+    }
+
+    double *data = (double*)malloc(sizeof(double)*sndInfo.frames);
+    Q_CHECK_PTR(data);
+    if( sf_read_double(sndFile,data,sndInfo.frames) != sndInfo.frames )
+    {
+        QMessageBox::critical(0,"Error","There was some kind of error in reading the file (not enough data).");
+        sf_close(sndFile);
+        return;
+    }
+    sf_close(sndFile);
+
+    double *times = (double*)malloc(sizeof(double)*sndInfo.frames);
+    Q_CHECK_PTR(times);
+
+    for(quint32 i=0; i < sndInfo.frames; i++)
+    {
+        *(times+i) = ((double)i)/sndInfo.samplerate;;
+    }
+
+    QFileInfo info(fileName);
+    WaveformData *sound = new WaveformData(info.fileName(),times,data,sndInfo.frames,sndInfo.samplerate);
+
+    Sound * newSound = new Sound(sound);
+    mSounds.append( newSound );
 }
 
 void MainWindow::loadPlugins()
@@ -113,27 +174,28 @@ void MainWindow::newSoundWindow(Sound *snd)
 
 void MainWindow::newComparisonWindow()
 {
-    QList<SoundWidget*> *sounds = soundWindows();
-    if( sounds->count() < 2 )
-    {
-    QMessageBox::critical(this,tr("Error"),tr("You need at least two different sounds to make a comparison."));
-    return;
-    }
+    /// @todo Replicate this functionality, bearing in mind that ComparisonWidget now accepts Sound objects
+//    QList<SoundWidget*> *sounds = soundWindows();
+//    if( sounds->count() < 2 )
+//    {
+//    QMessageBox::critical(this,tr("Error"),tr("You need at least two different sounds to make a comparison."));
+//    return;
+//    }
 
-    QStringList items;
-    for(int i=0; i< sounds->count(); i++)
-    items << sounds->at(i)->windowTitle();
+//    QStringList items;
+//    for(int i=0; i< sounds->count(); i++)
+//    items << sounds->at(i)->windowTitle();
 
-    bool ok;
-    QString item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the primary sound for the comparison"), items, 0, false, &ok);
-    if(!ok) { return; }
-    int first = items.indexOf(item);
+//    bool ok;
+//    QString item = QInputDialog::getItem(this, tr("Acoustic Workspace"),tr("Choose the primary sound for the comparison"), items, 0, false, &ok);
+//    if(!ok) { return; }
+//    int first = items.indexOf(item);
 
 
-    ComparisonWidget *tmp = new ComparisonWidget(sounds->at(first), sounds);
-    ui->mdiArea->addSubWindow(tmp);
-    ui->mdiArea->subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
-    tmp->show();
+//    ComparisonWidget *tmp = new ComparisonWidget(sounds->at(first), sounds);
+//    ui->mdiArea->addSubWindow(tmp);
+//    ui->mdiArea->subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
+//    tmp->show();
 }
 
 QList<SoundWidget*>* MainWindow::soundWindows()

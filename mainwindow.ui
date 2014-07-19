@@ -10,10 +10,22 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Acoustic Workspace</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
      <number>0</number>
@@ -28,7 +40,14 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QMdiArea" name="mdiArea"/>
+     <widget class="QMdiArea" name="mdiArea">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -55,41 +74,8 @@
     <addaction name="actionImport_sound_to_create_waveform"/>
     <addaction name="actionImport_Text_Grid"/>
    </widget>
-   <widget class="QMenu" name="menuOptions">
-    <property name="title">
-     <string>Options</string>
-    </property>
-    <addaction name="actionData_Manager"/>
-    <addaction name="actionPlot_Manager"/>
-   </widget>
-   <widget class="QMenu" name="menuDisplay">
-    <property name="title">
-     <string>Display</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuRegressions">
-    <property name="title">
-     <string>Regressions</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuAnnotations">
-    <property name="title">
-     <string>Annotations</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menuScripting">
-    <property name="title">
-     <string>Scripting</string>
-    </property>
-   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuOptions"/>
-   <addaction name="menuDisplay"/>
-   <addaction name="menuRegressions"/>
-   <addaction name="menuAnnotations"/>
-   <addaction name="menuScripting"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_Sound">
    <property name="text">
     <string>Open Sound</string>

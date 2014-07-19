@@ -64,6 +64,8 @@ public:
 private slots:
     void openSound();
 
+    void importSoundFile();
+
     //! \brief Create a new sound-display child window
     void newSoundWindow(Sound * snd);
 
@@ -73,6 +75,9 @@ private slots:
 private:
     //! \brief Return a pointer to a list of pointers to SoundWidget objects.
     QList<SoundWidget*>* soundWindows();
+
+    //! \brief Create a Sound from a wav file
+    void loadSound(const QString & fileName);
 
     //! \brief Reads the plugins from the application's plugins folder, invoking loadPlugin for each one
     void loadPlugins();

@@ -9,8 +9,7 @@
 #ifndef SOUNDWIDGET_H
 #define SOUNDWIDGET_H
 
-#include <QMetaType>
-#include <QWidget>
+#include <QMainWindow>
 #include <qwt_slider.h>
 
 class QVBoxLayout;
@@ -37,14 +36,13 @@ class IntervalAnnotation;
 class QScriptEngine;
 class Sound;
 
-//Q_DECLARE_METATYPE(QList<WaveformData*>)
-//Q_DECLARE_METATYPE(QList<SpectrogramData*>)
+namespace Ui {
+    class SoundWidget;
+}
 
-class SoundWidget : public QWidget
+class SoundWidget : public QMainWindow
 {
     Q_OBJECT
-
-    friend class ComparisonWidget;
 
 public:
     SoundWidget(Sound * snd, QList<AbstractWaveform2WaveformMeasure*> *w2w, QList<AbstractWaveform2SpectrogramMeasure*> *w2s, QList<AbstractSpectrogram2WaveformMeasure*> *s2w, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2s, QWidget *parent = 0);
@@ -62,24 +60,6 @@ signals:
     void scriptDataChanged();
 
 public slots:
-    //! \brief Reads a project file into memory
-    void readFromFile(QString filename);
-
-    //! \brief Reads a Praat TextGrid file into memory
-    void readTextGridFromFile(QString fileName);
-
-    //! \brief Closes the current sound
-    void close();
-
-    //! \brief Loads a sound into the project
-    void loadSound(QString fileName);
-
-    //! \brief Write the project to the current filename, or prompt the user for a filename if none exists.
-    void save();
-
-    //! \brief Write the project to \a filename
-    void writeProjectToFile(QString filename);
-
     //! \brief Remove the \a index-th waveform, if \a index is a valid index
     void removeWaveform(int index);
 
@@ -87,38 +67,20 @@ public slots:
     void removeSpectrogram(int index);
 
 private slots:
-    //! \brief Prompts the user to select a file to be opened by loadSound()
-    void importSound();
-
     //! \brief Launches a DataManagerDialog
     void launchDataManager();
 
     //! \brief Launches a RegressionDialog
     void newRegression();
 
-    //! \brief Prompt the user to select a project to open, and calls readFromFile to read the project
-    void openProject();
-
     //! \brief Launches a PlotManagerDialog
     void launchPlotManager();
-
-    //! \brief Prompts the user for a new filename, and calls writeProjectToFile
-    void saveAs();
 
     //! \brief Prompts the user to select a TextGrid file, and calls readTextGridFromFile
     void importTextGrid();
 
     //! \brief Adds the appropriate submenu to the annotations menu
     void addAnnotationMenu(IntervalAnnotation *annotation);
-
-    //! \brief Adds \regression to the project
-    void addRegression(RegressionModel *regression);
-
-    //! \brief Adds the spectrogram to the project, if the project is in a focused window.
-    void addSpectrogram(SpectrogramData *data);
-
-    //! \brief Adds the waveform to the project, if the project is in a focused window.
-    void addWaveform(WaveformData *data);
 
     //! \brief Processes \action depending on the action's data, to produce appropriate behavior items in the regression menu
     void regressionMenuAction(QAction *action);
@@ -139,16 +101,13 @@ private slots:
     void setupScripting();
 
 private:
-    MainWindow *mMainWnd;
-    PlotDisplayAreaWidget *mPlotDisplay;
+    Ui::SoundWidget *ui;
 
     Sound * mSound;
 
     QScriptEngine* mScriptEngine;
 
     QMenuBar *mMenuBar;
-
-    QString mCurrentFilename;
 
     QMenu *mFileMenu, *mOptionsMenu, *mVisibilityMenu, *mRegressionMenu, *mAnnotationMenu, *mScriptingMenu;
     QAction *mImportSoundAction, *mCloseAction, *mOpenProjectAction, *mSaveProjectAction, *mSaveProjectAsAction, *mNewSoundAction;
@@ -161,15 +120,8 @@ private:
     QList<AbstractSpectrogram2WaveformMeasure*> *mS2wPlugins;
     QList<AbstractSpectrogram2SpectrogramMeasure*> *mS2sPlugins;
 
-    QList<WaveformData*> maWaveformData;
-    QList<SpectrogramData*> maSpectrogramData;
-    QList<RegressionModel*> maRegressions;
-    QList<IntervalAnnotation*> maIntervalAnnotations;
     QList<QMenu*> maRegressionMenus;
     QList<QMenu*> maAnnotationMenus;
-
-    //! \brief Return the inner text of the next element named \a elementname in \a reader, or an empty string if there is none
-    QString readXmlElement(QXmlStreamReader &reader, QString elementname);
 
     //! \brief Add actions to the menus
     void setupActions();

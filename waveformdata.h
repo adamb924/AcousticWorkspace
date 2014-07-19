@@ -97,4 +97,6 @@ private:
     double mMaximum;
 };
 
+//Q_DECLARE_METATYPE(WaveformData)
+
 #endif // WAVEFORMDATA_H

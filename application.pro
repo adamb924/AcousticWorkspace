@@ -58,4 +58,5 @@ LIBS += -L./ \
     -lgsl
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    soundwidget.ui

@@ -131,4 +131,6 @@ private:
     quint32 mNFrames, mNFreqBins;
 };
 
+// Q_DECLARE_METATYPE(SpectrogramData)
+
 #endif // SPECTROGRAMDATA_H
