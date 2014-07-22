@@ -39,7 +39,7 @@ public:
       \param windowLength Window length of the spectrogram
       \param timeStep Time step of the spectrogram
     */
-    SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins, double specMin, double specMax , double windowLength, double timeStep);
+    SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins, double windowLength, double timeStep);
 
     ~SpectrogramData();
 
@@ -81,7 +81,7 @@ public slots:
     quint32 frequencyBinBelow(double t) const;
 
     //! \brief Return the interpolated value at time \a x, frequency \a y. Reimplemented from QwtRasterData
-    virtual double value(double x, double y) const;
+    double value(double x, double y) const;
 
     //! \brief Return the bilinearly interpolated value at time \a x, frequency \a y
     double bilinearInterpolation(double x, double y) const;

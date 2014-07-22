@@ -168,7 +168,7 @@ void SpectrogramPlugin::calculate(int index, WaveformData *data)
 
     QString suggested_label = "Spectrogram WL:" + settingsValues.at(0).toString() + " TS:" + settingsValues.at(1).toString();
 
-    emit spectrogramCreated(new SpectrogramData(suggested_label, spec, times, nFrames, frequencies, nFreqBins, spec_min, spec_max , windowLength, timeStep));
+    emit spectrogramCreated(new SpectrogramData(suggested_label, spec, times, nFrames, frequencies, nFreqBins, windowLength, timeStep));
 
 //    QList<SpectrogramData*> ret;
 //    ret << new SpectrogramData(suggested_label, spec, times, nFrames, frequencies, nFreqBins, spec_min, spec_max , windowLength, timeStep);

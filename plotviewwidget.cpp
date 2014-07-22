@@ -95,24 +95,27 @@ QwtPlotCurve * PlotViewWidget::addCurveData(WaveformData *curveData, bool second
 
 QwtPlotSpectrogram * PlotViewWidget::addSpectrogramData(SpectrogramData *spectrogramData)
 {
-    maSpectrogramData << spectrogramData;
-
     QwtPlotSpectrogram *spectrogram = new QwtPlotSpectrogram();
-
-//    d_spectrogram->setColorMap( new ColorMap() );
+    spectrogram->setRenderThreadCount( 0 ); // use system specific thread count
 
     QwtLinearColorMap * colorMap = new QwtLinearColorMap(Qt::white, Qt::black);
-    //    QwtLinearColorMap colorMap(Qt::black, Qt::white);
     spectrogram->setColorMap(colorMap);
-    spectrogram->setData(spectrogramData);
+
+    spectrogram->setCachePolicy( QwtPlotRasterItem::PaintCache );
+    spectrogram->setData( spectrogramData );
 
     QRectF r = spectrogramData->boundingRect();
     mQwtPlot->setAxisScale( QwtPlot::yLeft , 0, 5000, 1000);
     mQwtPlot->setAxisScale( QwtPlot::yRight , 0, 5000, 1000);
     mQwtPlot->setAxisScale( QwtPlot::xBottom , r.left(), r.right(), 0.1);
 
+    spectrogram->setDisplayMode( QwtPlotSpectrogram::ImageMode, true );
+    spectrogram->setAlpha(100);
+
+    maSpectrogramData << spectrogramData;
+
     maSpectrograms << spectrogram;
-    spectrogram->attach(mQwtPlot);
+    spectrogram->attach( mQwtPlot );
     mQwtPlot->repaint();
 
     return spectrogram;

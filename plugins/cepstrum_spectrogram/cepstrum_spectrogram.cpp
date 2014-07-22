@@ -104,8 +104,6 @@ void CepstrumSpectrogramPlugin::calculate(int index, SpectrogramData *data)
 	}
     }
 
-    qDebug() << "CepstrumSpectrogramPlugin::calculate";
-
     fftw_free( in );
     fftw_free( out );
     fftw_destroy_plan(theplan);
@@ -121,7 +119,7 @@ void CepstrumSpectrogramPlugin::calculate(int index, SpectrogramData *data)
 
     qDebug() << "CepstrumSpectrogramPlugin::calculate end";
 
-    emit spectrogramCreated(new SpectrogramData(suggested_label, spec, times, nFrames, coefficientindices, nCoefficients, spec_min, spec_max , data->getWindowLength(), data->getTimeStep()));
+    emit spectrogramCreated(new SpectrogramData(suggested_label, spec, times, nFrames, coefficientindices, nCoefficients, data->getWindowLength(), data->getTimeStep()));
 }
 
 void CepstrumSpectrogramPlugin::setParameter(QString label, QVariant value)

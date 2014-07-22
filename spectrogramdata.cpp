@@ -12,11 +12,23 @@ SpectrogramData::SpectrogramData() : mData(0), mTimes(0), mFrequencies(0), mWind
 {
 }
 
-SpectrogramData::SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins, double spec_min, double spec_max , double windowLength, double timeStep)
+SpectrogramData::SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins , double windowLength, double timeStep)
      : mLabel(n), mData(data), mTimes(times), mFrequencies(frequencies), mWindowLength(windowLength), mTimeStep(timeStep), mNFrames(nFrames), mNFreqBins(nFreqBins)
 {
     mSafeLabel = n;
     mSafeLabel.replace(QRegExp("[\\W]*"),"");
+    setInterval( Qt::XAxis, QwtInterval( getTimeFromIndex(0), getTimeFromIndex(mNFrames-1) ) );
+    setInterval( Qt::YAxis, QwtInterval( getFrequencyFromIndex(0), getFrequencyFromIndex(mNFreqBins-1) ) );
+
+    double min=999999, max=-999999;
+    for(quint32 i=0; i<mNFrames*mNFreqBins; i++)
+    {
+        if( mData[i] < min )
+            min = mData[i];
+        if( mData[i] > max )
+            max = mData[i];
+    }
+    setInterval( Qt::ZAxis, QwtInterval( min, max ) );
 }
 
 SpectrogramData::~SpectrogramData()
@@ -42,6 +54,10 @@ SpectrogramData* SpectrogramData::copy() const
     copy->mNFrames = mNFrames;
     copy->mNFreqBins = mNFreqBins;
     copy->mSafeLabel = mSafeLabel;
+
+    copy->setInterval(Qt::XAxis, interval(Qt::XAxis) );
+    copy->setInterval(Qt::YAxis, interval(Qt::YAxis) );
+    copy->setInterval(Qt::ZAxis, interval(Qt::ZAxis) );
 
     quint32 i;
     copy->mTimes = (double*)malloc(sizeof(double)*mNFrames);

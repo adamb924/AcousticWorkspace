@@ -149,8 +149,6 @@ void Sound::readFromFile(const QString & filename)
                 xml.readNextStartElement(); if(xml.name().toString() != "number-of-frequency-bins") { qDebug() << "Line " << xml.lineNumber() << ", Column " << xml.columnNumber() << ": " << "File format error: " << xml.name(); return; }
                 size_t nFreqBins= xml.readElementText().toInt();
 
-                double spec_min = 999999999, spec_max = -999999999;
-
                 double *times = (double*)malloc(sizeof(double)*nFrames);
                 double *frequencies = (double*)malloc(sizeof(double)*nFreqBins);
                 double *data = (double*)malloc(sizeof(double)*nFrames*nFreqBins);
@@ -167,11 +165,9 @@ void Sound::readFromFile(const QString & filename)
                 for(quint32 i=0; i<nFrames*nFreqBins; i++)
                 {
                     binaryin >> *(data+i);
-                    if( *(data+i) < spec_min ) { spec_min = *(data+i); }
-                    if( *(data+i) > spec_max ) { spec_max = *(data+i); }
                 }
 
-                maSpectrogramData << new SpectrogramData(name, data, times, nFrames, frequencies, nFreqBins, spec_min, spec_max , windowLength, timeStep);
+                maSpectrogramData << new SpectrogramData(name, data, times, nFrames, frequencies, nFreqBins, windowLength, timeStep);
             }
             else if( name == "plot" )
             {

@@ -269,6 +269,7 @@ void SoundWidget::setupScripting()
 
 void SoundWidget::regressionMenuAction(QAction *action)
 {
+    Q_UNUSED(action);
     /// @todo rethink this implementation
 //    int actiontype = action->data().toInt();
 //    int index = maRegressionMenus.indexOf(  qobject_cast<QMenu*>(action->parentWidget()) );
@@ -292,6 +293,7 @@ void SoundWidget::regressionMenuAction(QAction *action)
 
 void SoundWidget::annotationMenuAction(QAction *action)
 {
+    Q_UNUSED(action);
     /// @todo rethink this implementation
 //    int actiontype = action->data().toInt();
 //    int index = maAnnotationMenus.indexOf( qobject_cast<QMenu*>(action->parentWidget()) );
