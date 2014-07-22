@@ -59,7 +59,7 @@ QSize PlotViewWidget::sizeHint() const
     return QSize(750,mWidgetHeight);
 }
 
-void PlotViewWidget::addCurveData(WaveformData *curveData, bool secondary, QColor col)
+QwtPlotCurve * PlotViewWidget::addCurveData(WaveformData *curveData, bool secondary, QColor col)
 {
     maWaveformData << curveData;
 
@@ -90,13 +90,16 @@ void PlotViewWidget::addCurveData(WaveformData *curveData, bool secondary, QColo
     }
 
     mQwtPlot->repaint();
+    return waveCurve;
 }
 
-void PlotViewWidget::addSpectrogramData(SpectrogramData *spectrogramData)
+QwtPlotSpectrogram * PlotViewWidget::addSpectrogramData(SpectrogramData *spectrogramData)
 {
     maSpectrogramData << spectrogramData;
 
     QwtPlotSpectrogram *spectrogram = new QwtPlotSpectrogram();
+
+//    d_spectrogram->setColorMap( new ColorMap() );
 
     QwtLinearColorMap * colorMap = new QwtLinearColorMap(Qt::white, Qt::black);
     //    QwtLinearColorMap colorMap(Qt::black, Qt::white);
@@ -111,6 +114,8 @@ void PlotViewWidget::addSpectrogramData(SpectrogramData *spectrogramData)
     maSpectrograms << spectrogram;
     spectrogram->attach(mQwtPlot);
     mQwtPlot->repaint();
+
+    return spectrogram;
 }
 
 
@@ -190,13 +195,13 @@ void PlotViewWidget::contextMenuEvent ( QContextMenuEvent * event )
 
     if( maSpectrograms.count() > 0 )
     {
-	QMenu *spectrogramSettingsMenu = menu.addMenu("Spectogram settings");
-	for(int i=0; i<maCurves.count(); i++)
-	{
-	    IndexedAction *tmp = new IndexedAction(countString(i)+maSpectrogramData.at(i)->name(),i,spectrogramSettingsMenu);
-	    spectrogramSettingsMenu->addAction( tmp );
-	    connect(tmp, SIGNAL(indexClicked(int)), this, SLOT(launchSpectrogramSettings(int)) );
-	}
+        QMenu *spectrogramSettingsMenu = menu.addMenu("Spectrogram settings");
+        for(int i=0; i<maSpectrograms.count(); i++)
+        {
+            IndexedAction *tmp = new IndexedAction(countString(i)+maSpectrogramData.at(i)->name(),i,spectrogramSettingsMenu);
+            spectrogramSettingsMenu->addAction( tmp );
+            connect(tmp, SIGNAL(indexClicked(int)), this, SLOT(launchSpectrogramSettings(int)) );
+        }
     }
 
     if( maCurves.count() > 0 )

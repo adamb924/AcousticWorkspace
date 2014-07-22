@@ -34,6 +34,7 @@
 #include "plotdisplayareawidget.h"
 #include "intervalannotation.h"
 #include "sound.h"
+#include "soundview.h"
 
 SoundWidget::SoundWidget(Sound * snd, QList<AbstractWaveform2WaveformMeasure*> *w2w, QList<AbstractWaveform2SpectrogramMeasure*> *w2s, QList<AbstractSpectrogram2WaveformMeasure*> *s2w, QList<AbstractSpectrogram2SpectrogramMeasure*> *s2s, QWidget *parent) :
     QMainWindow(parent),
@@ -57,6 +58,8 @@ SoundWidget::SoundWidget(Sound * snd, QList<AbstractWaveform2WaveformMeasure*> *
 //    setupActions();
 //    setupScripting();
 
+    setupLayout();
+
     setWindowTitle(mSound->name());
 }
 
@@ -64,6 +67,51 @@ SoundWidget::~SoundWidget()
 {
     if(mScriptEngine != 0)
         delete mScriptEngine;
+}
+
+void SoundWidget::setupLayout()
+{
+    const SoundView * v = mSound->soundView();
+    ui->plotDisplayWidget->setTimeMinMax( v->tMin(), v->tMax() );
+    ui->plotDisplayWidget->setTimeAxes( v->leftPos(), v->rightPos() );
+
+    /// @todo add in the annotations
+
+    for(int i=0; i<v->plotParameters()->count(); i++)
+    {
+        PlotParameters *p = v->plotParameters()->at(i);
+        PlotViewWidget *pvw = new PlotViewWidget( p->name() );
+        pvw->setHasSecondaryAxis( p->hasSecondaryAxis() );
+        pvw->setHeight( p->height() );
+
+        // add the curves
+        for(int j=0; j<p->curveParameters()->count(); j++)
+        {
+            CurveParameters *cp = p->curveParameters()->at(j);
+            QwtPlotCurve * curve = pvw->addCurveData( cp->waveformData(), cp->isSecondary() );
+            curve->setPen( cp->pen() );
+            curve->setStyle( cp->curveStyle() );
+            curve->setRenderHint(QwtPlotItem::RenderAntialiased, cp->antialiased() );
+
+            QwtSymbol * sym = new QwtSymbol;
+            sym->setBrush(cp->symbolBrush());
+            sym->setPen(cp->symbolPen());
+            sym->setSize(cp->symbolSize());
+            sym->setStyle(cp->symbolStyle());
+            curve->setSymbol(sym);
+        }
+
+        for(int j=0; j<p->spectrogramParameters()->count(); j++)
+        {
+            qDebug() << j;
+            SpectrogramParameters *sp = p->spectrogramParameters()->at(j);
+            QwtPlotSpectrogram * spectrogram = pvw->addSpectrogramData( sp->spectrogramData() );
+            QwtLinearScaleEngine engine;
+            spectrogram->plot()->setAxisScaleDiv(QwtPlot::yLeft, QwtScaleDiv( engine.divideScale( sp->lowerBound(), sp->upperBound(),10, 10) ));
+        }
+
+        ui->plotDisplayWidget->addPlotView( pvw , p->name() );
+    }
 }
 
 // Private slots

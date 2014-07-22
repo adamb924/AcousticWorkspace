@@ -68,10 +68,10 @@ public:
       \param secondary If true the curve is plotted on the secondary axis
       \param col The color for the plot curve
       */
-    void addCurveData(WaveformData *curveData, bool secondary = false, QColor col = Qt::blue);
+    QwtPlotCurve *addCurveData(WaveformData *curveData, bool secondary = false, QColor col = Qt::blue);
 
     //! \brief Add \a spectrogramData to the current plot
-    void addSpectrogramData(SpectrogramData *spectrogramData);
+    QwtPlotSpectrogram *addSpectrogramData(SpectrogramData *spectrogramData);
 
     //! \brief Remove the \a i-th plot item (curve or spectrogram)
     void removeItemAt(int i);

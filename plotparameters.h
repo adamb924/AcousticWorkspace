@@ -24,8 +24,8 @@ public:
     int height() const;
     void setHeight(int value);
 
-    const QList<SpectrogramParameters *> spectrogramParameters() const;
-    QList<SpectrogramParameters *> spectrogramParameters();
+    const QList<SpectrogramParameters *> * spectrogramParameters() const;
+    QList<SpectrogramParameters *> * spectrogramParameters();
 
 private:
     QString mName;

@@ -123,6 +123,8 @@ private:
     QList<QMenu*> maRegressionMenus;
     QList<QMenu*> maAnnotationMenus;
 
+    void setupLayout();
+
     //! \brief Add actions to the menus
     void setupActions();
 

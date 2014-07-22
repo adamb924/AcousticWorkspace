@@ -258,7 +258,7 @@ void Sound::readFromFile(const QString & filename)
                 sp->setLowerBound(lowerbound);
                 sp->setUpperBound(upperbound);
                 sp->setSpectrogramData(maSpectrogramData.at(index));
-                mSoundView.plotParameters()->last()->spectrogramParameters().append(sp);
+                mSoundView.plotParameters()->last()->spectrogramParameters()->append(sp);
             }
             else if(name=="regression")
             {
