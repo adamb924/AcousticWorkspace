@@ -653,3 +653,8 @@ const SoundView *Sound::soundView() const
 {
     return &mSoundView;
 }
+
+QString Sound::filename() const
+{
+    return mFilename;
+}

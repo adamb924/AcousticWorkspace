@@ -64,6 +64,9 @@ public:
 private slots:
     void openSound();
 
+    void save();
+    void saveAs();
+
     void importSoundFile();
 
     //! \brief Create a new sound-display child window
@@ -78,6 +81,8 @@ private:
 
     //! \brief Create a Sound from a wav file
     void loadSound(const QString & fileName);
+
+    Sound * currentSound();
 
     //! \brief Reads the plugins from the application's plugins folder, invoking loadPlugin for each one
     void loadPlugins();

@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->actionOpen_Sound, SIGNAL(triggered()), this, SLOT(openSound()));
     connect(ui->actionImport_sound_to_create_waveform, SIGNAL(triggered()), this, SLOT(importSoundFile()) );
+    connect(ui->actionSave_Sound, SIGNAL(triggered()), this, SLOT(save()) );
+    connect(ui->actionSave_Sound_As, SIGNAL(triggered()), this, SLOT(saveAs()) );
 }
 
 
@@ -51,10 +53,31 @@ void MainWindow::openSound()
     }
 }
 
+void MainWindow::save()
+{
+    Sound * sound = currentSound();
+    if( sound != 0 )
+    {
+        sound->writeProjectToFile( sound->filename() );
+    }
+}
+
+void MainWindow::saveAs()
+{
+    Sound * sound = currentSound();
+    if( sound != 0 )
+    {
+        QString filename = QFileDialog::getSaveFileName(this, tr("Open Sound"), "", tr("Sound files (*.*)"));
+        if(!filename.isNull())
+        {
+            sound->writeProjectToFile( filename );
+        }
+    }
+}
+
 void MainWindow::importSoundFile()
 {
-    QString fileName;
-    fileName= QFileDialog::getOpenFileName(this, tr("Open Sound"), "", tr("Sound files (*.*)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Sound"), "", tr("Sound files (*.*)"));
     if(!fileName.isNull())
     {
         QFileInfo info(fileName);
@@ -105,6 +128,14 @@ void MainWindow::loadSound(const QString &fileName)
 
     Sound * newSound = new Sound(sound);
     mSounds.append( newSound );
+}
+
+Sound *MainWindow::currentSound()
+{
+    SoundWidget* w = qobject_cast<SoundWidget*>(ui->mdiArea->currentSubWindow()->widget());
+    if( w == 0 )
+        return 0;
+    return w->sound();
 }
 
 void MainWindow::loadPlugins()

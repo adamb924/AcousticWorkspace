@@ -49,6 +49,8 @@ public:
 
     ~SoundWidget();
 
+    Sound * sound();
+
 signals:
     //! \brief Emitted whenever the horizontal scale (e.g., sliders & buttons) changes
     void horizontalScaleUpdated(double left, double right);

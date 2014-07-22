@@ -40,6 +40,8 @@ public:
 
     const SoundView * soundView() const;
 
+    QString filename() const;
+
 public slots:
 
     //! \brief Adds the spectrogram to the project, if the project is in a focused window.

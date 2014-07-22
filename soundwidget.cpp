@@ -69,6 +69,11 @@ SoundWidget::~SoundWidget()
         delete mScriptEngine;
 }
 
+Sound *SoundWidget::sound()
+{
+    return mSound;
+}
+
 void SoundWidget::setupLayout()
 {
     const SoundView * v = mSound->soundView();
