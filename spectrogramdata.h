@@ -121,8 +121,6 @@ private:
     double *mTimes;
     double *mFrequencies;
 
-    double mSpecMin;
-    double mSpecMax;
     double mWindowLength;
     double mTimeStep;
     quint32 mWindowLengthInSamples;

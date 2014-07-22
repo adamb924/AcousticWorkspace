@@ -8,12 +8,12 @@
 #include <QTime>
 #include <QRegExp>
 
-SpectrogramData::SpectrogramData() : mData(0), mTimes(0), mFrequencies(0), mSpecMin(-1.0f), mSpecMax(-1.0f), mWindowLength(-1.0f), mTimeStep(-1.0f)
+SpectrogramData::SpectrogramData() : mData(0), mTimes(0), mFrequencies(0), mWindowLength(-1.0f), mTimeStep(-1.0f)
 {
 }
 
 SpectrogramData::SpectrogramData(QString n, double *data, double *times, size_t nFrames, double *frequencies, size_t nFreqBins, double spec_min, double spec_max , double windowLength, double timeStep)
-     : mLabel(n), mData(data), mTimes(times), mFrequencies(frequencies), mSpecMin(spec_min), mSpecMax(spec_max), mWindowLength(windowLength), mTimeStep(timeStep), mNFrames(nFrames), mNFreqBins(nFreqBins)
+     : mLabel(n), mData(data), mTimes(times), mFrequencies(frequencies), mWindowLength(windowLength), mTimeStep(timeStep), mNFrames(nFrames), mNFreqBins(nFreqBins)
 {
     mSafeLabel = n;
     mSafeLabel.replace(QRegExp("[\\W]*"),"");
@@ -41,7 +41,6 @@ SpectrogramData* SpectrogramData::copy() const
     copy->mTimeStepInSamples = mTimeStepInSamples;
     copy->mNFrames = mNFrames;
     copy->mNFreqBins = mNFreqBins;
-    copy->mSpecMax = mSpecMax;
     copy->mSafeLabel = mSafeLabel;
 
     quint32 i;
