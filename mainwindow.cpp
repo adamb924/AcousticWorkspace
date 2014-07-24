@@ -16,6 +16,7 @@
 #include "comparisonwidget.h"
 #include "interfaces.h"
 #include "waveformdata.h"
+#include "comparisoncreationdialog.h"
 
 #include "sndfile.h"
 
@@ -30,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionImport_sound_to_create_waveform, SIGNAL(triggered()), this, SLOT(importSoundFile()) );
     connect(ui->actionSave_Sound, SIGNAL(triggered()), this, SLOT(save()) );
     connect(ui->actionSave_Sound_As, SIGNAL(triggered()), this, SLOT(saveAs()) );
+    connect(ui->actionNew_comparison, SIGNAL(triggered()), this, SLOT(newComparisonWindow()) );
 }
 
 
@@ -205,6 +207,14 @@ void MainWindow::newSoundWindow(Sound *snd)
 
 void MainWindow::newComparisonWindow()
 {
+    ComparisonCreationDialog dlg(mSounds, this);
+    if( dlg.exec() == QDialog::Accepted )
+    {
+        ComparisonWidget *tmp = new ComparisonWidget( dlg.comparisonSchema(), this );
+        ui->mdiArea->addSubWindow(tmp);
+        ui->mdiArea->subWindowList().last()->setAttribute(Qt::WA_DeleteOnClose);
+        tmp->show();
+    }
     /// @todo Replicate this functionality, bearing in mind that ComparisonWidget now accepts Sound objects
 //    QList<SoundWidget*> *sounds = soundWindows();
 //    if( sounds->count() < 2 )

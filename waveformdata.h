@@ -97,6 +97,7 @@ private:
     double mMaximum;
 };
 
-//Q_DECLARE_METATYPE(WaveformData)
+typedef QPair<WaveformData*, WaveformData*> WaveformPair;
+typedef QList<WaveformPair> WaveformPairList;
 
 #endif // WAVEFORMDATA_H

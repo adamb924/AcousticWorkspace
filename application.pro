@@ -32,7 +32,9 @@ SOURCES += main.cpp \
     curveparameters.cpp \
     plotparameters.cpp \
     spectrogramparameters.cpp \
-    interval.cpp
+    interval.cpp \
+    comparisoncreationdialog.cpp \
+    comparisonschema.cpp
 HEADERS += mainwindow.h \
     interfaces.h \
     plotmanagerdialog.h \
@@ -60,7 +62,9 @@ HEADERS += mainwindow.h \
     curveparameters.h \
     plotparameters.h \
     spectrogramparameters.h \
-    interval.h
+    interval.h \
+    comparisoncreationdialog.h \
+    comparisonschema.h
 LIBS += -L./ \
     -llibsndfile-1 \
     -lfftw3 \
@@ -69,4 +73,5 @@ LIBS += -L./ \
 
 FORMS += \
     mainwindow.ui \
-    soundwidget.ui
+    soundwidget.ui \
+    comparisoncreationdialog.ui

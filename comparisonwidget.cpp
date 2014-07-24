@@ -1,5 +1,7 @@
 #include "comparisonwidget.h"
 
+#include "comparisonschema.h"
+
 #include "soundwidget.h"
 #include "waveformdata.h"
 #include "plotdisplayareawidget.h"
@@ -16,16 +18,49 @@
 #include <QDialog>
 #include <QGridLayout>
 #include <QtWidgets>
+#include <QPair>
 
 #include <QtDebug>
 
-ComparisonWidget::ComparisonWidget(const Sound *primary, const QList<Sound*> *sounds, QWidget *parent) :
-    QWidget(parent), mPrimary(primary), mSounds(sounds)
+ComparisonWidget::ComparisonWidget(ComparisonSchema schema, QWidget *parent) :
+    PlotDisplayAreaWidget(parent), mSchema(schema)
 {
     colors << QColor(Qt::red) << QColor(Qt::green) << QColor(Qt::yellow) << QColor(Qt::cyan) << QColor(Qt::black);
-
     setMinimumSize(500,200);
 
+    if( schema.waveforms().count() > 0 )
+    {
+        setTimeMinMax( schema.waveforms().first().first->tMin(), schema.waveforms().first().first->tMax() );
+    }
+
+    mSecondaryCurves.append( QList<WaveformData*>() );
+
+    for( int i=0; i<schema.waveforms().count(); i++ )
+    {
+        mPrimaryCurves << new WaveformData( * schema.waveforms().at(i).first );
+        mSecondaryCurves.first() << new WaveformData( * schema.waveforms().at(i).second );
+    }
+
+    mPrimaryInterval = schema.intervals().first;
+    mSecondaryIntervals.append( schema.intervals().second );
+    warpSecondaryCurvesLinear(0);
+
+    /// @todo this bit of trickery is a way to get the annotation at the top
+    PlotViewWidget *pvw = new PlotViewWidget( mPrimaryCurves.at(0)->name() );
+    pvw->addCurveData( mPrimaryCurves.at(0), false, QColor(Qt::blue) );
+    pvw->addCurveData( mSecondaryCurves.first().at(0), false, QColor(Qt::red) );
+    addAnnotation( new IntervalDisplayWidget( schema.intervals().first, pvw, this ) );
+    addPlotView( pvw, tr("This never shows up") );
+
+    for( int i=1; i< mPrimaryCurves.count(); i++ )
+    {
+        PlotViewWidget *pvw = new PlotViewWidget( mPrimaryCurves.at(i)->name() );
+        pvw->addCurveData( mPrimaryCurves.at(i), false, QColor(Qt::blue) );
+        pvw->addCurveData( mSecondaryCurves.first().at(i), false, QColor(Qt::red) );
+        addPlotView( pvw, tr("This never shows up") );
+    }
+
+/*
     // skip the first because that's just the waveform
     for(int i = 1; i < mPrimary->waveformData()->count(); i++)
         mPrimaryCurves << new WaveformData( * (mPrimary->waveformData()->at(i)) );
@@ -80,6 +115,7 @@ ComparisonWidget::ComparisonWidget(const Sound *primary, const QList<Sound*> *so
     }
 
     setWindowTitle(createWindowTitle());
+*/
 }
 
 ComparisonWidget::~ComparisonWidget()
@@ -268,7 +304,7 @@ void ComparisonWidget::warpSecondaryCurvesLinear(int index)
     for(int i=0; i<mSecondaryCurves.at(index).count(); i++)
     {
         WaveformData *curve = mSecondaryCurves.at(index).at(i);
-        IntervalAnnotation *secondaryInterval = mSecondaryIntervals.at(index);
+        const IntervalAnnotation *secondaryInterval = mSecondaryIntervals.at(index);
         if(curve==0) { continue;}
 
         double *newTimes = (double*)malloc(sizeof(double)*curve->size());
@@ -344,7 +380,7 @@ void ComparisonWidget::warpSecondaryCurvesAccumulated(int index)
     for(int i=0; i<mSecondaryCurves.at(index).count(); i++)
     {
         WaveformData *curve = mSecondaryCurves.at(index).at(i);
-        IntervalAnnotation *secondaryInterval = mSecondaryIntervals.at(index);
+        const IntervalAnnotation *secondaryInterval = mSecondaryIntervals.at(index);
         if(curve==0) { continue;}
 
         double *newTimes = (double*)malloc(sizeof(double)*curve->size());

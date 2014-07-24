@@ -11,8 +11,6 @@
 #ifndef COMPARISONWIDGET_H
 #define COMPARISONWIDGET_H
 
-#include <QWidget>
-
 class Sound;
 class SoundWidget;
 class WaveformData;
@@ -22,12 +20,15 @@ class PlotDisplayAreaWidget;
 class IntervalAnnotation;
 class QColor;
 
-class ComparisonWidget : public QWidget
+#include "plotdisplayareawidget.h"
+#include "comparisonschema.h"
+
+class ComparisonWidget : public PlotDisplayAreaWidget
 {
     Q_OBJECT
 public:
     //! \brief Prompts the user for input, and creates the window
-    ComparisonWidget(const Sound *primary, const QList<Sound*> *sounds, QWidget *parent = 0);
+    ComparisonWidget(ComparisonSchema schema, QWidget *parent = 0);
     ~ComparisonWidget();
 
 private:
@@ -77,9 +78,10 @@ private:
     QList<WaveformData*> mPrimaryCurves;
     QList< QList<WaveformData*> > mSecondaryCurves;
 
-    IntervalAnnotation *mPrimaryInterval;
-    QList< IntervalAnnotation* > mSecondaryIntervals;
+    const IntervalAnnotation *mPrimaryInterval;
+    QList< const IntervalAnnotation* > mSecondaryIntervals;
 
+    ComparisonSchema mSchema;
 
 private slots:
     //! \brief Prompts user to add a secondary sound to the comparison.
