@@ -80,8 +80,6 @@ void SoundWidget::setupLayout()
     ui->plotDisplayWidget->setTimeMinMax( v->tMin(), v->tMax() );
     ui->plotDisplayWidget->setTimeAxes( v->leftPos(), v->rightPos() );
 
-    /// @todo add in the annotations
-
     for(int i=0; i<v->plotParameters()->count(); i++)
     {
         PlotParameters *p = v->plotParameters()->at(i);
@@ -108,7 +106,6 @@ void SoundWidget::setupLayout()
 
         for(int j=0; j<p->spectrogramParameters()->count(); j++)
         {
-            qDebug() << j;
             SpectrogramParameters *sp = p->spectrogramParameters()->at(j);
             QwtPlotSpectrogram * spectrogram = pvw->addSpectrogramData( sp->spectrogramData() );
             QwtLinearScaleEngine engine;
@@ -117,13 +114,19 @@ void SoundWidget::setupLayout()
 
         ui->plotDisplayWidget->addPlotView( pvw , p->name() );
     }
+
+    for(int i=0; i< mSound->intervals()->count(); i++)
+    {
+        ui->plotDisplayWidget->addAnnotation(new IntervalDisplayWidget(mSound->intervals()->at(i),ui->plotDisplayWidget->plotViews()->first(),this));
+        addAnnotationMenu(mSound->intervals()->at(i));
+    }
 }
 
 // Private slots
 
 void SoundWidget::addAnnotationMenu(IntervalAnnotation *annotation)
 {
-    QMenu *tmp = mAnnotationMenu->addMenu(annotation->mName);
+    QMenu *tmp = ui->menuAnnotations->addMenu(annotation->mName);
     QAction *visible = new QAction(tr("Visible"),tmp);
     visible->setCheckable(true);
     visible->setChecked(true);
@@ -247,7 +250,6 @@ void SoundWidget::setupMenus()
     mVisibilityMenu = mMenuBar->addMenu(tr("Display"));
     mVisibilityMenu->setEnabled(false);
     mRegressionMenu = mMenuBar->addMenu(tr("Regressions"));
-    mAnnotationMenu = mMenuBar->addMenu(tr("Annotations"));
     mScriptingMenu = mMenuBar->addMenu(tr("Scripting"));
 }
 

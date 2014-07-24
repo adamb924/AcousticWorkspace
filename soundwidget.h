@@ -111,7 +111,7 @@ private:
 
     QMenuBar *mMenuBar;
 
-    QMenu *mFileMenu, *mOptionsMenu, *mVisibilityMenu, *mRegressionMenu, *mAnnotationMenu, *mScriptingMenu;
+    QMenu *mFileMenu, *mOptionsMenu, *mVisibilityMenu, *mRegressionMenu, *mScriptingMenu;
     QAction *mImportSoundAction, *mCloseAction, *mOpenProjectAction, *mSaveProjectAction, *mSaveProjectAsAction, *mNewSoundAction;
     QAction *mNewRegressionAction, *mImportTextGridAction;
     QAction *mPlotManagerAction, *mDataManagerAction, *mRegressionAction;
