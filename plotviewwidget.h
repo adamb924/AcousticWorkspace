@@ -12,6 +12,7 @@
 #include <QWidget>
 #include <QList>
 
+#include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_spectrogram.h>
 
@@ -21,7 +22,7 @@
 class QMouseEvent;
 class QHBoxLayout;
 
-class PlotViewWidget : public QWidget
+class PlotViewWidget : public QwtPlot
 {
     Q_OBJECT
     Q_ENUMS(Type)
@@ -49,9 +50,6 @@ public:
 
     //! \brief Return a pointer to the data associated with the \a i-th spectrogram
     SpectrogramData* spectrogramData(int i);
-
-    //! \brief Return a pointer to the plot object
-    QwtPlot* plot();
 
     //! \brief Return true if the plot has a secondary axis, otherwise return false
     bool hasSecondaryAxis();
@@ -119,7 +117,6 @@ protected:
     QHBoxLayout *mHlayout;
 
     bool mSecondaryAxis;
-    QwtPlot *mQwtPlot;
 
     QList<WaveformData*> maWaveformData;
     QList<SpectrogramData*> maSpectrogramData;

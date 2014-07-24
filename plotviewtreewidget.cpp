@@ -226,12 +226,12 @@ void PlotViewTreeWidget::doubleClick(QTreeWidgetItem * item, int column)
 
     if(isSpectrogram(plotIndex,index))
     {
-        SpectrogramSettingsDialog ss(maProsodyViews->at(plotIndex)->spectrograms()->at(index), maProsodyViews->at(plotIndex)->plot(), this);
+        SpectrogramSettingsDialog ss(maProsodyViews->at(plotIndex)->spectrograms()->at(index), maProsodyViews->at(plotIndex), this);
         ss.exec();
     }
     else
     {
-        CurveSettingsDialog cs(maProsodyViews->at(plotIndex)->curves()->at(index) ,maProsodyViews->at(plotIndex)->plot(),this);
+        CurveSettingsDialog cs(maProsodyViews->at(plotIndex)->curves()->at(index) ,maProsodyViews->at(plotIndex),this);
         cs.exec();
     }
     }
@@ -250,7 +250,7 @@ void PlotViewTreeWidget::remove()
     //	emit removeSource(plotIndex,index);
 
     maProsodyViews->at(plotIndex)->removeItemAt(index);
-    maProsodyViews->at(plotIndex)->plot()->replot();
+    maProsodyViews->at(plotIndex)->replot();
     populate();
     }
     else // it's a top-level item
@@ -273,12 +273,12 @@ void PlotViewTreeWidget::settings()
     // spectrograms are always added to the list first
     if( isSpectrogram(plotIndex,index) )
     {
-        SpectrogramSettingsDialog ss(maProsodyViews->at(plotIndex)->spectrograms()->at(index), maProsodyViews->at(plotIndex)->plot(), this);
+        SpectrogramSettingsDialog ss(maProsodyViews->at(plotIndex)->spectrograms()->at(index), maProsodyViews->at(plotIndex), this);
         ss.exec();
     }
     else // must be a curve
     {
-        CurveSettingsDialog cs(maProsodyViews->at(plotIndex)->curves()->at(index) ,maProsodyViews->at(plotIndex)->plot(),this);
+        CurveSettingsDialog cs(maProsodyViews->at(plotIndex)->curves()->at(index) ,maProsodyViews->at(plotIndex),this);
         cs.exec();
     }
     }

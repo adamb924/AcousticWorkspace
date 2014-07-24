@@ -32,10 +32,10 @@ void IntervalDisplayWidget::paintEvent(QPaintEvent *event)
     double left, right;
     int pLeft, pRight;
     int pHeight = height();
-    left = mProsody->plot()->axisScaleDiv(QwtPlot::xBottom).lowerBound();
-    right = mProsody->plot()->axisScaleDiv(QwtPlot::xBottom).upperBound();
-    pLeft = mProsody->plot()->pos().x() + mProsody->plot()->canvas()->pos().x() + mProsody->plot()->canvasMap(QwtPlot::xBottom).transform(left);
-    pRight = mProsody->plot()->pos().x() + mProsody->plot()->canvas()->pos().x() + mProsody->plot()->canvasMap(QwtPlot::xBottom).transform(right);
+    left = mProsody->axisScaleDiv(QwtPlot::xBottom).lowerBound();
+    right = mProsody->axisScaleDiv(QwtPlot::xBottom).upperBound();
+    pLeft = mProsody->pos().x() + mProsody->canvas()->pos().x() + mProsody->canvasMap(QwtPlot::xBottom).transform(left);
+    pRight = mProsody->pos().x() + mProsody->canvas()->pos().x() + mProsody->canvasMap(QwtPlot::xBottom).transform(right);
 
 
     // multiply times by scale to get numbers

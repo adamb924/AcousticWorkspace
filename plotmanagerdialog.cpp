@@ -76,7 +76,7 @@ void PlotManagerDialog::addWaveform(int plot, int waveform)
     if( !maProsodyViews->at(plot)->hasSecondaryAxis() )
     {
 	maProsodyViews->at(plot)->addCurveData(tmp , false );
-	maProsodyViews->at(plot)->plot()->replot();
+    maProsodyViews->at(plot)->replot();
 
 	mPvt->populate();
 	return;
@@ -90,13 +90,13 @@ void PlotManagerDialog::addWaveform(int plot, int waveform)
     }
 
     QString info = "The range of the waveform is [" + QString::number(limits.bottom()) + ", " + QString::number(limits.top()) + "].\nOn which axis should the waveform be plotted?";
-    QString primary = "Primary Axis - [" + QString::number(maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft).lowerBound()) + ", " + QString::number(maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yLeft).upperBound()) + "].";
+    QString primary = "Primary Axis - [" + QString::number(maProsodyViews->at(plot)->axisScaleDiv(QwtPlot::yLeft).lowerBound()) + ", " + QString::number(maProsodyViews->at(plot)->axisScaleDiv(QwtPlot::yLeft).upperBound()) + "].";
 
     QString secondary;
-    if( maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).lowerBound() == 0 && maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).upperBound() == 1000 )
+    if( maProsodyViews->at(plot)->axisScaleDiv(QwtPlot::yRight).lowerBound() == 0 && maProsodyViews->at(plot)->axisScaleDiv(QwtPlot::yRight).upperBound() == 1000 )
 	secondary = "Secondary Axis";
     else
-    secondary = "Secondary Axis - [" + QString::number(maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).lowerBound()) + ", " + QString::number(maProsodyViews->at(plot)->plot()->axisScaleDiv(QwtPlot::yRight).upperBound()) + "].";
+    secondary = "Secondary Axis - [" + QString::number(maProsodyViews->at(plot)->axisScaleDiv(QwtPlot::yRight).lowerBound()) + ", " + QString::number(maProsodyViews->at(plot)->axisScaleDiv(QwtPlot::yRight).upperBound()) + "].";
 
     QStringList items;
     items << primary << secondary;
@@ -111,7 +111,7 @@ void PlotManagerDialog::addWaveform(int plot, int waveform)
 	else
 	    maProsodyViews->at(plot)->addCurveData(tmp , true );
 
-	maProsodyViews->at(plot)->plot()->replot();
+    maProsodyViews->at(plot)->replot();
 	mPvt->populate();
     }
 }
@@ -119,7 +119,7 @@ void PlotManagerDialog::addWaveform(int plot, int waveform)
 void PlotManagerDialog::addSpectrogram(int plot, int spectrogram)
 {
     maProsodyViews->at(plot)->addSpectrogramData( maSpectrogramData->at(spectrogram) );
-    maProsodyViews->at(plot)->plot()->replot();
+    maProsodyViews->at(plot)->replot();
     mPvt->populate();
 }
 
