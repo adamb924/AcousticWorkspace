@@ -1,33 +1,12 @@
 #include "intervalannotation.h"
 
+#include "interval.h"
+
 #include <QFile>
 #include <QTextStream>
 #include <QString>
 #include <QtDebug>
 #include <QRegExp>
-
-Interval::Interval(QString label, double left, double right)
-    : mLabel(label), mLeft(left), mRight(right)
-{
-}
-
-// this seems too simple
-bool Interval::inRange(double start, double end)
-{
-    if( end < mLeft || start > mRight )
-	return false;
-    else
-	return true;
-}
-
-Interval* Interval::clip(double start, double end)
-{
-    if( mLeft > start )
-	start = mLeft;
-    if( end > mRight )
-	end = mRight;
-    return new Interval(mLabel,start,end);
-}
 
 IntervalAnnotation::IntervalAnnotation()
 {

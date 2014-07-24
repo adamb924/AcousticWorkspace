@@ -1,37 +1,18 @@
-#ifndef INTERVALANNOTATION_H
-#define INTERVALANNOTATION_H
-
-#include <QList>
-#include <QString>
-
-/*! \class Interval
-    \ingroup Annotation
-    \brief A data class for representing a single interval annotation in the time domain.
-
-    The class provides data structure and convenience functions for a single time-interval.
-  */
-class Interval {
-public:
-    Interval() {}
-    //! \brief Initialize the interval with label \a label, the left edge of the interval at \a left seconds, and the right edge at \a right seconds.
-    Interval(QString label, double left, double right);
-
-    //! \brief Return true if the interval overlaps with the range [\a start,\a end], otherwise return false.
-    bool inRange(double start, double end);
-
-    //! \brief Return an interval identical to the current one, but clipped to the range [\a start,\a end].
-    Interval* clip(double start, double end);
-
-    QString mLabel;
-    double mLeft, mRight;
-};
-
 /*! \class IntervalAnnotation
     \ingroup Annotation
     \brief A data class for representing multiple time-domain annotations.
 
     The class represents the an interval annotation tier with a list of Interval objects. There are convenience functions to convert the tier to a string, clip the interval, and check for equality (of labels) with other tiers.
   */
+
+#ifndef INTERVALANNOTATION_H
+#define INTERVALANNOTATION_H
+
+#include <QList>
+#include <QString>
+
+class Interval;
+
 class IntervalAnnotation
 {
 public:

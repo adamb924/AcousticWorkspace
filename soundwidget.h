@@ -129,9 +129,6 @@ private:
 
     //! \brief Add actions to the menus
     void setupActions();
-
-    //! \brief Set up menus for the widget
-    void setupMenus();
 };
 
 

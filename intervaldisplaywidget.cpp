@@ -1,8 +1,8 @@
 #include "intervaldisplaywidget.h"
 
+#include "interval.h"
+
 #include <QtWidgets>
-//#include <QPainter>
-//#include <QPaintEvent>
 #include <QtDebug>
 
 #include <qwt_plot.h>

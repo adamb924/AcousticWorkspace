@@ -52,9 +52,6 @@ SoundWidget::SoundWidget(Sound * snd, QList<AbstractWaveform2WaveformMeasure*> *
     connect( ui->actionPlot_Manager, SIGNAL(triggered()), this, SLOT(launchPlotManager()) );
 
     /// @todo Look at how much of this functionality needs to be replaced
-//    mMenuBar = new QMenuBar(this);
-//    layout->setMenuBar(mMenuBar);
-//    setupMenus();
 //    setupActions();
 //    setupScripting();
 
@@ -194,63 +191,14 @@ void SoundWidget::newRegression()
 
 void SoundWidget::setupActions()
 {
-    mOpenProjectAction = new QAction(tr("Open Sound"),this);
-    mOpenProjectAction->setShortcut(QKeySequence("Ctrl+O"));
+    /// @todo Replace this functionality
+//    mNewRegressionAction = new QAction(tr("New regression"),this);
+//    connect(mNewRegressionAction,SIGNAL(triggered()),this,SLOT(newRegression()));
+//    mNewRegressionAction->setShortcut(QKeySequence("Ctrl+R"));
 
-    mDataManagerAction = new QAction(tr("Data Manager"),this);
-    mDataManagerAction->setShortcut(QKeySequence("Ctrl+D"));
-    connect(mDataManagerAction,SIGNAL(triggered()),this,SLOT(launchDataManager()));
-
-    mPlotManagerAction = new QAction(tr("Plot Manager"),this);
-    mPlotManagerAction->setShortcut(QKeySequence("Ctrl+M"));
-    connect(mPlotManagerAction,SIGNAL(triggered()),this,SLOT(launchPlotManager()));
-
-    mNewSoundAction = new QAction(tr("New Sound (new window)"),this);
-    mNewSoundAction->setShortcut(QKeySequence("Ctrl+N"));
-    //    MdiArea* mdi = qobject_cast<MdiArea*>(mainWnd->centralWidget());
-    //    qDebug() << mainWnd->mdi();
-    //    connect(newSoundAction,SIGNAL(triggered()),mainWnd->mdi(),SLOT(newSoundWindow()));
-
-    mNewRegressionAction = new QAction(tr("New regression"),this);
-    connect(mNewRegressionAction,SIGNAL(triggered()),this,SLOT(newRegression()));
-    mNewRegressionAction->setShortcut(QKeySequence("Ctrl+R"));
-
-    mImportTextGridAction = new QAction(tr("Import TextGrid"),this);
-    connect(mImportTextGridAction,SIGNAL(triggered()),this,SLOT(importTextGrid()));
-    mImportTextGridAction->setShortcut(QKeySequence("Ctrl+T"));
-
-    mFileMenu->addAction(mOpenProjectAction);
-    mFileMenu->addAction(mSaveProjectAction);
-    mFileMenu->addAction(mSaveProjectAsAction);
-    mFileMenu->addAction(mCloseAction);
-    mFileMenu->addSeparator();
-    mFileMenu->addAction(mImportSoundAction);
-    mFileMenu->addAction(mImportTextGridAction);
-    //    fileMenu->addSeparator();
-    //    fileMenu->addAction(newSoundAction);
-
-    mOptionsMenu->addAction(mDataManagerAction);
-    mOptionsMenu->addAction(mPlotManagerAction);
-    mOptionsMenu->addSeparator();
-
-    mVisibilityMenu->addSeparator();
-
-    mRegressionMenu->addAction(mNewRegressionAction);
-    mRegressionMenu->addSeparator();
-
-    QAction* runScriptAction = new QAction(tr("Run script..."),this);
-    mScriptingMenu->addAction(runScriptAction);
-    connect(runScriptAction,SIGNAL(triggered()),this,SLOT(runScript()));
-}
-
-void SoundWidget::setupMenus()
-{
-    mFileMenu = mMenuBar->addMenu(tr("File"));
-    mOptionsMenu = mMenuBar->addMenu(tr("Options"));
-    mVisibilityMenu = mMenuBar->addMenu(tr("Display"));
-    mVisibilityMenu->setEnabled(false);
-    mRegressionMenu = mMenuBar->addMenu(tr("Regressions"));
-    mScriptingMenu = mMenuBar->addMenu(tr("Scripting"));
+//    QAction* runScriptAction = new QAction(tr("Run script..."),this);
+//    mScriptingMenu->addAction(runScriptAction);
+//    connect(runScriptAction,SIGNAL(triggered()),this,SLOT(runScript()));
 }
 
 void SoundWidget::setupScripting()

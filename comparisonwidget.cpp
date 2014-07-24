@@ -5,6 +5,7 @@
 #include "plotdisplayareawidget.h"
 #include "plotviewwidget.h"
 #include "intervalannotation.h"
+#include "interval.h"
 #include "intervaldisplaywidget.h"
 #include "sound.h"
 

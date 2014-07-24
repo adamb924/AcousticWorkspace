@@ -9,6 +9,7 @@
 #include "spectrogramdata.h"
 #include "regression.h"
 #include "intervalannotation.h"
+#include "interval.h"
 
 Sound::Sound(const QString & filename, QObject *parent) :
     QObject(parent),
