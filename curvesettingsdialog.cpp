@@ -27,13 +27,20 @@ CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlo
 
     vlayout->addWidget(new QLabel(tr("Symbol Settings")));
 
-    mSymbolColor = new QPushButton(iconFromColor(curve->symbol()->pen().color()),"Symbol Color");
+    mSymbolColor = new QPushButton(iconFromColor(curve->symbol() == 0 ? QColor(Qt::blue) : curve->symbol()->pen().color()),"Symbol Color");
     connect(mSymbolColor,SIGNAL(clicked()),this,SLOT(SymbolBorderColor()));
     vlayout->addWidget(mSymbolColor,0,Qt::AlignHCenter);
 
-    mSymbolFillColor = new QPushButton(iconFromColor(curve->symbol()->brush().color()),"Symbol Fill Color");
+    mSymbolFillColor = new QPushButton(iconFromColor(curve->symbol() == 0 ? QColor(Qt::blue) : curve->symbol()->brush().color()),"Symbol Fill Color");
     connect(mSymbolFillColor,SIGNAL(clicked()),this,SLOT(SymbolFillColor()));
     vlayout->addWidget(mSymbolFillColor,0,Qt::AlignHCenter);
+
+    QSpinBox *symbolSize = new QSpinBox();
+    symbolSize->setMinimum(0);
+    symbolSize->setMaximum(100);
+    symbolSize->setValue(curve->symbol() == 0 ? 1 : curve->symbol()->pen().width());
+    connect(symbolSize,SIGNAL(valueChanged(int)),this,SLOT(SymbolSizeChange(int)));
+    vlayout->addWidget(symbolSize);
 
     QComboBox *symbolStyle = new QComboBox();
     QStringList styles;
@@ -41,13 +48,6 @@ CurveSettingsDialog::CurveSettingsDialog(QwtPlotCurve *curve, QwtPlot *parentPlo
     symbolStyle->addItems(styles);
     connect(symbolStyle,SIGNAL(currentIndexChanged(int)),this,SLOT(SymbolStyleChanged(int)));
     vlayout->addWidget(symbolStyle);
-
-    QSpinBox *symbolSize = new QSpinBox();
-    symbolSize->setMinimum(0);
-    symbolSize->setMaximum(100);
-    symbolSize->setValue(curve->symbol()->pen().width());
-    connect(symbolSize,SIGNAL(valueChanged(int)),this,SLOT(SymbolSizeChange(int)));
-    vlayout->addWidget(symbolSize);
 
     vlayout->addWidget(new QLabel(tr("Line Settings")));
 

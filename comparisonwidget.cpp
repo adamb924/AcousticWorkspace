@@ -26,7 +26,9 @@ ComparisonWidget::ComparisonWidget(const SoundWidget *primary, const QList<Sound
 
     // skip the first because that's just the waveform
     for(int i = 1; i < primary->maWaveformData.count(); i++)
+    {
         mPrimaryCurves << new WaveformData( * (primary->maWaveformData.at(i)) );
+    }
 
     mDisplayWidget = new PlotDisplayAreaWidget;
     QVBoxLayout *layout = new QVBoxLayout;
@@ -377,7 +379,8 @@ void ComparisonWidget::warpSecondaryCurvesAccumulated(int index)
 
 void ComparisonWidget::drawCurves()
 {
-    if(mDisplayWidget != 0) { delete mDisplayWidget; }
+    qDebug() << "ComparisonWidget::drawCurves()";
+//    if(mDisplayWidget != 0) { delete mDisplayWidget; }
     mDisplayWidget = new PlotDisplayAreaWidget;
 
     for(int i=0; i< mPrimaryCurves.count(); i++) // for each of the curves in the primary

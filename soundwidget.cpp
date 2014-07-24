@@ -299,92 +299,98 @@ void SoundWidget::readTextGridFromFile(QString fileName)
     int count = maIntervalAnnotations.count();
     QFile data(fileName);
     if (data.open(QFile::ReadOnly)) {
-	QTextStream in(&data);
+        QTextStream in(&data);
 
-	while( !in.atEnd() )
-	{
         bool inInterval = false;
-        QString line = in.readLine();
-	    //		qDebug() << line;
-	    if( line.contains("class = \"IntervalTier\""))
-	    {
-		maIntervalAnnotations << new IntervalAnnotation;
-		inInterval = true;
-	    }
-	    else if( line.contains("class = \"TextTier\""))
-	    {
-		inInterval = false;
-	    }
-	    else if( line.contains("name = \""))
-	    {
-		QRegExp rx("\"(.*)\"");
-		rx.indexIn(line);
-		if(rx.captureCount() < 1) { continue; }
-		if(inInterval)
-		    maIntervalAnnotations.last()->mName = rx.capturedTexts().at(1);
-	    }
-	    else if( line.contains(QRegExp("intervals \\[\\d*\\]:")))
-	    {
-		//		    qDebug() << "Interval" << line;
-		if(inInterval)
-		    maIntervalAnnotations.last()->maIntervals << new Interval;
-	    }
-	    else if( line.contains("xmin = "))
-	    {
-		if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
-		{
-		    QRegExp rx("xmin = (\\d*\\.\\d*)"); // will this get the decimal?
-		    rx.indexIn(line);
-		    //			qDebug() << rx.capturedTexts();
-		    if(rx.captureCount() < 1) { continue; }
-		    QString tmp = rx.capturedTexts().at(1);
-		    //			qDebug() << tmp.toDouble();
-		    maIntervalAnnotations.last()->maIntervals.last()->mLeft = tmp.toDouble();
-		}
-	    }
-	    else if( line.contains("xmax = "))
-	    {
-		if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
-		{
-		    QRegExp rx("xmax = (\\d*\\.\\d*)"); // will this get the decimal?
-		    rx.indexIn(line);
-		    //			qDebug() << rx.capturedTexts() << rx.captureCount();
-		    if(rx.captureCount() < 1) { continue; }
-		    QString tmp = rx.capturedTexts().at(1);
-		    //			qDebug() << tmp.toDouble();
-		    maIntervalAnnotations.last()->maIntervals.last()->mRight = tmp.toDouble();
-		}
-	    }
-	    else if( line.contains("text = "))
-	    {
-		if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
-		{
-		    QRegExp rx("\"(.*)\"");
-		    rx.indexIn(line);
-		    //			qDebug() << rx.capturedTexts();
-		    if(rx.captureCount() < 1) { continue; }
-		    QString tmp = rx.capturedTexts().at(1);
-		    maIntervalAnnotations.last()->maIntervals.last()->mLabel = tmp;
-		    //			qDebug() << tmp;
-		}
-	    }
-	}
+
+        while( !in.atEnd() )
+        {
+            QString line = in.readLine();
+            qDebug() << line;
+            if( line.contains("class = \"IntervalTier\""))
+            {
+                qDebug() << "New IntervalAnnotation!";
+                maIntervalAnnotations << new IntervalAnnotation;
+                inInterval = true;
+            }
+            else if( line.contains("class = \"TextTier\""))
+            {
+                qDebug() << "!!!!!FALSE!!!!!!";
+                inInterval = false;
+            }
+            else if( line.contains("name = \""))
+            {
+                QRegExp rx("\"(.*)\"");
+                rx.indexIn(line);
+                if(rx.captureCount() < 1) { continue; }
+
+                qDebug() << rx.capturedTexts().at(1) << inInterval;
+
+                if(inInterval)
+                    maIntervalAnnotations.last()->mName = rx.capturedTexts().at(1);
+            }
+            else if( line.contains(QRegExp("intervals \\[\\d*\\]:")))
+            {
+                //		    qDebug() << "Interval" << line;
+                qDebug() << "intervals" << inInterval;
+                if(inInterval)
+                    maIntervalAnnotations.last()->maIntervals << new Interval;
+            }
+            else if( line.contains("xmin = "))
+            {
+                if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
+                {
+                    QRegExp rx("xmin = (\\d*\\.\\d*)"); // will this get the decimal?
+                    rx.indexIn(line);
+                    //			qDebug() << rx.capturedTexts();
+                    if(rx.captureCount() < 1) { continue; }
+                    QString tmp = rx.capturedTexts().at(1);
+                    //			qDebug() << tmp.toDouble();
+                    maIntervalAnnotations.last()->maIntervals.last()->mLeft = tmp.toDouble();
+                }
+            }
+            else if( line.contains("xmax = "))
+            {
+                if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
+                {
+                    QRegExp rx("xmax = (\\d*\\.\\d*)"); // will this get the decimal?
+                    rx.indexIn(line);
+                    //			qDebug() << rx.capturedTexts() << rx.captureCount();
+                    if(rx.captureCount() < 1) { continue; }
+                    QString tmp = rx.capturedTexts().at(1);
+                    //			qDebug() << tmp.toDouble();
+                    maIntervalAnnotations.last()->maIntervals.last()->mRight = tmp.toDouble();
+                }
+            }
+            else if( line.contains("text = "))
+            {
+                if(inInterval && maIntervalAnnotations.count() > 0 && maIntervalAnnotations.last()->maIntervals.count() > 0)
+                {
+                    QRegExp rx("\"(.*)\"");
+                    rx.indexIn(line);
+                    //			qDebug() << rx.capturedTexts();
+                    if(rx.captureCount() < 1) { continue; }
+                    QString tmp = rx.capturedTexts().at(1);
+                    maIntervalAnnotations.last()->maIntervals.last()->mLabel = tmp;
+                    //			qDebug() << tmp;
+                }
+            }
+        }
     }
 
     for(int i=count; i<maIntervalAnnotations.count(); i++)
     {
-	mPlotDisplay->addAnnotation(new IntervalDisplayWidget(maIntervalAnnotations.at(i),mPlotDisplay->plotViews()->first(),this));
-	addAnnotationMenu(maIntervalAnnotations.at(i));
+        mPlotDisplay->addAnnotation(new IntervalDisplayWidget(maIntervalAnnotations.at(i),mPlotDisplay->plotViews()->first(),this));
+        addAnnotationMenu(maIntervalAnnotations.at(i));
     }
-
-    /*
-    for(int i=0; i<aIntervalAnnotations.count(); i++)
+/*
+    for(int i=0; i<maIntervalAnnotations.count(); i++)
     {
-	qDebug() << "Tier" << aIntervalAnnotations.at(i)->name;
-	for(int j=0; j<aIntervalAnnotations.at(i)->aIntervals.count(); j++)
-	{
-	    qDebug() << "Interval" << aIntervalAnnotations.at(i)->aIntervals.at(j)->left << aIntervalAnnotations.at(i)->aIntervals.at(j)->right << aIntervalAnnotations.at(i)->aIntervals.at(j)->label;
-	}
+        qDebug() << "Tier" << maIntervalAnnotations.at(i)->mName;
+        for(int j=0; j<maIntervalAnnotations.at(i)->maIntervals.count(); j++)
+        {
+            qDebug() << "Interval" << maIntervalAnnotations.at(i)->maIntervals.at(j)->mLeft << maIntervalAnnotations.at(i)->maIntervals.at(j)->mRight << maIntervalAnnotations.at(i)->maIntervals.at(j)->mLabel;
+        }
     }
 */
 }
@@ -785,40 +791,45 @@ void SoundWidget::writeProjectToFile(QString filename)
 	    xs.writeEndElement();
 	}
 
-	for(int j=0; j< mPlotDisplay->plotViews()->at(i)->curves()->length(); j++)
-	{
+    for(int j=0; j< mPlotDisplay->plotViews()->at(i)->curves()->length(); j++)
+    {
+        QwtPlotCurve * curve = mPlotDisplay->plotViews()->at(i)->curves()->at(j);
+
 	    xs.writeStartElement("curve");
 	    xs.writeAttribute("index",QString::number( maWaveformData.indexOf(mPlotDisplay->plotViews()->at(i)->curveData(j)) ));
 	    xs.writeAttribute("name", mPlotDisplay->plotViews()->at(i)->curveData(j)->name() );
-	    if( mPlotDisplay->plotViews()->at(i)->curves()->at(j)->yAxis() == QwtPlot::yLeft )
+        if( curve->yAxis() == QwtPlot::yLeft )
 		xs.writeAttribute("secondary-axis", "0" );
 	    else
 		xs.writeAttribute("secondary-axis", "1" );
 
-	    xs.writeEmptyElement("symbol-color");
-        xs.writeAttribute("r",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().red()));
-        xs.writeAttribute("g",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().green()));
-        xs.writeAttribute("b",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->pen().color().blue()));
+        if( curve->symbol() != 0 )
+        {
+            xs.writeEmptyElement("symbol-color");
+            xs.writeAttribute("r",QString::number(curve->symbol()->pen().color().red()));
+            xs.writeAttribute("g",QString::number(curve->symbol()->pen().color().green()));
+            xs.writeAttribute("b",QString::number(curve->symbol()->pen().color().blue()));
 
-	    xs.writeEmptyElement("symbol-fill-color");
-        xs.writeAttribute("r",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().red()));
-        xs.writeAttribute("g",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().green()));
-        xs.writeAttribute("b",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->brush().color().blue()));
+            xs.writeEmptyElement("symbol-fill-color");
+            xs.writeAttribute("r",QString::number(curve->symbol()->brush().color().red()));
+            xs.writeAttribute("g",QString::number(curve->symbol()->brush().color().green()));
+            xs.writeAttribute("b",QString::number(curve->symbol()->brush().color().blue()));
 
-        xs.writeTextElement("symbol-style",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->style()));
+            xs.writeTextElement("symbol-style",QString::number(curve->symbol()->style()));
 
-        xs.writeTextElement("symbol-size",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->symbol()->size().height()));
+            xs.writeTextElement("symbol-size",QString::number(curve->symbol()->size().height()));
+        }
 
 	    xs.writeEmptyElement("line-color");
-        xs.writeAttribute("r",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().red()));
-	    xs.writeAttribute("g",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().green()));
-	    xs.writeAttribute("b",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().color().blue()));
+        xs.writeAttribute("r",QString::number(curve->pen().color().red()));
+        xs.writeAttribute("g",QString::number(curve->pen().color().green()));
+        xs.writeAttribute("b",QString::number(curve->pen().color().blue()));
 
-	    xs.writeTextElement("line-style",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->style()));
+        xs.writeTextElement("line-style",QString::number(curve->style()));
 
-	    xs.writeTextElement("line-width",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->pen().width()));
+        xs.writeTextElement("line-width",QString::number(curve->pen().width()));
 
-	    xs.writeTextElement("antialiased",QString::number(mPlotDisplay->plotViews()->at(i)->curves()->at(j)->testRenderHint(QwtPlotItem::RenderAntialiased)));
+        xs.writeTextElement("antialiased",QString::number(curve->testRenderHint(QwtPlotItem::RenderAntialiased)));
 
 	    xs.writeEndElement();
 	}

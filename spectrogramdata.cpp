@@ -17,6 +17,11 @@ SpectrogramData::SpectrogramData(QString n, double *data, double *times, size_t 
 {
     mSafeLabel = n;
     mSafeLabel.replace(QRegExp("[\\W]*"),"");
+
+    setInterval( Qt::XAxis, QwtInterval( getTimeFromIndex(0), getTimeFromIndex(mNFrames-1) ) );
+    setInterval( Qt::YAxis, QwtInterval( getFrequencyFromIndex(0), getFrequencyFromIndex(mNFreqBins-1) ) );
+   setInterval( Qt::ZAxis, QwtInterval( mSpecMin, mSpecMax ) );
+
 }
 
 SpectrogramData::~SpectrogramData()
