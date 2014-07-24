@@ -567,13 +567,13 @@ void Sound::readTextGridFromFile(const QString & fileName)
 {
     int count = maIntervalAnnotations.count();
     QFile data(fileName);
+    bool inInterval = false;
     if (data.open(QFile::ReadOnly))
     {
         QTextStream in(&data);
 
         while( !in.atEnd() )
         {
-            bool inInterval = false;
             QString line = in.readLine();
             //		qDebug() << line;
             if( line.contains("class = \"IntervalTier\""))
